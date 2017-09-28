@@ -1,0 +1,7 @@
+---
+name: docker-compose
+
+dependencies: []
+
+files:
+- docker/docker-compose-Linux-x86_64-1.16.1 #https://github-production-release-asset-2e65be.s3.amazonaws.com/15045751/95d87c62-8f1c-11e7-9a2a-6a49015dd4e5?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20170918%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20170918T022436Z&X-Amz-Expires=300&X-Amz-Signature=eecdf4f4792f71961b900ebd0f48acbd5fdaa556599f627f6ff7ecd75891d6a8&X-Amz-SignedHeaders=host&actor_id=5753287&response-content-disposition=attachment%3B%20filename%3Ddocker-compose-Linux-x86_64&response-content-type=application%2Foctet-stream

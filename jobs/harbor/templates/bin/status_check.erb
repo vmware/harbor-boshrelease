@@ -1,0 +1,34 @@
+#!/bin/sh
+
+set -e # exit immediately if a simple command exits with a non-zero status
+set -u # report the usage of uninitialized variables
+
+HARBOR_JOB_DIR=/var/vcap/jobs/harbor
+DOCKER_PACKAGE_DIR=${HARBOR_JOB_DIR}/packages/docker
+
+export PATH=$PATH:${DOCKER_PACKAGE_DIR}/bin
+
+#Check the status of Harbor containers
+if docker ps --filter "status=restarting" | grep 'vmware'; then
+	exit 1
+fi
+
+#Check the API
+protocol=<%= p("harbor.ui_url_protocol") %>
+harbor_url=<%= p("harbor.hostname") %>
+curl_command="curl"
+if [ "$protocol" = "https" ]; then
+	curl_command="$curl_command -k"
+fi
+
+url=`${curl_command} ${protocol}://${harbor_url}/api/systeminfo | python -c "import sys, json; print json.load(sys.stdin)['registry_url']"`
+if [ $? != 0 ] ; then
+	exit 2
+fi
+
+if [ "$harbor_url" != "$url" ]; then
+	exit 3
+fi
+
+echo "Harbor status check: [PASSED]"
+exit 0

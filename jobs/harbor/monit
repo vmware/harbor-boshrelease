@@ -1,0 +1,5 @@
+check process harbor
+  with pidfile /var/vcap/sys/run/harbor/pid
+  start program "/var/vcap/jobs/harbor/bin/ctl start" with timeout 120 seconds
+  stop program "/var/vcap/jobs/harbor/bin/ctl stop" with timeout 60 seconds
+  group vcap

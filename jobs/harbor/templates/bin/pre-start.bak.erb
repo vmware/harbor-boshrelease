@@ -1,0 +1,131 @@
+#!/bin/bash
+
+set -e # exit immediately if a simple command exits with a non-zero status
+set -u # report the usage of uninitialized variables
+
+#
+# Set Colors
+#
+
+bold=$(tput bold)
+underline=$(tput sgr 0 1)
+reset=$(tput sgr0)
+
+red=$(tput setaf 1)
+green=$(tput setaf 76)
+white=$(tput setaf 7)
+tan=$(tput setaf 202)
+blue=$(tput setaf 25)
+
+#Make sure folders are ready
+RUN_DIR=/var/vcap/sys/run/harbor
+LOG_DIR=/var/vcap/sys/log/harbor
+HARBOR_JOB_DIR=/var/vcap/jobs/harbor
+HARBOR_PACKAGE_DIR=${HARBOR_JOB_DIR}/packages/harbor-app
+COMPOSE_PACKAGE_DIR=${HARBOR_JOB_DIR}/packages/docker-compose
+DOCKER_PACKAGE_DIR=${HARBOR_JOB_DIR}/packages/docker
+IMAGES_TAR_PATH=${HARBOR_PACKAGE_DIR}/harbor*.tar.gz
+DOCKER_DATA_DIR=/var/vcap/data/docker
+
+HARBOR_DATA=/data
+
+LOG_FILE=${LOG_DIR}/harbor.log
+
+export PATH=$PATH:${DOCKER_PACKAGE_DIR}/bin
+export PATH=$PATH:${COMPOSE_PACKAGE_DIR}/bin
+
+for dir in $RUN_DIR $LOG_DIR $HARBOR_DATA ; do 
+  mkdir -p ${dir}
+  chown vcap:vcap ${dir}
+  chmod 700 ${dir}
+done
+
+touch $LOG_FILE
+chmod 777 $LOG_FILE
+
+#logging
+log() {
+	echo `date` $1 >> $LOG_FILE
+}
+
+info() { 
+  printf "${white}➜ %s${reset}\n" "$@"
+  log "$@"
+}
+
+success() {
+  printf "${green}✔ %s${reset}\n" "$@"
+  log "$@"
+}
+
+error() { 
+  printf "${red}✖ %s${reset}\n" "$@"
+  log "$@"
+}
+
+warn() { 
+  printf "${tan}➜ %s${reset}\n" "$@"
+  log "$@"
+}
+
+info $PATH
+
+#cgroups mount point settings
+if grep -v '^#' /etc/fstab | grep -q cgroup || [ ! -e /proc/cgroups ] || [ ! -d /sys/fs/cgroup ]; then
+  mkdir -p /sys/fs/cgroup
+fi
+if ! mountpoint -q /sys/fs/cgroup; then
+  mount -t tmpfs -o uid=0,gid=0,mode=0755 cgroup /sys/fs/cgroup
+fi
+(cd /sys/fs/cgroup
+ for sys in $(awk '!/^#/ { if ($4 == 1) print $1 }' /proc/cgroups); do
+   mkdir -p $sys
+   if ! mountpoint -q $sys; then
+     if ! mount -n -t cgroup -o $sys cgroup $sys; then
+       rmdir $sys || true
+     fi
+   fi
+done)
+success "Successfully set cgroup mount point"
+
+#Start docker daemon
+dockerd -g ${DOCKER_DATA_DIR} >/dev/null 2>&1 &
+while [[ ! -e /var/run/docker.sock ]]; do
+  sleep 1
+done
+success "Successfully start Docker daemon"
+
+#Load docker images
+if [ -f ${IMAGES_TAR_PATH} ] ; then
+  docker load -i ${IMAGES_TAR_PATH}
+  if [[ $? != 0 ]] ; then
+  	error "Failed to load docker images from ${IMAGES_TAR_PATH}"
+  	exit 1
+  else
+  	success "Load docker images from ${IMAGES_TAR_PATH} successfully"
+  fi
+else
+  error "${IMAGES_TAR_PATH} does not exist"
+  exit 2
+fi
+
+#Copy cert to the right place
+mkdir -p $HARBOR_DATA/cert
+cp ${HARBOR_JOB_DIR}/tls/server.crt $HARBOR_DATA/cert/
+cp ${HARBOR_JOB_DIR}/tls/server.key $HARBOR_DATA/cert/
+
+#Prepare Harbor env
+cat ${HARBOR_JOB_DIR}/config/harbor.cfg
+
+${HARBOR_PACKAGE_DIR}/prepare --conf ${HARBOR_JOB_DIR}/config/harbor.cfg --with-notary --with-clair
+if [[ $? != 0 ]] ; then
+  error "Failed to prepare Harbor environment"
+  exit 3
+else
+  success "Prepare Harbor environment successfully"
+fi
+
+#Workaround to resolve the docker-compose libz issue
+sudo mount /tmp -o remount,exec
+
+exit 0

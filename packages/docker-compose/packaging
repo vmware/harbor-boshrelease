@@ -1,0 +1,10 @@
+set -e # exit immediately if a simple command exits with a non-zero status
+set -u # report the usage of uninitialized variables
+
+# We grab the latest versions that are in the directory
+COMPOSE_VERSION=`ls -r docker/docker-compose-Linux-x86_64-* | sed 's/docker\/docker-compose-Linux-x86_64-\(.*\)/\1/' | head -1`
+
+echo "Copying docker-compose ${COMPOSE_VERSION} binary..."
+mkdir -p ${BOSH_INSTALL_TARGET}/bin
+cp ${BOSH_COMPILE_TARGET}/docker/docker-compose-Linux-x86_64-${COMPOSE_VERSION} ${BOSH_INSTALL_TARGET}/bin/docker-compose
+chmod +x ${BOSH_INSTALL_TARGET}/bin/docker-compose

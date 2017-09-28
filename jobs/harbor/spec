@@ -1,0 +1,126 @@
+---
+name: harbor
+
+templates:
+  bin/ctl.erb: bin/ctl
+  bin/pre-start.erb: bin/pre-start
+  bin/status_check.erb: bin/status_check
+  config/harbor.cfg: config/harbor.cfg
+  tls/server.crt: tls/server.crt
+  tls/server.key: tls/server.key 
+
+packages:
+- docker
+- docker-compose
+- harbor-app
+- common
+
+properties:
+  harbor.hostname:
+    description: "The IP address or hostname to access admin UI and registry service"
+    default: ~
+  harbor.ui_url_protocol:
+    description: "The protocol for accessing the UI and token/notification service, by default it is http"
+    default: "http"
+  harbor.db_password:
+    description: "The password for the root user of mysql db"
+    default: "root123"
+  harbor.max_job_workers:
+    description: "Maximum number of job workers in job service"
+    default: 3
+  harbor.customize_crt:
+    description: "Determine whether or not to generate certificate for the registry's token. If the value is on, the prepare script creates new root cert and private key for generating token to access the registry. If the value is off the default key/cert will be used. This flag also controls the creation of the notary signer's cert."
+    default: "on"
+  harbor.secretkey_path:
+    description: "The path of secretkey storage"
+    default: "/data"
+  harbor.admiral_url:
+    description: "Admiral's url, comment this attribute, or set its value to NA when Harbor is standalone"
+    default: "NA"
+  harbor.clair_db_password:
+    description: "The password of the Clair's postgres database, only effective when Harbor is deployed with Clair"
+    default: "password"
+  harbor.admin_password:
+    description: "The initial password of Harbor admin, only works for the first time when Harbor starts"
+    default: "Harbor12345"
+  harbor.auth_mode:
+    description: "By default the auth mode is db_auth, i.e. the credentials are stored in a local database. Set it to ldap_auth if you want to verify a user's credentials against an LDAP server."
+    default: "db_auth"
+  harbor.self_registration:
+    description: "Turn on or off the self-registration feature"
+    default: "on"
+  harbor.token_expiration:
+    description: "The expiration time (in minute) of token created by token service, default is 30 minutes"
+    default: 30
+  harbor.verify_remote_cert:
+    description: "Determine whether the job service should verify the ssl cert when it connects to a remote registry."
+    default: "on"
+  harbor.project_creation_restriction:
+    description: "The flag to control what users have permission to create projects. The default value [everyone] allows everyone to creates a project. Set to [adminonly] so that only admin user can create project."
+    default: "everyone"
+  harbor.db.host:
+    description: "The address of the mysql database"
+    default: "mysql"
+  harbor.db.port:
+    description: "The port of mysql database host"
+    default: 3306
+  harbor.db.user:
+    description: "The user name of mysql database"
+    default: "root"
+  harbor.email.identity:
+    description: "Identity left blank to act as username"
+    default: ""
+  harbor.email.server:
+    description: "Email server address"
+    default: "smtp.mydomain.com"
+  harbor.email.port:
+    description: "Email server port"
+    default: 25
+  harbor.email.username:
+    description: "Username of email server"
+    default: "sample_admin@mydomain.com"
+  harbor.email.password:
+    description: "Password of email server"
+    default: "Passw0rd!"
+  harbor.email.from:
+    description: "Emails sent from who"
+    default: "admin <sample_admin@mydomain.com>"
+  harbor.email.ssl:
+    description: "If ssl is enabled to check"
+    default: "false"
+  harbor.ldap.url:
+    description: "The url for an ldap endpoint"
+    default: "ldaps://ldap.mydomain.com"
+  harbor.ldap.searchdn:
+    description: "A user's DN who has the permission to search the LDAP/AD server. If your LDAP/AD server does not support anonymous search, you should configure this DN and harbor.ldap.searchpwd."
+    default: ~
+  harbor.ldap.searchpwd:
+    description: "The password of the harbor.ldap.searchdn"
+    default: ~
+  harbor.ldap.filter:
+    description: "Search filter for LDAP/AD, make sure the syntax of the filter is correct"
+    default: ~
+  harbor.ldap.basedn:
+    description: "The base DN from which to look up a user in LDAP/AD"
+    default: "ou=people,dc=mydomain,dc=com"
+  harbor.ldap.uid:
+    description: "The attribute used in a search to match a user, it could be uid, cn, email, sAMAccountName or other attributes"
+    default: "uid"
+  harbor.ldap.scope:
+    description: "The scope to search for users, 1-LDAP_SCOPE_BASE, 2-LDAP_SCOPE_ONELEVEL, 3-LDAP_SCOPE_SUBTREE"
+    default: "3"
+  harbor.ldap.timeout:
+    description: "Timeout (in seconds)  when connecting to an LDAP Server"
+    default: 5
+  harbor.ssl.cert:
+    description: "The certificate for server"
+    default: ~
+  harbor.ssl.key:
+    description: "The certificate key for server"
+    default: ~
+  harbor.ssl.cert_path:
+    description: "The path of cert file for nginx, they are applied only the protocol is set to https"
+    default: "/data/cert/server.crt"
+  harbor.ssl.key_path:
+    description: "The path of key file for nginx, they are applied only the protocol is set to https"
+    default: "/data/cert/server.key"
