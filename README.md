@@ -79,6 +79,16 @@ $ bosh create-env bosh-deployment/bosh.yml \
     -v vcenter_vms=bosh-1-vms \
     -v vcenter_disks=bosh-1-disks \
     -v vcenter_cluster=cluster1
+
+# Create alias for the created env
+bosh alias-env <alias name> -e <director IP> --ca-cert <(bosh int ./creds.yml --path /director_ssl/ca)
+
+# Set env
+$ export BOSH_CLIENT=admin
+$ export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
+
+bosh -e <env name> env
+
 ```
 
 ### Create the release
@@ -97,6 +107,9 @@ bosh create-release --force
 #Current workdir is the release dir
 bosh -e <env> upload-release
 
+#Additionally you can specify the release name and version
+#bosh -e <env> upload-release --name <name> --version <version> <PATH>
+
 ```
 
 ### Make a deployment
@@ -106,9 +119,33 @@ bosh -e <env> releases
 
 ```
 Now, make the deployment.
+**NOTES: deployment_vsphere.yml is not a manifest file template yet, you need to change some of the contents such as network, director uuid, release and certifications etc. according to your environment.**
+
 ```
 #Current workdir is the release dir
 bosh -e <env> -d <deployment name> deploy templates/deployment_vsphere.yml
+
+```
+After the deployment is completed, you can check the status of the deployment:
+
+```
+#See current deployments
+bosh -e <env> deployments
+
+#Check the status of vms
+bosh -e <env> vms
+
+#Check the status of instances
+bosh -e <env> instances
+
+```
+
+### Delete deployment
+If you want to delete the specified deployment, execute
+
+```
+## --force ignore the errors when deleting
+bosh -e <env> -d <deployment name> delete-deployment --force
 
 ```
 
@@ -119,3 +156,5 @@ bosh -e <env> -d <deployment name> deploy templates/deployment_vsphere.yml
 * Make deployment on aws and gcp (Create cloud_config file for aws and gcp)[P1]
 * Extract manifest to templates and cloud_config files and provide manifest file generating script tool [P2]
 * Create Pivotal tile based on this BOSH release [P3]
+
+The job is tracked by issue [#3184: BOSH release for Harbor](https://github.com/vmware/harbor/issues/3184).
