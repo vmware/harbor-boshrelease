@@ -1,32 +1,36 @@
-name: harbor
-version: "1"
-commit_hash: non-git
+name: harbor-bosh-release
+version: 0.1.2
+commit_hash: 4ae6836
 uncommitted_changes: false
 jobs:
 - name: harbor
   version: 5a4fbe9b2b0a18df5d655538036ee4ba8b75f3a2
   fingerprint: 5a4fbe9b2b0a18df5d655538036ee4ba8b75f3a2
-  sha1: 46c4813ad11a13232393adc69663a9bdac609995
+  sha1: 8caa4bd235f081bbb7f8fc639cfee818ba93010e
 packages:
 - name: common
   version: 03616c0fe8fbbbf83fd403801530cc9b6f16f5c5
   fingerprint: 03616c0fe8fbbbf83fd403801530cc9b6f16f5c5
-  sha1: 5d7e46ec4afbd0d3507a9576285ceef99775f5df
+  sha1: a4dad917210c853fdf1b1612ecac36a8be7b7e86
   dependencies: []
 - name: docker
   version: 8484c466d82ce26bf7781fdb669472718609d527
   fingerprint: 8484c466d82ce26bf7781fdb669472718609d527
-  sha1: 255782e29421ddee232b1b2da62e58b0205b0d7a
+  sha1: 31d94a8800c351ab377f2e142498d2bedd3eb86d
   dependencies: []
 - name: docker-compose
   version: cb0ea0d494d6563695e722ed6fc4db18c9d5a093
   fingerprint: cb0ea0d494d6563695e722ed6fc4db18c9d5a093
-  sha1: 250f3ef318f6e07d500631614130041fe7e633e6
+  sha1: cb9372eb247bb6d6d578e0b5a68bd0675ca8ec17
   dependencies: []
 - name: harbor-app
   version: 37851b798072d13526105fb8136838b28b70c1f7
   fingerprint: 37851b798072d13526105fb8136838b28b70c1f7
-  sha1: 8cdd1dc3d94851c67e508e5f1c625d7980fd4b1e
+  sha1: 78031bfdebb8a9a98421ae8a5e8d1d934a237290
   dependencies:
   - docker
   - docker-compose
+license:
+  version: e6c4ccc65c76e75e2338d1edabdcf264d37ee663
+  fingerprint: e6c4ccc65c76e75e2338d1edabdcf264d37ee663
+  sha1: 0c6e60236417151efb9c3007f535532f29d48a9c
