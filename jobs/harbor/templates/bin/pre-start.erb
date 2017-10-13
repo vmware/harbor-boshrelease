@@ -14,6 +14,9 @@ DOCKER_PACKAGE_DIR=${HARBOR_JOB_DIR}/packages/docker
 IMAGES_TAR_PATH=${HARBOR_PACKAGE_DIR}/harbor*.tar.gz
 DOCKER_DATA_DIR=/var/vcap/data/docker
 HARBOR_DATA=/data
+CFG_FILE=${HARBOR_JOB_DIR}/config/harbor.cfg
+
+source /var/vcap/packages/common/generateCerts.sh
 
 export PATH=$PATH:${DOCKER_PACKAGE_DIR}/bin
 export PATH=$PATH:${COMPOSE_PACKAGE_DIR}/bin
@@ -68,15 +71,32 @@ else
   exit 2
 fi
 
+# Cat out the harbor.cfg file content
+cat ${CFG_FILE}
+
 #Copy cert to the right place
 mkdir -p $HARBOR_DATA/cert
+
+<% if_p("harbor.ssl.cert", "harbor.ssl.key") do |cert, key| %>
 cp ${HARBOR_JOB_DIR}/tls/server.crt $HARBOR_DATA/cert/
 cp ${HARBOR_JOB_DIR}/tls/server.key $HARBOR_DATA/cert/
+<% end.else do %>
+HARBOR_HOST_IP=
+if [[ $(grep 'hostname[[:blank:]]*=' ${CFG_FILE}) =~ hostname[[:blank:]]*=[[:blank:]]*(.*) ]]; then
+  HARBOR_HOST_IP=${BASH_REMATCH[1]}
+fi
+
+generateCerts $HARBOR_HOST_IP <%= p("harbor.ssl.self_sign.location") %> <%= p("harbor.ssl.self_sign.orgnization") %> <%= p("harbor.ssl.self_sign.cn_ca") %> <%= p("harbor.ssl.self_sign.cn_cert") %>
+
+mv $HARBOR_HOST_IP.crt $HARBOR_DATA/cert/server.crt
+mv $HARBOR_HOST_IP.key $HARBOR_DATA/cert/server.key
+
+mkdir -p $HARBOR_DATA/ca_download
+mv harbor_ca.crt $HARBOR_DATA/ca_download/ca.crt
+<% end %>
 
 #Prepare Harbor env
-cat ${HARBOR_JOB_DIR}/config/harbor.cfg
-
-${HARBOR_PACKAGE_DIR}/prepare --conf ${HARBOR_JOB_DIR}/config/harbor.cfg --with-notary --with-clair
+${HARBOR_PACKAGE_DIR}/prepare --conf ${CFG_FILE} --with-notary --with-clair
 if [[ $? != 0 ]] ; then
   echo "Failed to prepare Harbor environment"
   exit 3

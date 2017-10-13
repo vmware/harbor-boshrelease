@@ -14,6 +14,7 @@ packages:
 - docker-compose
 - harbor-app
 - common
+- openssl
 
 properties:
   harbor.hostname:
@@ -124,3 +125,15 @@ properties:
   harbor.ssl.key_path:
     description: "The path of key file for nginx, they are applied only the protocol is set to https"
     default: "/data/cert/server.key"
+  harbor.ssl.self_sign.location:
+    description: "The location information used in generating self-signed certificate"
+    default: "Bei Jing"
+  harbor.ssl.self_sign.orgnization:
+    description: "The orgnization information used in generating self-signed certificate"
+    default: "VMware"
+  harbor.ssl.self_sign.cn_ca:
+    description: "The CN information used in generating self-signed CA"
+    default: "HarborCA"
+  harbor.ssl.self_sign.cn_cert:
+    description: "The CN information used in generating self-signed certificate"
+    default: "HarborManager"

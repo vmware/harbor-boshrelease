@@ -5,3 +5,4 @@ dependencies: []
 
 files:
 - common/utils.sh
+- common/generateCerts.sh

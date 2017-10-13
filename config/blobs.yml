@@ -18,3 +18,7 @@ library/bridge-utils-1.6.tar.gz:
   size: 33368
   object_id: a01838a4-f817-405d-7f11-ab59e6f1c93d
   sha: e11d78aa49a540c3455b09e7d30c318b00f332af
+library/openssl-1.0.2l.tar.gz:
+  size: 5365054
+  object_id: 3f56a07d-e5c5-423c-7627-f41a302587d6
+  sha: b58d5d0e9cea20e571d903aafa853e2ccd914138
