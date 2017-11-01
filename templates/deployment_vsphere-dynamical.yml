@@ -3,14 +3,14 @@ name: harbor-deployment-second-try
 director_uuid: 46fc9846-9882-49e6-a385-73047973839f
 
 release:
-  name: harbor-bosh-release
+  name: harbor
   version: latest
 
 jobs:
 - name: harbor-app
   instances: 1
   templates:
-  - {name: harbor, release: harbor-bosh-release}
+  - {name: harbor, release: harbor}
   persistent_disk_pool: default
   resource_pool: harbor-nodes
   networks:
