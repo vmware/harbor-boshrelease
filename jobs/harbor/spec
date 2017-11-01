@@ -21,8 +21,8 @@ properties:
     description: "The IP address or hostname to access admin UI and registry service"
     default: ~
   harbor.ui_url_protocol:
-    description: "The protocol for accessing the UI and token/notification service, by default it is http"
-    default: "http"
+    description: "The protocol for accessing the UI and token/notification service, by default it is https"
+    default: "https"
   harbor.db_password:
     description: "The password for the root user of mysql db"
     default: "root123"
@@ -127,7 +127,7 @@ properties:
     default: "/data/cert/server.key"
   harbor.ssl.self_sign.location:
     description: "The location information used in generating self-signed certificate"
-    default: "Bei Jing"
+    default: "Beijing"
   harbor.ssl.self_sign.orgnization:
     description: "The orgnization information used in generating self-signed certificate"
     default: "VMware"

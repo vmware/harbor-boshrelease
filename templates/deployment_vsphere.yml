@@ -16,9 +16,10 @@ jobs:
   networks:
   - name: default
     static_ips:
-    - 10.112.123.56
+    - 10.112.123.59
   properties:
     harbor:
+      hostname: "10.112.123.59"
       ssl:
         cert: |+
           -----BEGIN CERTIFICATE-----
@@ -113,7 +114,7 @@ networks:
   - range: 10.112.0.0/16
     gateway: 10.112.123.253
     static:
-    - 10.112.123.56
+    - 10.112.123.59
     cloud_properties:
       name: VM Network
 
@@ -162,8 +163,3 @@ update:
   max_in_flight: 3
   canary_watch_time: 60000-120000
   update_watch_time: 60000-120000
-
-properties:
-  harbor:
-    hostname: "10.112.123.56"
-    ui_url_protocol: "https"
