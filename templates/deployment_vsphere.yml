@@ -1,165 +1,121 @@
 ---
 name: harbor-deployment-first-try
-director_uuid: 46fc9846-9882-49e6-a385-73047973839f
 
-release:
-  name: harbor
+releases:
+- name: harbor
   version: latest
 
-jobs:
-- name: harbor-app
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: latest
+
+instance_groups:
+- name: harbor
+  azs: [az1]
   instances: 1
-  templates:
-  - {name: harbor, release: harbor}
-  persistent_disk_pool: default
-  resource_pool: harbor-nodes
+  jobs:
+  - name: harbor
+    release: harbor
+    properties:
+      harbor:
+        hostname: "10.112.122.1"
+        ssl:
+          cert: |+
+            -----BEGIN CERTIFICATE-----
+            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
+            Fw==
+            -----END CERTIFICATE-----
+          key: |+
+            -----BEGIN PRIVATE KEY-----
+            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
+            2sGUtNjHW9D8ZYMoyOHS/KMJ7WGzSg==
+            -----END PRIVATE KEY-----
+  vm_type: standard
+  stemcell: default
+  persistent_disk_type: 20G
   networks:
   - name: default
     static_ips:
-    - 10.112.123.59
-  properties:
-    harbor:
-      hostname: "10.112.123.59"
-      ssl:
-        cert: |+
-          -----BEGIN CERTIFICATE-----
-          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
-          /JqB
-          -----END CERTIFICATE-----
-        key: |+
-          -----BEGIN PRIVATE KEY-----
-          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
-          tFVqoB7uQJ+yoheIcydJilPiHSMCMAA=
-          -----END PRIVATE KEY-----
-
-networks:
-- name: default
-  type: manual
-  subnets:
-  - range: 10.112.0.0/16
-    gateway: 10.112.123.253
-    static:
-    - 10.112.123.59
-    cloud_properties:
-      name: VM Network
-
-resource_pools:
-- name: harbor-nodes
-  network: default
-  stemcell:
-    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
-    version: 3445.11
-  cloud_properties:
-    cpu: 1
-    ram: 4_096
-    disk: 81_920
-    datastores: [Datastore, datastore1]
-    datacenters:
-    - name: Datacenter
-      clusters:
-      - compute: {}
-    vmx_options:
-      sched.mem.maxmemctl: "1330"
-
-disk_pools:
-- name: default
-  disk_size: 20_480
-  cloud_properties:
-    datastores: ['Datastore', 'datastore1']
-
-compilation:
-  workers: 2
-  network: default
-  reuse_compilation_vms: true
-  cloud_properties:
-    cpu: 1
-    ram: 4_096
-    disk: 81_920
-    datastores: [Datastore, datastore1]
-    datacenters:
-    - name: Datacenter
-      clusters:
-      - compute: {}
-    vmx_options:
-      sched.mem.maxmemctl: "1330"
+    - 10.112.122.1
 
 update:
-  canaries: 1
-  max_in_flight: 3
-  canary_watch_time: 60000-120000
-  update_watch_time: 60000-120000
+  canaries: 2
+  max_in_flight: 1
+  canary_watch_time: 5000-60000
+  update_watch_time: 5000-60000

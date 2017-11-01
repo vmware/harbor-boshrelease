@@ -1,75 +1,30 @@
 ---
 name: harbor-deployment-second-try
-director_uuid: 46fc9846-9882-49e6-a385-73047973839f
 
-release:
-  name: harbor
+releases:
+- name: harbor
   version: latest
 
-jobs:
-- name: harbor-app
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: latest
+
+instance_groups:
+- name: harbor
+  azs: [az1]
   instances: 1
-  templates:
-  - {name: harbor, release: harbor}
-  persistent_disk_pool: default
-  resource_pool: harbor-nodes
+  jobs:
+  - name: harbor
+    release: harbor
+  vm_type: standard
+  stemcell: default
+  persistent_disk_type: 20G
   networks:
   - name: default
 
-networks:
-- name: default
-  type: manual
-  subnets:
-  - range: 10.112.123.0/24
-    gateway: 10.112.123.253
-    reserved:
-    - 10.112.123.1-10.112.123.53
-    - 10.112.123.57-10.112.123.255
-    cloud_properties:
-      name: VM Network
-
-resource_pools:
-- name: harbor-nodes
-  network: default
-  stemcell:
-    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
-    version: 3445.11
-  cloud_properties:
-    cpu: 1
-    ram: 4_096
-    disk: 81_920
-    datastores: [Datastore, datastore1]
-    datacenters:
-    - name: Datacenter
-      clusters:
-      - compute: {}
-    vmx_options:
-      sched.mem.maxmemctl: "1330"
-
-disk_pools:
-- name: default
-  disk_size: 20_480
-  cloud_properties:
-    datastores: ['Datastore', 'datastore1']
-
-compilation:
-  workers: 2
-  network: default
-  reuse_compilation_vms: true
-  cloud_properties:
-    cpu: 1
-    ram: 4_096
-    disk: 81_920
-    datastores: [Datastore, datastore1]
-    datacenters:
-    - name: Datacenter
-      clusters:
-      - compute: {}
-    vmx_options:
-      sched.mem.maxmemctl: "1330"
-
 update:
-  canaries: 1
-  max_in_flight: 3
-  canary_watch_time: 60000-120000
-  update_watch_time: 60000-120000
+  canaries: 2
+  max_in_flight: 1
+  canary_watch_time: 5000-60000
+  update_watch_time: 5000-60000
