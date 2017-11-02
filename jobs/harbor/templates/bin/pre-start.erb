@@ -96,7 +96,19 @@ mv harbor_ca.crt $HARBOR_DATA/ca_download/ca.crt
 <% end %>
 
 #Prepare Harbor env
-${HARBOR_PACKAGE_DIR}/prepare --conf ${CFG_FILE} --with-notary --with-clair
+PREPARE_OPTS="--conf ${CFG_FILE}"
+
+#If install optional component Notary
+<% if_p("with_notary") do |withNotary| %>
+  PREPARE_OPTS="${PREPARE_OPTS} --with-notary"
+<% end %>
+
+#If install optional component Clair
+<% if_p("with_clair") do |withClair| %>
+  PREPARE_OPTS="${PREPARE_OPTS} --with-clair"
+<% end %>
+
+${HARBOR_PACKAGE_DIR}/prepare ${PREPARE_OPTS}
 if [[ $? != 0 ]] ; then
   echo "Failed to prepare Harbor environment"
   exit 3

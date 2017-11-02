@@ -35,7 +35,7 @@ case $1 in
     chown -R vcap:vcap $RUN_DIR $LOG_DIR
 
     harbor_config=${HARBOR_JOB_DIR}/config/harbor.cfg
-    protocol=http
+    protocol=https
     hostname=reg.mydomain.com
 
     if [[ $(cat ${harbor_config}) =~ ui_url_protocol[[:blank:]]*=[[:blank:]]*(https?) ]] ; then
@@ -49,7 +49,16 @@ case $1 in
     echo $$ > $PIDFILE
     echo -n "Starting harbor at ${protocol}://${hostname}"
 
-    docker-compose -f ${HARBOR_YAML} -f ${HARBOR_NOTARY_YAML} -f ${HARBOR_CLAIR_YAML} up
+    COMPOSE_OPTS="-f ${HARBOR_YAML}"
+    <% if_p("with_notary") do |withNotary| %>
+      COMPOSE_OPTS="${COMPOSE_OPTS} -f ${HARBOR_NOTARY_YAML}"
+    <% end %>
+
+    <% if_p("with_clair") do |withClair| %>
+      COMPOSE_OPTS="${COMPOSE_OPTS} -f ${HARBOR_CLAIR_YAML}"
+    <% end %>
+
+    docker-compose ${COMPOSE_OPTS} up
     ;;
 
   stop)

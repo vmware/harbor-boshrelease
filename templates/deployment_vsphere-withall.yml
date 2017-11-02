@@ -1,0 +1,33 @@
+---
+name: harbor-deployment-second-try
+
+releases:
+- name: harbor
+  version: latest
+
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: latest
+
+instance_groups:
+- name: harbor
+  azs: [az1]
+  instances: 1
+  jobs:
+  - name: harbor
+    release: harbor
+    properties:
+      with_clair: true
+      with_notary: true
+  vm_type: standard
+  stemcell: default
+  persistent_disk_type: 20G
+  networks:
+  - name: default
+
+update:
+  canaries: 2
+  max_in_flight: 1
+  canary_watch_time: 5000-60000
+  update_watch_time: 5000-60000
