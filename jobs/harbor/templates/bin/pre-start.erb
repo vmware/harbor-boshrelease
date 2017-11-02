@@ -77,7 +77,7 @@ cat ${CFG_FILE}
 #Copy cert to the right place
 mkdir -p $HARBOR_DATA/cert
 
-<% if_p("harbor.ssl.cert", "harbor.ssl.key") do |cert, key| %>
+<% if_p("ssl.cert", "ssl.key") do |cert, key| %>
 cp ${HARBOR_JOB_DIR}/tls/server.crt $HARBOR_DATA/cert/
 cp ${HARBOR_JOB_DIR}/tls/server.key $HARBOR_DATA/cert/
 <% end.else do %>
@@ -86,7 +86,7 @@ if [[ $(grep 'hostname[[:blank:]]*=' ${CFG_FILE}) =~ hostname[[:blank:]]*=[[:bla
   HARBOR_HOST_IP=${BASH_REMATCH[1]}
 fi
 
-generateCerts $HARBOR_HOST_IP <%= p("harbor.ssl.self_sign.location") %> <%= p("harbor.ssl.self_sign.orgnization") %> <%= p("harbor.ssl.self_sign.cn_ca") %> <%= p("harbor.ssl.self_sign.cn_cert") %>
+generateCerts $HARBOR_HOST_IP <%= p("ssl.self_sign.location") %> <%= p("ssl.self_sign.orgnization") %> <%= p("ssl.self_sign.cn_ca") %> <%= p("ssl.self_sign.cn_cert") %>
 
 mv $HARBOR_HOST_IP.crt $HARBOR_DATA/cert/server.crt
 mv $HARBOR_HOST_IP.key $HARBOR_DATA/cert/server.key

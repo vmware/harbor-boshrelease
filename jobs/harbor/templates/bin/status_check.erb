@@ -16,7 +16,7 @@ fi
 
 #Check the API
 harbor_url=
-<% if_p("harbor.hostname") do |host| %>
+<% if_p("hostname") do |host| %>
 harbor_url=<%= host %>
 <% end.else do %>
 if [[ $(grep 'hostname[[:blank:]]*=' ${CFG_FILE}) =~ hostname[[:blank:]]*=[[:blank:]]*(.*) ]]; then
@@ -28,7 +28,7 @@ if [[ -z ${harbor_url} ]]; then
 	exit 2
 fi
 
-protocol=<%= p("harbor.ui_url_protocol") %>
+protocol=<%= p("ui_url_protocol") %>
 
 curl_command="curl"
 if [ "$protocol" = "https" ]; then
