@@ -1,0 +1,41 @@
+name: harbor
+version: 0.1.7
+commit_hash: 0190d55
+uncommitted_changes: false
+jobs:
+- name: harbor
+  version: 408ce1bc18c3d9ff9f6c81721e2f3112ead6c57f
+  fingerprint: 408ce1bc18c3d9ff9f6c81721e2f3112ead6c57f
+  sha1: 234c0fa5421783b047d61137ee91045e9f5d128f
+packages:
+- name: common
+  version: e2499ea2013243a1d18a3199fd696c509d01b637
+  fingerprint: e2499ea2013243a1d18a3199fd696c509d01b637
+  sha1: c33b5bc0f1f3b09da4b6092b5c844daf7b369b88
+  dependencies: []
+- name: docker
+  version: 8484c466d82ce26bf7781fdb669472718609d527
+  fingerprint: 8484c466d82ce26bf7781fdb669472718609d527
+  sha1: 31d94a8800c351ab377f2e142498d2bedd3eb86d
+  dependencies: []
+- name: docker-compose
+  version: cb0ea0d494d6563695e722ed6fc4db18c9d5a093
+  fingerprint: cb0ea0d494d6563695e722ed6fc4db18c9d5a093
+  sha1: cb9372eb247bb6d6d578e0b5a68bd0675ca8ec17
+  dependencies: []
+- name: harbor-app
+  version: 37851b798072d13526105fb8136838b28b70c1f7
+  fingerprint: 37851b798072d13526105fb8136838b28b70c1f7
+  sha1: 78031bfdebb8a9a98421ae8a5e8d1d934a237290
+  dependencies:
+  - docker
+  - docker-compose
+- name: openssl
+  version: 37678107fd471e4c5ef879a13c51f10102fb274f
+  fingerprint: 37678107fd471e4c5ef879a13c51f10102fb274f
+  sha1: 9c14dcadcae614ae5d7a9d077409921bc5fa17d7
+  dependencies: []
+license:
+  version: e6c4ccc65c76e75e2338d1edabdcf264d37ee663
+  fingerprint: e6c4ccc65c76e75e2338d1edabdcf264d37ee663
+  sha1: 0c6e60236417151efb9c3007f535532f29d48a9c
