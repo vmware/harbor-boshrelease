@@ -13,11 +13,13 @@ pid_guard() {
 
     if [ -n "$pid" ] && [ -e /proc/$pid ]; then
       echo "$name is already running, please stop it first"
-      exit 1
+      return 1
     fi
 
     echo "Removing stale pidfile..."
     rm $pidfile
+
+    return 0
   fi
 }
 

@@ -15,6 +15,8 @@ IMAGES_TAR_PATH=${HARBOR_PACKAGE_DIR}/harbor*.tar.gz
 DOCKER_DATA_DIR=/var/vcap/data/docker
 HARBOR_DATA=/data
 CFG_FILE=${HARBOR_JOB_DIR}/config/harbor.cfg
+CRON_PATH=/etc/cron.d/harbor
+CERTS_D=/etc/docker/certs.d
 
 source /var/vcap/packages/common/generateCerts.sh
 
@@ -58,40 +60,41 @@ done
 echo "Successfully start Docker daemon"
 
 #Load docker images
+set +e
 if [ -f ${IMAGES_TAR_PATH} ] ; then
   docker load -i ${IMAGES_TAR_PATH}
   if [[ $? != 0 ]] ; then
   	echo "Failed to load docker images from ${IMAGES_TAR_PATH}"
-  	exit 1
+  	exit 2
   else
   	echo "Load docker images from ${IMAGES_TAR_PATH} successfully"
   fi
 else
   echo "${IMAGES_TAR_PATH} does not exist"
-  exit 2
+  exit 3
 fi
 
+set -e
 # Cat out the harbor.cfg file content
 cat ${CFG_FILE}
 
 #Copy cert to the right place
 mkdir -p $HARBOR_DATA/cert
-
-<% if_p("ssl.cert", "ssl.key") do |cert, key| %>
-cp ${HARBOR_JOB_DIR}/tls/server.crt $HARBOR_DATA/cert/
-cp ${HARBOR_JOB_DIR}/tls/server.key $HARBOR_DATA/cert/
-<% end.else do %>
-HARBOR_HOST_IP=
+mkdir -p $HARBOR_DATA/ca_download
+HARBOR_HOSTNAME=
 if [[ $(grep 'hostname[[:blank:]]*=' ${CFG_FILE}) =~ hostname[[:blank:]]*=[[:blank:]]*(.*) ]]; then
-  HARBOR_HOST_IP=${BASH_REMATCH[1]}
+  HARBOR_HOSTNAME=${BASH_REMATCH[1]}
 fi
 
-generateCerts $HARBOR_HOST_IP <%= p("ssl.self_sign.location") %> <%= p("ssl.self_sign.orgnization") %> <%= p("ssl.self_sign.cn_ca") %> <%= p("ssl.self_sign.cn_cert") %>
+<% if_p("ssl.cert", "ssl.key", "ssl.ca") do |cert, key, ca| %>
+cp ${HARBOR_JOB_DIR}/tls/server.crt $HARBOR_DATA/cert/
+cp ${HARBOR_JOB_DIR}/tls/server.key $HARBOR_DATA/cert/
+cp ${HARBOR_JOB_DIR}/tls/ca.crt $HARBOR_DATA/ca_download
+<% end.else do %>
+generateCerts $HARBOR_HOSTNAME <%= p("ssl.self_sign.location") %> <%= p("ssl.self_sign.orgnization") %> <%= p("ssl.self_sign.cn_ca") %> <%= p("ssl.self_sign.cn_cert") %>
 
-mv $HARBOR_HOST_IP.crt $HARBOR_DATA/cert/server.crt
-mv $HARBOR_HOST_IP.key $HARBOR_DATA/cert/server.key
-
-mkdir -p $HARBOR_DATA/ca_download
+mv $HARBOR_HOSTNAME.crt $HARBOR_DATA/cert/server.crt
+mv $HARBOR_HOSTNAME.key $HARBOR_DATA/cert/server.key
 mv harbor_ca.crt $HARBOR_DATA/ca_download/ca.crt
 <% end %>
 
@@ -108,15 +111,29 @@ PREPARE_OPTS="--conf ${CFG_FILE}"
   PREPARE_OPTS="${PREPARE_OPTS} --with-clair"
 <% end %>
 
+set +e
 ${HARBOR_PACKAGE_DIR}/prepare ${PREPARE_OPTS}
 if [[ $? != 0 ]] ; then
   echo "Failed to prepare Harbor environment"
-  exit 3
+  exit 4
 else
   echo "Prepare Harbor environment successfully"
 fi
 
+set -e
 #Workaround to resolve the docker-compose libz issue
 sudo mount /tmp -o remount,exec
+
+#For status checking script usage
+CERT_PATH=$CERTS_D/${HARBOR_HOSTNAME}
+mkdir -p $CERT_PATH
+chown vcap:vcap ${CERT_PATH}
+chmod 755 ${CERT_PATH}
+cp $HARBOR_DATA/ca_download/ca.crt ${CERT_PATH}
+
+#Enable status checking script
+#Check with 5 minutes interval
+CHECK_SCRIPT_PATH=${HARBOR_JOB_DIR}/bin/status_check
+echo "*/5 * * * * root ${CHECK_SCRIPT_PATH} >> $LOG_DIR/cron.log 2>&1" > $CRON_PATH
 
 exit 0

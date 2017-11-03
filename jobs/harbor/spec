@@ -7,7 +7,8 @@ templates:
   bin/status_check.erb: bin/status_check
   config/harbor.cfg: config/harbor.cfg
   tls/server.crt: tls/server.crt
-  tls/server.key: tls/server.key 
+  tls/server.key: tls/server.key
+  tls/ca.crt: tls/ca.crt
 
 packages:
 - docker
@@ -118,6 +119,9 @@ properties:
     default: ~
   ssl.key:
     description: "The certificate key for server"
+    default: ~
+  ssl.ca:
+    description: "The CA of the server"
     default: ~
   ssl.cert_path:
     description: "The path of cert file for nginx, they are applied only the protocol is set to https"

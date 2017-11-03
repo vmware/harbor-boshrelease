@@ -25,6 +25,7 @@ instance_groups:
       ssl:
         cert: ((harbor_ssl.certificate))
         key: ((harbor_ssl.private_key))
+        ca: ((default_ca.ca))
   vm_type: standard
   stemcell: default
   persistent_disk_type: 20G

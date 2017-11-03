@@ -29,7 +29,14 @@ echo $PATH
 case $1 in
 
   start)
+    set +e
     pid_guard $PIDFILE "harbor"
+    if [ $? != 0 ]; then
+      echo "Kill the running harbor before starting"
+      kill_and_wait $PIDFILE
+    fi
+
+    set -e
 
     mkdir -p $RUN_DIR $LOG_DIR
     chown -R vcap:vcap $RUN_DIR $LOG_DIR
