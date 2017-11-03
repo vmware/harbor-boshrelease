@@ -19,4 +19,4 @@
 **/blobs
 **/private.yml
 ~/
-**/final_builds
+**/.final_builds
