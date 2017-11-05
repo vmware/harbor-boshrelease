@@ -18,9 +18,9 @@ pid_guard() {
 
     echo "Removing stale pidfile..."
     rm $pidfile
-
-    return 0
   fi
+
+  return 0
 }
 
 wait_pidfile() {

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#set -e # exit immediately if a simple command exits with a non-zero status
+set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
 set -x
 
@@ -16,59 +16,24 @@ HARBOR_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.yml
 HARBOR_CLAIR_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.clair.yml
 HARBOR_NOTARY_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.notary.yml
 
-CTL_CMD=/sbin/start-stop-daemon
-COMPOSE_CMD=${COMPOSE_PACKAGE_DIR}/bin/docker-compose
-
-exec 1>> $LOG_DIR/ctl.stdout.log
-exec 2>> $LOG_DIR/ctl.stderr.log
+source /var/vcap/packages/common/utils.sh
 
 export PATH=$PATH:${DOCKER_PACKAGE_DIR}/bin
 export PATH=$PATH:${COMPOSE_PACKAGE_DIR}/bin
+
+exec 1>> $LOG_DIR/$JOB_NAME.stdout.log
+exec 2>> $LOG_DIR/$JOB_NAME.stderr.log
+
 echo $PATH
-
-#Start the harbor process
-#Require options parameter for $COMPOSE_CMD
-startHarbor() {
-  $CTL_CMD --pidfile $PIDFILE \
-  --make-pidfile \
-  --exec $COMPOSE_CMD \
-  --start \
-  -- $1 \
-  >> $LOG_DIR/$JOB_NAME.stdout.log \
-  2>> $LOG_DIR/$JOB_NAME.stderr.log
-}
-
-#Check the status of harbor(docker-compose) process
-checkHarbor() {
-  $CTL_CMD --pidfile $PIDFILE --exec $COMPOSE_CMD --user vcap --status
-  return $?
-}
-
-#Stop the harbor process
-stopHarbor() {
-  $CTL_CMD --pidfile $PIDFILE --retry TERM/30/QUIT/5/KILL --oknodo --stop
-  RET=$?
-  if [ RET == 0 ]; then
-    rm -f $PIDFILE
-  fi
-
-  return $RET
-}
-
-
 
 case $1 in
 
   start)
-    #Check status
-    checkHarbor
-    if [ $? == 0 ]; then
-      #Kill the running harbor before starting again
-      stopHarbor
-      if [ $? != 0 ]; then
-        #Failed to stop it
-        exit 1
-      fi
+    set +e
+    pid_guard $PIDFILE "harbor"
+    if [ $? != 0 ]; then
+      echo "Kill the running harbor before starting"
+      kill_and_wait $PIDFILE
     fi
 
     set -e
@@ -88,6 +53,7 @@ case $1 in
     	hostname=${BASH_REMATCH[1]}
     fi
 
+    echo $$ > $PIDFILE
     echo -n "Starting harbor at ${protocol}://${hostname}"
 
     COMPOSE_OPTS="-f ${HARBOR_YAML}"
@@ -99,19 +65,12 @@ case $1 in
       COMPOSE_OPTS="${COMPOSE_OPTS} -f ${HARBOR_CLAIR_YAML}"
     <% end %>
 
-    COMPOSE_OPTS="${COMPOSE_OPTS} up"
-    startHarbor "$COMPOSE_OPTS"
-    if [ $? == 0 ]; then
-      exit 2
-    fi
+    docker-compose ${COMPOSE_OPTS} up
     ;;
 
   stop)
     echo -n "Stopping harbor: "
-    stopHarbor
-    if [ $? == 0 ]; then
-      exit 3
-    fi
+    kill_and_wait $PIDFILE
     ;;
 
   *)
