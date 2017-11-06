@@ -52,7 +52,7 @@ yml files containing the references to blobs for each package in a given release
 [Download](https://bosh.io/docs/cli-v2.html#install) the binary for your platform and place it on your **PATH**.
 
 ### Create BOSH env
-Here we just provide the command for vCenter/vSphere, for other IaaS platform, please refer [BSOH](https://bosh.io/docs/init.html).
+Here we just provide the command for vCenter/vSphere, for other IaaS platform, please refer to [BOSH doc](https://bosh.io/docs/init.html).
 ```
 # Create directory to keep state
 $ mkdir bosh-1 && cd bosh-1
@@ -97,10 +97,14 @@ Before deploy, we need to create and upload the bosh release. You need to git cl
 #Clone repostiry
 git clone https://github.com/steven-zou/harbor-bosh-release.git
 
-#Create DEV release
+#Download blobs
+cd harbor-bosh-release/scripts
+bash download_blobs.sh
+
+#Create a dev release
 bosh create-release --force
 
-#Create final release
+#Or create a final release
 #bosh -e <env> create-release --name <release name> --version <version> --final
 
 #Upload your release

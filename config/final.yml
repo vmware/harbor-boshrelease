@@ -2,5 +2,5 @@
 blobstore:
   provider: local
   options:
-    blobstore_path: ~/VMware/Projects/bosh/blob-store
+    blobstore_path: /tmp/harbor-blob-store
 final_name: harbor
