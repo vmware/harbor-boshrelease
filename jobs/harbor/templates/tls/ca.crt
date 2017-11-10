@@ -1,1 +1,1 @@
-<% if_p('ssl.ca') do |x| %><%= x %><% end %>
+<%= p('ssl.ca') %>

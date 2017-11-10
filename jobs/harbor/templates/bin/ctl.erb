@@ -1,36 +1,36 @@
 #!/bin/bash
 
-#set -e # exit immediately if a simple command exits with a non-zero status
+set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
 set -x
 
 JOB_NAME=harbor
 RUN_DIR=/var/vcap/sys/run/harbor
 LOG_DIR=/var/vcap/sys/log/harbor
-PIDFILE=${RUN_DIR}/pid
-HARBOR_JOB_DIR=/var/vcap/jobs/harbor
-HARBOR_PACKAGE_DIR=${HARBOR_JOB_DIR}/packages/harbor-app
-COMPOSE_PACKAGE_DIR=${HARBOR_JOB_DIR}/packages/docker-compose
-DOCKER_PACKAGE_DIR=${HARBOR_JOB_DIR}/packages/docker
+PIDFILE=${RUN_DIR}/harbor.pid
+PACKAGE_DIR=/var/vcap/packages
+HARBOR_PACKAGE_DIR=${PACKAGE_DIR}/harbor-app
+COMPOSE_PACKAGE_DIR=${PACKAGE_DIR}/docker-compose
+DOCKER_PACKAGE_DIR=${PACKAGE_DIR}/docker
 HARBOR_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.yml
 HARBOR_CLAIR_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.clair.yml
 HARBOR_NOTARY_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.notary.yml
+IMAGES_TAR_PATH=${HARBOR_PACKAGE_DIR}/harbor*.tar.gz
+DAEMON_SOCK=${RUN_DIR}/dockerd.sock
 
 CTL_CMD=/sbin/start-stop-daemon
 COMPOSE_CMD=${COMPOSE_PACKAGE_DIR}/bin/docker-compose
+DOCKER_CMD=${DOCKER_PACKAGE_DIR}/bin/docker
 
 exec 1>> $LOG_DIR/ctl.stdout.log
 exec 2>> $LOG_DIR/ctl.stderr.log
-
-export PATH=$PATH:${DOCKER_PACKAGE_DIR}/bin
-export PATH=$PATH:${COMPOSE_PACKAGE_DIR}/bin
-echo $PATH
 
 #Start the harbor process
 #Require options parameter for $COMPOSE_CMD
 startHarbor() {
   $CTL_CMD --pidfile $PIDFILE \
   --make-pidfile \
+  --background \
   --exec $COMPOSE_CMD \
   --start \
   -- $1 \
@@ -40,78 +40,61 @@ startHarbor() {
 
 #Check the status of harbor(docker-compose) process
 checkHarbor() {
-  $CTL_CMD --pidfile $PIDFILE --exec $COMPOSE_CMD --user vcap --status
+  $CTL_CMD --pidfile $PIDFILE --exec $COMPOSE_CMD --status
   return $?
 }
 
 #Stop the harbor process
+#Require options parameter for $COMPOSE_CMD
 stopHarbor() {
-  $CTL_CMD --pidfile $PIDFILE --retry TERM/30/QUIT/5/KILL --oknodo --stop
-  RET=$?
-  if [ RET == 0 ]; then
-    rm -f $PIDFILE
+  $COMPOSE_CMD $1
+  if [ $? != 0 ]; then
+    #Try to kill
+    $CTL_CMD --pidfile $PIDFILE --retry TERM/30/QUIT/5/KILL --oknodo --stop
   fi
 
-  return $RET
+  if [ $? == 0 ]; then
+    rm -f $PIDFILE
+  fi
 }
 
+#Load images
+loadImages() {
+  $DOCKER_CMD --host "unix://${DAEMON_SOCK}" load -i ${IMAGES_TAR_PATH}
+}
 
+#Build compose options
+COMPOSE_OPTS="-H unix://${DAEMON_SOCK} -f ${HARBOR_YAML}"
+<% if_p("with_notary") do |withNotary| %>
+  COMPOSE_OPTS="${COMPOSE_OPTS} -f ${HARBOR_NOTARY_YAML}"
+<% end %>
+<% if_p("with_clair") do |withClair| %>
+  COMPOSE_OPTS="${COMPOSE_OPTS} -f ${HARBOR_CLAIR_YAML}"
+<% end %>
 
 case $1 in
 
   start)
-    #Check status
-    checkHarbor
-    if [ $? == 0 ]; then
-      #Kill the running harbor before starting again
-      stopHarbor
-      if [ $? != 0 ]; then
-        #Failed to stop it
-        exit 1
-      fi
-    fi
-
-    set -e
-
     mkdir -p $RUN_DIR $LOG_DIR
     chown -R vcap:vcap $RUN_DIR $LOG_DIR
 
-    harbor_config=${HARBOR_JOB_DIR}/config/harbor.cfg
-    protocol=https
-    hostname=reg.mydomain.com
-
-    if [[ $(cat ${harbor_config}) =~ ui_url_protocol[[:blank:]]*=[[:blank:]]*(https?) ]] ; then
-    	protocol=${BASH_REMATCH[1]}
-    fi
-
-    if [[ $(grep 'hostname[[:blank:]]*=' ${harbor_config}) =~ hostname[[:blank:]]*=[[:blank:]]*(.*) ]] ; then
-    	hostname=${BASH_REMATCH[1]}
-    fi
-
+    protocol=<%= p("ui_url_protocol") %>
+    hostname=<%= p("hostname", spec.ip) %>
     echo -n "Starting harbor at ${protocol}://${hostname}"
 
-    COMPOSE_OPTS="-f ${HARBOR_YAML}"
-    <% if_p("with_notary") do |withNotary| %>
-      COMPOSE_OPTS="${COMPOSE_OPTS} -f ${HARBOR_NOTARY_YAML}"
-    <% end %>
-
-    <% if_p("with_clair") do |withClair| %>
-      COMPOSE_OPTS="${COMPOSE_OPTS} -f ${HARBOR_CLAIR_YAML}"
-    <% end %>
+    #TODO: Add image cleaning here if do migration
+    loadImages
 
     COMPOSE_OPTS="${COMPOSE_OPTS} up"
     startHarbor "$COMPOSE_OPTS"
-    if [ $? == 0 ]; then
-      exit 2
-    fi
     ;;
 
   stop)
     echo -n "Stopping harbor: "
-    stopHarbor
-    if [ $? == 0 ]; then
-      exit 3
-    fi
+
+    COMPOSE_OPTS="${COMPOSE_OPTS} down"
+    stopHarbor "$COMPOSE_OPTS"
+    #TODO: Add instance clean work here if migration is enabled
     ;;
 
   *)

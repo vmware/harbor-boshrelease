@@ -8,31 +8,18 @@ set -x
 RUN_DIR=/var/vcap/sys/run/harbor
 LOG_DIR=/var/vcap/sys/log/harbor
 HARBOR_JOB_DIR=/var/vcap/jobs/harbor
-HARBOR_PACKAGE_DIR=${HARBOR_JOB_DIR}/packages/harbor-app
-COMPOSE_PACKAGE_DIR=${HARBOR_JOB_DIR}/packages/docker-compose
-DOCKER_PACKAGE_DIR=${HARBOR_JOB_DIR}/packages/docker
-IMAGES_TAR_PATH=${HARBOR_PACKAGE_DIR}/harbor*.tar.gz
-DOCKER_DATA_DIR=/var/vcap/data/docker
+PACKAGE_DIR=/var/vcap/packages
+HARBOR_PACKAGE_DIR=${PACKAGE_DIR}/harbor-app
 HARBOR_DATA=/data
 CFG_FILE=${HARBOR_JOB_DIR}/config/harbor.cfg
 CRON_PATH=/etc/cron.d/harbor
 CERTS_D=/etc/docker/certs.d
-
-source /var/vcap/packages/common/generateCerts.sh
-
-export PATH=$PATH:${DOCKER_PACKAGE_DIR}/bin
-export PATH=$PATH:${COMPOSE_PACKAGE_DIR}/bin
 
 for dir in $RUN_DIR $LOG_DIR $HARBOR_DATA ; do
   mkdir -p ${dir}
   chown vcap:vcap ${dir}
   chmod 755 ${dir}
 done
-
-exec 1>> $LOG_DIR/pre-start.stdout.log
-exec 2>> $LOG_DIR/pre-start.stderr.log
-
-echo $PATH
 
 #cgroups mount point settings
 if grep -v '^#' /etc/fstab | grep -q cgroup || [ ! -e /proc/cgroups ] || [ ! -d /sys/fs/cgroup ]; then
@@ -52,51 +39,17 @@ fi
 done)
 echo "Successfully set cgroup mount point"
 
-#Start docker daemon
-dockerd -g ${DOCKER_DATA_DIR} >/dev/null 2>&1 &
-while [[ ! -e /var/run/docker.sock ]]; do
-  sleep 1
-done
-echo "Successfully start Docker daemon"
-
-#Load docker images
-set +e
-if [ -f ${IMAGES_TAR_PATH} ] ; then
-  docker load -i ${IMAGES_TAR_PATH}
-  if [[ $? != 0 ]] ; then
-  	echo "Failed to load docker images from ${IMAGES_TAR_PATH}"
-  	exit 2
-  else
-  	echo "Load docker images from ${IMAGES_TAR_PATH} successfully"
-  fi
-else
-  echo "${IMAGES_TAR_PATH} does not exist"
-  exit 3
-fi
-
-set -e
 # Cat out the harbor.cfg file content
 cat ${CFG_FILE}
 
 #Copy cert to the right place
 mkdir -p $HARBOR_DATA/cert
 mkdir -p $HARBOR_DATA/ca_download
-HARBOR_HOSTNAME=
-if [[ $(grep 'hostname[[:blank:]]*=' ${CFG_FILE}) =~ hostname[[:blank:]]*=[[:blank:]]*(.*) ]]; then
-  HARBOR_HOSTNAME=${BASH_REMATCH[1]}
-fi
+HARBOR_HOSTNAME=<%= p("hostname", spec.ip) %>
 
-<% if_p("ssl.cert", "ssl.key", "ssl.ca") do |cert, key, ca| %>
 cp ${HARBOR_JOB_DIR}/tls/server.crt $HARBOR_DATA/cert/
 cp ${HARBOR_JOB_DIR}/tls/server.key $HARBOR_DATA/cert/
 cp ${HARBOR_JOB_DIR}/tls/ca.crt $HARBOR_DATA/ca_download
-<% end.else do %>
-generateCerts $HARBOR_HOSTNAME <%= p("ssl.self_sign.location") %> <%= p("ssl.self_sign.orgnization") %> <%= p("ssl.self_sign.cn_ca") %> <%= p("ssl.self_sign.cn_cert") %>
-
-mv $HARBOR_HOSTNAME.crt $HARBOR_DATA/cert/server.crt
-mv $HARBOR_HOSTNAME.key $HARBOR_DATA/cert/server.key
-mv harbor_ca.crt $HARBOR_DATA/ca_download/ca.crt
-<% end %>
 
 #Prepare Harbor env
 PREPARE_OPTS="--conf ${CFG_FILE}"
@@ -111,18 +64,15 @@ PREPARE_OPTS="--conf ${CFG_FILE}"
   PREPARE_OPTS="${PREPARE_OPTS} --with-clair"
 <% end %>
 
-set +e
 ${HARBOR_PACKAGE_DIR}/prepare ${PREPARE_OPTS}
-if [[ $? != 0 ]] ; then
-  echo "Failed to prepare Harbor environment"
-  exit 4
-else
-  echo "Prepare Harbor environment successfully"
-fi
 
-set -e
 #Workaround to resolve the docker-compose libz issue
 sudo mount /tmp -o remount,exec
+
+if ! grep -q "^docker:" /etc/group
+  then
+    sudo groupadd docker
+fi
 
 #For status checking script usage
 CERT_PATH=$CERTS_D/${HARBOR_HOSTNAME}

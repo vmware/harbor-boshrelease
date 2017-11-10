@@ -3,6 +3,7 @@ name: harbor
 
 templates:
   bin/ctl.erb: bin/ctl
+  bin/dockerd_ctl.erb: bin/dockerd_ctl
   bin/pre-start.erb: bin/pre-start
   bin/status_check.erb: bin/status_check
   config/harbor.cfg: config/harbor.cfg
@@ -14,37 +15,28 @@ packages:
 - docker
 - docker-compose
 - harbor-app
-- common
-- openssl
 
 properties:
   hostname:
     description: "The IP address or hostname to access admin UI and registry service"
-    default: ~
   ui_url_protocol:
     description: "The protocol for accessing the UI and token/notification service, by default it is https"
     default: "https"
   db_password:
     description: "The password for the root user of mysql db"
-    default: "root123"
   max_job_workers:
     description: "Maximum number of job workers in job service"
     default: 3
   customize_crt:
     description: "Determine whether or not to generate certificate for the registry's token. If the value is on, the prepare script creates new root cert and private key for generating token to access the registry. If the value is off the default key/cert will be used. This flag also controls the creation of the notary signer's cert."
     default: "on"
-  secretkey_path:
-    description: "The path of secretkey storage"
-    default: "/data"
   admiral_url:
     description: "Admiral's url, comment this attribute, or set its value to NA when Harbor is standalone"
     default: "NA"
   clair_db_password:
     description: "The password of the Clair's postgres database, only effective when Harbor is deployed with Clair"
-    default: "password"
   admin_password:
     description: "The initial password of Harbor admin, only works for the first time when Harbor starts"
-    default: "Harbor12345"
   auth_mode:
     description: "By default the auth mode is db_auth, i.e. the credentials are stored in a local database. Set it to ldap_auth if you want to verify a user's credentials against an LDAP server."
     default: "db_auth"
@@ -116,34 +108,11 @@ properties:
     default: 5
   ssl.cert:
     description: "The certificate for server"
-    default: ~
   ssl.key:
     description: "The certificate key for server"
-    default: ~
   ssl.ca:
     description: "The CA of the server"
-    default: ~
-  ssl.cert_path:
-    description: "The path of cert file for nginx, they are applied only the protocol is set to https"
-    default: "/data/cert/server.crt"
-  ssl.key_path:
-    description: "The path of key file for nginx, they are applied only the protocol is set to https"
-    default: "/data/cert/server.key"
-  ssl.self_sign.location:
-    description: "The location information used in generating self-signed certificate"
-    default: "Beijing"
-  ssl.self_sign.orgnization:
-    description: "The orgnization information used in generating self-signed certificate"
-    default: "VMware"
-  ssl.self_sign.cn_ca:
-    description: "The CN information used in generating self-signed CA"
-    default: "HarborCA"
-  ssl.self_sign.cn_cert:
-    description: "The CN information used in generating self-signed certificate"
-    default: "HarborManager"
   with_clair:
     description: "An option to determine whether install the optional component Clair or not."
-    default: ~
   with_notary:
     description: "An option to determine whether install the optional component Notary or not."
-    default: ~

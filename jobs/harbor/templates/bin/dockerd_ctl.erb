@@ -1,0 +1,68 @@
+#!/bin/bash
+
+set -e # exit immediately if a simple command exits with a non-zero status
+set -u # report the usage of uninitialized variables
+set -x
+
+RUN_DIR=/var/vcap/sys/run/harbor
+LOG_DIR=/var/vcap/sys/log/harbor
+PACKAGE_DIR=/var/vcap/packages
+HARBOR_PACKAGE_DIR=${PACKAGE_DIR}/harbor-app
+DOCKER_PACKAGE_DIR=${PACKAGE_DIR}/docker
+DAEMON_PIDFILE=${RUN_DIR}/dockerd.pid
+DAEMON_SOCK=${RUN_DIR}/dockerd.sock
+DOCKER_DATA_DIR=/var/vcap/data/docker
+
+CTL_CMD=/sbin/start-stop-daemon
+DOCKERD_CMD=${DOCKER_PACKAGE_DIR}/bin/dockerd
+
+exec 1>> $LOG_DIR/dockerd_ctl.stdout.log
+exec 2>> $LOG_DIR/dockerd_ctl.stderr.log
+
+#Start docker daemon
+startDockerd() {
+  OPT="--data-root ${DOCKER_DATA_DIR} --host unix://${DAEMON_SOCK}"
+
+  $CTL_CMD --pidfile $DAEMON_PIDFILE \
+  --make-pidfile \
+  --background \
+  --exec $DOCKERD_CMD \
+  --start \
+  -- $OPT \
+  >> $LOG_DIR/dockerd.stdout.log \
+  2>> $LOG_DIR/dockerd.stderr.log
+}
+
+#Stop the dockerd process
+stopDockerd() {
+  $CTL_CMD --pidfile $DAEMON_PIDFILE --retry TERM/30/QUIT/5/KILL --oknodo --stop
+  RET=$?
+  if [ RET == 0 ]; then
+    rm -f $DAEMON_PIDFILE
+    rm -f $DAEMON_SOCK
+  fi
+
+  return $RET
+}
+
+export PATH=$PATH:${DOCKER_PACKAGE_DIR}/bin
+
+case $1 in
+
+  start)
+    mkdir -p $RUN_DIR $LOG_DIR
+    chown -R vcap:vcap $RUN_DIR $LOG_DIR
+
+    startDockerd
+    ;;
+
+  stop)
+    stopDockerd
+    ;;
+
+  *)
+    echo -n "Usage: dockerd_ctl {start|stop}"
+    ;;
+
+esac
+exit 0

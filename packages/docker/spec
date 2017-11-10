@@ -4,6 +4,4 @@ name: docker
 dependencies: []
 
 files:
-- library/autoconf-2.69.tar.gz #http://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.gz
-- library/bridge-utils-1.6.tar.gz #https://www.kernel.org/pub/linux/utils/net/bridge-utils/bridge-utils-1.6.tar.gz
 - docker/docker-17.06.2-ce.tgz #https://download.docker.com/linux/static/stable/x86_64/docker-17.06.2-ce.tgz
