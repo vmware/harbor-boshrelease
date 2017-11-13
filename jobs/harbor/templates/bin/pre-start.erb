@@ -10,16 +10,25 @@ LOG_DIR=/var/vcap/sys/log/harbor
 HARBOR_JOB_DIR=/var/vcap/jobs/harbor
 PACKAGE_DIR=/var/vcap/packages
 HARBOR_PACKAGE_DIR=${PACKAGE_DIR}/harbor-app
+OPENSSL_BIN_DIR=${PACKAGE_DIR}/openssl/bin
+HARBOR_PERSISTED_DATA=/var/vcap/store/harbor
 HARBOR_DATA=/data
 CFG_FILE=${HARBOR_JOB_DIR}/config/harbor.cfg
 CRON_PATH=/etc/cron.d/harbor
 CERTS_D=/etc/docker/certs.d
 
-for dir in $RUN_DIR $LOG_DIR $HARBOR_DATA ; do
+export PATH=$PATH:${OPENSSL_BIN_DIR}
+
+for dir in $RUN_DIR $LOG_DIR $HARBOR_PERSISTED_DATA ; do
   mkdir -p ${dir}
   chown vcap:vcap ${dir}
   chmod 755 ${dir}
 done
+
+#Link the data dir
+if ! [ -L $HARBOR_DATA ]; then
+  ln -s $HARBOR_PERSISTED_DATA $HARBOR_DATA
+fi
 
 #cgroups mount point settings
 if grep -v '^#' /etc/fstab | grep -q cgroup || [ ! -e /proc/cgroups ] || [ ! -d /sys/fs/cgroup ]; then

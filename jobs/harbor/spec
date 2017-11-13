@@ -15,6 +15,7 @@ packages:
 - docker
 - docker-compose
 - harbor-app
+- openssl
 
 properties:
   hostname:
@@ -63,25 +64,19 @@ properties:
     default: "root"
   email.identity:
     description: "Identity left blank to act as username"
-    default: ""
   email.server:
     description: "Email server address"
-    default: "smtp.mydomain.com"
   email.port:
     description: "Email server port"
     default: 25
   email.username:
     description: "Username of email server"
-    default: "sample_admin@mydomain.com"
   email.password:
     description: "Password of email server"
-    default: "Passw0rd!"
   email.from:
     description: "Emails sent from who"
-    default: "admin <sample_admin@mydomain.com>"
   email.ssl:
     description: "If ssl is enabled to check"
-    default: "false"
   ldap.url:
     description: "The url for an ldap endpoint"
     default: "ldaps://ldap.mydomain.com"

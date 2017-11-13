@@ -1,6 +1,6 @@
 check process harbor with pidfile /var/vcap/sys/run/harbor/harbor.pid
   group vcap
-  start program "/var/vcap/jobs/harbor/bin/ctl start" with timeout 120 seconds
+  start program "/var/vcap/jobs/harbor/bin/ctl start" with timeout 180 seconds
   stop program "/var/vcap/jobs/harbor/bin/ctl stop" with timeout 60 seconds
   depends on dockerd
 

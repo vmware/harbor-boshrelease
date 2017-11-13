@@ -18,7 +18,7 @@ fi
 # Compile and install the openssl
 echo "Building openssl ${OPENSSL_VERSION}..."
 cd ${BOSH_COMPILE_TARGET}/openssl-${OPENSSL_VERSION}
-./config
+./config --prefix=${BOSH_INSTALL_TARGET}
 make -j${CPUS}
 make install
 
