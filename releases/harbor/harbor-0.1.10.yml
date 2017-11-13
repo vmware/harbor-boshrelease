@@ -1,17 +1,17 @@
-name: harbor-bosh-release
-version: 0.1.3
-commit_hash: c71cc96
+name: harbor
+version: 0.1.10
+commit_hash: 5d421c7
 uncommitted_changes: false
 jobs:
 - name: harbor
-  version: edc93abcf7a54b97d4df52300595b380ef9c91da
-  fingerprint: edc93abcf7a54b97d4df52300595b380ef9c91da
-  sha1: fa93a1e92d96f4778bcbcc579c042a56f715b8ea
+  version: 87a41f0fc541b776a18e601bb177cf19438bb587
+  fingerprint: 87a41f0fc541b776a18e601bb177cf19438bb587
+  sha1: da3d8e534e8c2243d453ef4408302645256f3c60
 packages:
 - name: common
-  version: e2499ea2013243a1d18a3199fd696c509d01b637
-  fingerprint: e2499ea2013243a1d18a3199fd696c509d01b637
-  sha1: c33b5bc0f1f3b09da4b6092b5c844daf7b369b88
+  version: d2e5e3ecce81d20252c5bddcf68e6a82a22ce77f
+  fingerprint: d2e5e3ecce81d20252c5bddcf68e6a82a22ce77f
+  sha1: d04f3e5ece0445c60c8cdd83ec728f17c8707fc2
   dependencies: []
 - name: docker
   version: 8484c466d82ce26bf7781fdb669472718609d527
