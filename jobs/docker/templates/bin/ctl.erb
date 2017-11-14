@@ -4,24 +4,29 @@ set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
 set -x
 
-RUN_DIR=/var/vcap/sys/run/harbor
-LOG_DIR=/var/vcap/sys/log/harbor
+JOB_NAME=docker
+RUN_DIR="/var/vcap/sys/run/${JOB_NAME}"
+LOG_DIR="/var/vcap/sys/log/${JOB_NAME}"
+JOB_DIR="/var/vcap/jobs/${JOB_NAME}"
 PACKAGE_DIR=/var/vcap/packages
-HARBOR_PACKAGE_DIR=${PACKAGE_DIR}/harbor-app
 DOCKER_PACKAGE_DIR=${PACKAGE_DIR}/docker
 DAEMON_PIDFILE=${RUN_DIR}/dockerd.pid
 DAEMON_SOCK=${RUN_DIR}/dockerd.sock
-DOCKER_DATA_DIR=/var/vcap/data/docker
+
+export PATH=$PATH:${DOCKER_PACKAGE_DIR}/bin
 
 CTL_CMD=/sbin/start-stop-daemon
 DOCKERD_CMD=${DOCKER_PACKAGE_DIR}/bin/dockerd
+DOCKER_HOST="unix://$DAEMON_SOCK"
 
-exec 1>> $LOG_DIR/dockerd_ctl.stdout.log
-exec 2>> $LOG_DIR/dockerd_ctl.stderr.log
+exec 1>> $LOG_DIR/ctl.stdout.log
+exec 2>> $LOG_DIR/ctl.stderr.log
+
+source $JOB_DIR/bin/properties.sh
 
 #Start docker daemon
 startDockerd() {
-  OPT="--data-root ${DOCKER_DATA_DIR} --host unix://${DAEMON_SOCK}"
+  OPT="--data-root ${DATA_ROOT_DIR} --host $DOCKER_HOST"
 
   $CTL_CMD --pidfile $DAEMON_PIDFILE \
   --make-pidfile \
@@ -45,24 +50,37 @@ stopDockerd() {
   return $RET
 }
 
-export PATH=$PATH:${DOCKER_PACKAGE_DIR}/bin
-
 case $1 in
 
   start)
-    mkdir -p $RUN_DIR $LOG_DIR
-    chown -R vcap:vcap $RUN_DIR $LOG_DIR
+    if [ ! -d $DATA_ROOT_DIR ]; then
+      mkdir -p $DATA_ROOT_DIR
+      chmod 770 $DATA_ROOT_DIR
+    fi
 
+    echo "Starting docker daemon..."
     startDockerd
     ;;
 
   stop)
+    echo "Stopping docker containers..."
+    containers="$(docker -H $DOCKER_HOST ps -q)"
+    if [[ ! -z $containers ]]; then
+      for container in $containers
+        do
+          echo "Stopping docker container ${container}"
+          docker -H $DOCKER_HOST stop ${container}
+        done
+    fi
+
+    echo "Stopping docker daemon"
     stopDockerd
     ;;
 
   *)
-    echo -n "Usage: dockerd_ctl {start|stop}"
+    echo -n "Usage: ctl {start|stop}"
     ;;
 
 esac
+echo "Successfully done!"
 exit 0

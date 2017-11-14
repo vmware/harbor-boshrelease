@@ -2,12 +2,13 @@
 
 set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
-set -x
 
 JOB_NAME=harbor
-RUN_DIR=/var/vcap/sys/run/harbor
-LOG_DIR=/var/vcap/sys/log/harbor
-PIDFILE=${RUN_DIR}/harbor.pid
+RUN_DIR=/var/vcap/sys/run
+HARBOR_RUN_DIR=$RUN_DIR/$JOB_NAME
+LOG_DIR=/var/vcap/sys/log/$JOB_NAME
+HARBOR_JOB_DIR=/var/vcap/jobs/$JOB_NAME
+PIDFILE=${HARBOR_RUN_DIR}/harbor.pid
 PACKAGE_DIR=/var/vcap/packages
 HARBOR_PACKAGE_DIR=${PACKAGE_DIR}/harbor-app
 COMPOSE_PACKAGE_DIR=${PACKAGE_DIR}/docker-compose
@@ -16,14 +17,17 @@ HARBOR_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.yml
 HARBOR_CLAIR_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.clair.yml
 HARBOR_NOTARY_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.notary.yml
 IMAGES_TAR_PATH=${HARBOR_PACKAGE_DIR}/harbor*.tar.gz
-DAEMON_SOCK=${RUN_DIR}/dockerd.sock
 
 CTL_CMD=/sbin/start-stop-daemon
 COMPOSE_CMD=${COMPOSE_PACKAGE_DIR}/bin/docker-compose
 DOCKER_CMD=${DOCKER_PACKAGE_DIR}/bin/docker
+DAEMON_SOCK=${RUN_DIR}/docker/dockerd.sock
+DOCKER_HOST="unix://$DAEMON_SOCK"
 
 exec 1>> $LOG_DIR/ctl.stdout.log
 exec 2>> $LOG_DIR/ctl.stderr.log
+
+source $HARBOR_JOB_DIR/bin/properties.sh
 
 #Start the harbor process
 #Require options parameter for $COMPOSE_CMD
@@ -60,37 +64,36 @@ stopHarbor() {
 
 #Load images
 loadImages() {
-  $DOCKER_CMD --host "unix://${DAEMON_SOCK}" load -i ${IMAGES_TAR_PATH}
+  $DOCKER_CMD -H $DOCKER_HOST load -i ${IMAGES_TAR_PATH}
 }
 
 #Build compose options
-COMPOSE_OPTS="-H unix://${DAEMON_SOCK} -f ${HARBOR_YAML}"
-<% if_p("with_notary") do |withNotary| %>
+COMPOSE_OPTS="-H $DOCKER_HOST -f ${HARBOR_YAML}"
+if [ -n "$WITH_NOTARY" ]; then
   COMPOSE_OPTS="${COMPOSE_OPTS} -f ${HARBOR_NOTARY_YAML}"
-<% end %>
-<% if_p("with_clair") do |withClair| %>
+fi
+
+if [ -n "$WITH_CLAIR" ]; then
   COMPOSE_OPTS="${COMPOSE_OPTS} -f ${HARBOR_CLAIR_YAML}"
-<% end %>
+fi
 
 case $1 in
 
   start)
-    mkdir -p $RUN_DIR $LOG_DIR
-    chown -R vcap:vcap $RUN_DIR $LOG_DIR
-
-    protocol=<%= p("ui_url_protocol") %>
-    hostname=<%= p("hostname", spec.ip) %>
-    echo -n "Starting harbor at ${protocol}://${hostname}"
-
     #TODO: Add image cleaning here if do migration
-    loadImages
+    echo $$ > $PIDFILE
+
+    echo "Loading docker images..."
+    loadImages    
+
+    echo "Starting harbor at ${HARBOR_PROTOCOL}://${HARBOR_HOSTNAME}"
 
     COMPOSE_OPTS="${COMPOSE_OPTS} up"
     startHarbor "$COMPOSE_OPTS"
     ;;
 
   stop)
-    echo -n "Stopping harbor: "
+    echo -n "Stopping harbor..."
 
     COMPOSE_OPTS="${COMPOSE_OPTS} down"
     stopHarbor "$COMPOSE_OPTS"
@@ -102,4 +105,5 @@ case $1 in
     ;;
 
 esac
+echo "Successfully done!"
 exit 0

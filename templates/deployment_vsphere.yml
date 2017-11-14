@@ -1,5 +1,5 @@
 ---
-name: harbor-deployment-first-try
+name: harbor-deployment-third-try
 
 releases:
 - name: harbor
@@ -18,93 +18,16 @@ instance_groups:
   - name: harbor
     release: harbor
     properties:
-      hostname: "10.112.122.1"
+      hostname: ((hostname))
+      db_password: ((harbor_db_password))
+      admin_password: ((harbor_admin_password))
+      clair_db_password: ((clair_db_password))
       ssl:
-        cert: |+
-          -----BEGIN CERTIFICATE-----
-          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
-          Fw==
-          -----END CERTIFICATE-----
-        key: |+
-          -----BEGIN PRIVATE KEY-----
-          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
-          2sGUtNjHW9D8ZYMoyOHS/KMJ7WGzSg==
-          -----END PRIVATE KEY-----
+        cert: ((harbor_ssl.certificate))
+        key: ((harbor_ssl.private_key))
+        ca: ((default_ca.ca))
+  - name: docker
+    release: harbor
   vm_type: standard
   stemcell: default
   persistent_disk_type: 20G
@@ -118,3 +41,17 @@ update:
   max_in_flight: 1
   canary_watch_time: 5000-60000
   update_watch_time: 5000-60000
+
+variables:
+- name: harbor_admin_password
+  type: password
+- name: clair_db_password
+  type: password
+- name: harbor_db_password
+  type: password
+- name: harbor_ssl
+  type: certificate
+  options:
+    ca: default_ca
+    common_name: ((hostname))
+    alternative_names: [((hostname))]

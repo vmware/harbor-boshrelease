@@ -1,5 +1,5 @@
 ---
-name: harbor-deployment-second-try
+name: harbor-deployment-third-try
 
 releases:
 - name: harbor
@@ -18,16 +18,42 @@ instance_groups:
   - name: harbor
     release: harbor
     properties:
+      hostname: ((hostname))
+      db_password: ((harbor_db_password))
+      admin_password: ((harbor_admin_password))
+      clair_db_password: ((clair_db_password))
+      ssl:
+        cert: ((harbor_ssl.certificate))
+        key: ((harbor_ssl.private_key))
+        ca: ((default_ca.ca))
       with_clair: true
       with_notary: true
+  - name: docker
+    release: harbor
   vm_type: standard
   stemcell: default
   persistent_disk_type: 20G
   networks:
   - name: default
+    static_ips:
+    - 10.112.122.1
 
 update:
   canaries: 2
   max_in_flight: 1
   canary_watch_time: 5000-60000
   update_watch_time: 5000-60000
+
+variables:
+- name: harbor_admin_password
+  type: password
+- name: clair_db_password
+  type: password
+- name: harbor_db_password
+  type: password
+- name: harbor_ssl
+  type: certificate
+  options:
+    ca: default_ca
+    common_name: ((hostname))
+    alternative_names: [((hostname))]

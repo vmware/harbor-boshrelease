@@ -3,12 +3,14 @@
 set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
 
-HARBOR_JOB_DIR=/var/vcap/jobs/harbor
+JOB_NAME=harbor
+HARBOR_JOB_DIR=/var/vcap/jobs/$JOB_NAME
 CFG_FILE=${HARBOR_JOB_DIR}/config/harbor.cfg
 DOCKER_PACKAGE_DIR=${HARBOR_JOB_DIR}/packages/docker
-RUN_DIR=/var/vcap/sys/run/harbor
-PIDFILE=${RUN_DIR}/harbor.pid
-DAEMON_SOCK=${RUN_DIR}/dockerd.sock
+RUN_DIR=/var/vcap/sys/run
+HARBOR_RUN_DIR=$RUN_DIR/$JOB_NAME
+PIDFILE=${HARBOR_RUN_DIR}/harbor.pid
+DAEMON_SOCK=${RUN_DIR}/docker/dockerd.sock
 
 export PATH=$PATH:${DOCKER_PACKAGE_DIR}/bin
 
@@ -21,9 +23,15 @@ myExit() {
 	exit $1
 }
 
+#Check if containers existing
+harbor_containers=$(docker -H "unix://$DAEMON_SOCK" ps | awk '{print $2}' | grep vmware)
+if [[ -z $harbor_containers ]]; then
+  myExit 1
+fi
+
 #Check the status of Harbor containers
 if docker -H "unix://$DAEMON_SOCK" ps --filter "status=restarting" | grep 'vmware'; then
-	myExit 1
+  myExit 2
 fi
 
 #Check the API
@@ -40,11 +48,11 @@ set +e
 echo "${curl_command} ${protocol}://${harbor_url}/api/systeminfo"
 url=`${curl_command} ${protocol}://${harbor_url}/api/systeminfo | python -c "import sys, json; print json.load(sys.stdin)['registry_url']"`
 if [ $? != 0 ] ; then
-	myExit 2
+	myExit 3
 fi
 
 if [ "$harbor_url" != "$url" ]; then
-	myExit 3
+	myExit 4
 fi
 
 #Check docker registry
@@ -53,7 +61,7 @@ login=$(docker -H "unix://$DAEMON_SOCK" login -u admin -p $password $harbor_url)
 if [ $? != 0 ] ; then
   echo $login | grep -q "unauthorized"
   if [ $? != 0 ] ; then
-    myExit 4
+    myExit 5
   fi
 fi
 

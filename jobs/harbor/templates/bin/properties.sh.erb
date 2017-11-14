@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+#Protocol of harbor
+export HARBOR_PROTOCOL=<%= p("ui_url_protocol") %>
+
+#Hostname of harbor
+export HARBOR_HOSTNAME=<%= p("hostname", spec.ip) %>
+
+#If install optional component Notary
+export WITH_NOTARY=<%= p("with_notary", "") %>
+  
+#If install optional component Clair
+export WITH_CLAIR=<%= p("with_clair", "") %>

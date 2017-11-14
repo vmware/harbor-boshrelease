@@ -2,22 +2,24 @@
 
 set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
-set -x
 
+JOB_NAME=harbor
 #Make sure folders are ready
-RUN_DIR=/var/vcap/sys/run/harbor
-LOG_DIR=/var/vcap/sys/log/harbor
-HARBOR_JOB_DIR=/var/vcap/jobs/harbor
+RUN_DIR=/var/vcap/sys/run/$JOB_NAME
+LOG_DIR=/var/vcap/sys/log/$JOB_NAME
+HARBOR_JOB_DIR=/var/vcap/jobs/$JOB_NAME
 PACKAGE_DIR=/var/vcap/packages
 HARBOR_PACKAGE_DIR=${PACKAGE_DIR}/harbor-app
 OPENSSL_BIN_DIR=${PACKAGE_DIR}/openssl/bin
 HARBOR_PERSISTED_DATA=/var/vcap/store/harbor
 HARBOR_DATA=/data
 CFG_FILE=${HARBOR_JOB_DIR}/config/harbor.cfg
-CRON_PATH=/etc/cron.d/harbor
+CRON_PATH=/etc/cron.d/$JOB_NAME
 CERTS_D=/etc/docker/certs.d
 
 export PATH=$PATH:${OPENSSL_BIN_DIR}
+
+source $HARBOR_JOB_DIR/bin/properties.sh
 
 for dir in $RUN_DIR $LOG_DIR $HARBOR_PERSISTED_DATA ; do
   mkdir -p ${dir}
@@ -30,58 +32,34 @@ if ! [ -L $HARBOR_DATA ]; then
   ln -s $HARBOR_PERSISTED_DATA $HARBOR_DATA
 fi
 
-#cgroups mount point settings
-if grep -v '^#' /etc/fstab | grep -q cgroup || [ ! -e /proc/cgroups ] || [ ! -d /sys/fs/cgroup ]; then
-  mkdir -p /sys/fs/cgroup
-fi
-if ! mountpoint -q /sys/fs/cgroup; then
-  mount -t tmpfs -o uid=0,gid=0,mode=0755 cgroup /sys/fs/cgroup
-fi
-(cd /sys/fs/cgroup
- for sys in $(awk '!/^#/ { if ($4 == 1) print $1 }' /proc/cgroups); do
-   mkdir -p $sys
-   if ! mountpoint -q $sys; then
-     if ! mount -n -t cgroup -o $sys cgroup $sys; then
-       rmdir $sys || true
-     fi
-   fi
-done)
-echo "Successfully set cgroup mount point"
-
 # Cat out the harbor.cfg file content
 cat ${CFG_FILE}
 
 #Copy cert to the right place
 mkdir -p $HARBOR_DATA/cert
 mkdir -p $HARBOR_DATA/ca_download
-HARBOR_HOSTNAME=<%= p("hostname", spec.ip) %>
 
-cp ${HARBOR_JOB_DIR}/tls/server.crt $HARBOR_DATA/cert/
-cp ${HARBOR_JOB_DIR}/tls/server.key $HARBOR_DATA/cert/
-cp ${HARBOR_JOB_DIR}/tls/ca.crt $HARBOR_DATA/ca_download
+cp ${HARBOR_JOB_DIR}/config/server.crt $HARBOR_DATA/cert/
+cp ${HARBOR_JOB_DIR}/config/server.key $HARBOR_DATA/cert/
+cp ${HARBOR_JOB_DIR}/config/ca.crt $HARBOR_DATA/ca_download
 
 #Prepare Harbor env
 PREPARE_OPTS="--conf ${CFG_FILE}"
 
 #If install optional component Notary
-<% if_p("with_notary") do |withNotary| %>
+if [ -n "$WITH_NOTARY" ]; then
   PREPARE_OPTS="${PREPARE_OPTS} --with-notary"
-<% end %>
+fi
 
 #If install optional component Clair
-<% if_p("with_clair") do |withClair| %>
+if [ -n "$WITH_CLAIR" ]; then
   PREPARE_OPTS="${PREPARE_OPTS} --with-clair"
-<% end %>
+fi
 
 ${HARBOR_PACKAGE_DIR}/prepare ${PREPARE_OPTS}
 
 #Workaround to resolve the docker-compose libz issue
 sudo mount /tmp -o remount,exec
-
-if ! grep -q "^docker:" /etc/group
-  then
-    sudo groupadd docker
-fi
 
 #For status checking script usage
 CERT_PATH=$CERTS_D/${HARBOR_HOSTNAME}

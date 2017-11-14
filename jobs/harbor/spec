@@ -3,16 +3,15 @@ name: harbor
 
 templates:
   bin/ctl.erb: bin/ctl
-  bin/dockerd_ctl.erb: bin/dockerd_ctl
   bin/pre-start.erb: bin/pre-start
   bin/status_check.erb: bin/status_check
+  bin/properties.sh.erb: bin/properties.sh
   config/harbor.cfg: config/harbor.cfg
-  tls/server.crt: tls/server.crt
-  tls/server.key: tls/server.key
-  tls/ca.crt: tls/ca.crt
+  config/server.crt: config/server.crt
+  config/server.key: config/server.key
+  config/ca.crt: config/ca.crt
 
 packages:
-- docker
 - docker-compose
 - harbor-app
 - openssl

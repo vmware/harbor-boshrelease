@@ -1,11 +1,5 @@
 check process harbor with pidfile /var/vcap/sys/run/harbor/harbor.pid
   group vcap
-  start program "/var/vcap/jobs/harbor/bin/ctl start" with timeout 180 seconds
-  stop program "/var/vcap/jobs/harbor/bin/ctl stop" with timeout 60 seconds
+  start program "/var/vcap/jobs/harbor/bin/ctl start" with timeout 600 seconds
+  stop program "/var/vcap/jobs/harbor/bin/ctl stop" with timeout 120 seconds
   depends on dockerd
-
-check process dockerd with pidfile /var/vcap/sys/run/harbor/dockerd.pid
-  group vcap
-  start program "/var/vcap/jobs/harbor/bin/dockerd_ctl start" with timeout 120 seconds
-  stop program "/var/vcap/jobs/harbor/bin/dockerd_ctl stop" with timeout 60 seconds
-  if failed unixsocket /var/vcap/sys/run/harbor/dockerd.sock with timeout 5 seconds for 5 cycles then restart
