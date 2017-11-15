@@ -14,7 +14,6 @@ OPENSSL_BIN_DIR=${PACKAGE_DIR}/openssl/bin
 HARBOR_PERSISTED_DATA=/var/vcap/store/harbor
 HARBOR_DATA=/data
 CFG_FILE=${HARBOR_JOB_DIR}/config/harbor.cfg
-CRON_PATH=/etc/cron.d/$JOB_NAME
 CERTS_D=/etc/docker/certs.d
 
 export PATH=$PATH:${OPENSSL_BIN_DIR}
@@ -35,13 +34,22 @@ fi
 # Cat out the harbor.cfg file content
 cat ${CFG_FILE}
 
-#Copy cert to the right place
-mkdir -p $HARBOR_DATA/cert
-mkdir -p $HARBOR_DATA/ca_download
+if [ "$HARBOR_PROTOCOL" = "https" ]; then
+  #Copy cert to the right place
+  mkdir -p $HARBOR_DATA/cert
+  mkdir -p $HARBOR_DATA/ca_download
 
-cp ${HARBOR_JOB_DIR}/config/server.crt $HARBOR_DATA/cert/
-cp ${HARBOR_JOB_DIR}/config/server.key $HARBOR_DATA/cert/
-cp ${HARBOR_JOB_DIR}/config/ca.crt $HARBOR_DATA/ca_download
+  cp ${HARBOR_JOB_DIR}/config/server.crt $HARBOR_DATA/cert/
+  cp ${HARBOR_JOB_DIR}/config/server.key $HARBOR_DATA/cert/
+  cp ${HARBOR_JOB_DIR}/config/ca.crt $HARBOR_DATA/ca_download
+
+  #For status checking script usage
+  CERT_PATH=$CERTS_D/${HARBOR_HOSTNAME}
+  mkdir -p $CERT_PATH
+  chown vcap:vcap ${CERT_PATH}
+  chmod 755 ${CERT_PATH}
+  cp $HARBOR_DATA/ca_download/ca.crt ${CERT_PATH}
+fi
 
 #Prepare Harbor env
 PREPARE_OPTS="--conf ${CFG_FILE}"
@@ -61,16 +69,5 @@ ${HARBOR_PACKAGE_DIR}/prepare ${PREPARE_OPTS}
 #Workaround to resolve the docker-compose libz issue
 sudo mount /tmp -o remount,exec
 
-#For status checking script usage
-CERT_PATH=$CERTS_D/${HARBOR_HOSTNAME}
-mkdir -p $CERT_PATH
-chown vcap:vcap ${CERT_PATH}
-chmod 755 ${CERT_PATH}
-cp $HARBOR_DATA/ca_download/ca.crt ${CERT_PATH}
-
-#Enable status checking script
-#Check with 5 minutes interval
-CHECK_SCRIPT_PATH=${HARBOR_JOB_DIR}/bin/status_check
-echo "*/5 * * * * root ${CHECK_SCRIPT_PATH} >> $LOG_DIR/cron.log 2>&1" > $CRON_PATH
-
+echo "Successfully done!"
 exit 0

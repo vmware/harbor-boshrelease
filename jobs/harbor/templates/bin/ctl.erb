@@ -23,6 +23,7 @@ COMPOSE_CMD=${COMPOSE_PACKAGE_DIR}/bin/docker-compose
 DOCKER_CMD=${DOCKER_PACKAGE_DIR}/bin/docker
 DAEMON_SOCK=${RUN_DIR}/docker/dockerd.sock
 DOCKER_HOST="unix://$DAEMON_SOCK"
+CRON_PATH=/etc/cron.d/$JOB_NAME
 
 exec 1>> $LOG_DIR/ctl.stdout.log
 exec 2>> $LOG_DIR/ctl.stderr.log
@@ -67,6 +68,18 @@ loadImages() {
   $DOCKER_CMD -H $DOCKER_HOST load -i ${IMAGES_TAR_PATH}
 }
 
+#Enable status checking script
+#Check with 5 minutes interval
+cronJobUp() {
+  CHECK_SCRIPT_PATH=${HARBOR_JOB_DIR}/bin/status_check
+  echo "*/5 * * * * root ${CHECK_SCRIPT_PATH} > $LOG_DIR/cron.log 2>&1" > $CRON_PATH
+}
+
+#Stop the cron job
+cronJobDown() {
+  rm -f $CRON_PATH
+}
+
 #Build compose options
 COMPOSE_OPTS="-H $DOCKER_HOST -f ${HARBOR_YAML}"
 if [ -n "$WITH_NOTARY" ]; then
@@ -81,22 +94,24 @@ case $1 in
 
   start)
     #TODO: Add image cleaning here if do migration
-    echo $$ > $PIDFILE
-
     echo "Loading docker images..."
     loadImages    
 
     echo "Starting harbor at ${HARBOR_PROTOCOL}://${HARBOR_HOSTNAME}"
-
     COMPOSE_OPTS="${COMPOSE_OPTS} up"
     startHarbor "$COMPOSE_OPTS"
+
+    echo "Cron job for status checking up"
+    cronJobUp
     ;;
 
   stop)
-    echo -n "Stopping harbor..."
-
+    echo "Stopping harbor..."
     COMPOSE_OPTS="${COMPOSE_OPTS} down"
     stopHarbor "$COMPOSE_OPTS"
+
+    echo "Cron job for status checking down"
+    cronJobDown
     #TODO: Add instance clean work here if migration is enabled
     ;;
 

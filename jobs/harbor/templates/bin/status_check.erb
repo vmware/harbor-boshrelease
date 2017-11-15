@@ -25,7 +25,7 @@ myExit() {
 
 #Check if containers existing
 harbor_containers=$(docker -H "unix://$DAEMON_SOCK" ps | awk '{print $2}' | grep vmware)
-if [[ -z $harbor_containers ]]; then
+if [ -z "$harbor_containers" ]; then
   myExit 1
 fi
 
