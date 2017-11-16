@@ -1,0 +1,8 @@
+---
+name: harbor-common
+
+dependencies: []
+
+files:
+- harbor-common/common.sh
+- harbor-common/utils.sh

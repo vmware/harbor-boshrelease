@@ -1,5 +1,0 @@
-set -e 
-set -x
-
-cp -a common/* ${BOSH_INSTALL_TARGET}
-chmod +x ${BOSH_INSTALL_TARGET}/*.sh

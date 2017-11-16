@@ -1,38 +1,40 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e # exit immediately if a simple command exits with a non-zero status
-set -u # report the usage of uninitialized variables
 
+[ -z "${DEBUG:-}" ] || set -x
+
+PACKAGE_DIR=/var/vcap/packages
 JOB_NAME=harbor
-#Make sure folders are ready
 RUN_DIR=/var/vcap/sys/run/$JOB_NAME
 LOG_DIR=/var/vcap/sys/log/$JOB_NAME
 HARBOR_JOB_DIR=/var/vcap/jobs/$JOB_NAME
-PACKAGE_DIR=/var/vcap/packages
 HARBOR_PACKAGE_DIR=${PACKAGE_DIR}/harbor-app
-OPENSSL_BIN_DIR=${PACKAGE_DIR}/openssl/bin
-HARBOR_PERSISTED_DATA=/var/vcap/store/harbor
+HARBOR_PERSISTED_DATA=/var/vcap/store/$JOB_NAME
 HARBOR_DATA=/data
 CFG_FILE=${HARBOR_JOB_DIR}/config/harbor.cfg
+CRON_PATH=/etc/cron.d/$JOB_NAME
 CERTS_D=/etc/docker/certs.d
+OPENSSL_BIN_DIR=${PACKAGE_DIR}/openssl/bin
 
-export PATH=$PATH:${OPENSSL_BIN_DIR}
+export PATH=$PATH:$OPENSSL_BIN_DIR
 
+source $PACKAGE_DIR/harbor-common/common.sh
+source $PACKAGE_DIR/harbor-common/utils.sh
 source $HARBOR_JOB_DIR/bin/properties.sh
 
+log "Installing Harbor $HARBOR_FULL_VERSION"
+
+#Make sure folders are ready
 for dir in $RUN_DIR $LOG_DIR $HARBOR_PERSISTED_DATA ; do
   mkdir -p ${dir}
   chown vcap:vcap ${dir}
   chmod 755 ${dir}
 done
 
-#Link the data dir
-if ! [ -L $HARBOR_DATA ]; then
-  ln -s $HARBOR_PERSISTED_DATA $HARBOR_DATA
-fi
-
-# Cat out the harbor.cfg file content
-cat ${CFG_FILE}
+#Link Harbor Data dir to Bosh Persistent Disk
+#See https://bosh.io/docs/persistent-disks.html
+ln -sf $HARBOR_PERSISTED_DATA $HARBOR_DATA
 
 if [ "$HARBOR_PROTOCOL" = "https" ]; then
   #Copy cert to the right place

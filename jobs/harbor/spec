@@ -15,6 +15,7 @@ packages:
 - docker-compose
 - harbor-app
 - openssl
+- harbor-common
 
 properties:
   hostname:

@@ -34,7 +34,7 @@ instance_groups:
   networks:
   - name: default
     static_ips:
-    - 10.112.122.1
+    - 10.112.123.31
 
 update:
   canaries: 2

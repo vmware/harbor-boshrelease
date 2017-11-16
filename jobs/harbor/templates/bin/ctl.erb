@@ -21,14 +21,20 @@ IMAGES_TAR_PATH=${HARBOR_PACKAGE_DIR}/harbor*.tar.gz
 
 CTL_CMD=/sbin/start-stop-daemon
 COMPOSE_CMD=${COMPOSE_PACKAGE_DIR}/bin/docker-compose
-DOCKER_CMD=${DOCKER_PACKAGE_DIR}/bin/docker
 DAEMON_SOCK=${RUN_DIR}/docker/dockerd.sock
 DOCKER_HOST="unix://$DAEMON_SOCK"
+DOCKER_CMD="${DOCKER_PACKAGE_DIR}/bin/docker -H $DOCKER_HOST"
 CRON_PATH=/etc/cron.d/$JOB_NAME
+
+HARBOR_DATA=/data
+HARBOR_DB_BACKUP_DIR=$HARBOR_DATA/db_backup
+HARBOR_DB_PWD="<%= p("db_password") %>"
 
 exec 1>> $LOG_DIR/ctl.stdout.log
 exec 2>> $LOG_DIR/ctl.stderr.log
 
+source $PACKAGE_DIR/harbor-common/common.sh
+source $PACKAGE_DIR/harbor-common/utils.sh
 source $HARBOR_JOB_DIR/bin/properties.sh
 
 #Start the harbor process
@@ -60,7 +66,15 @@ stopHarbor() {
 
 #Load images
 loadImages() {
-  $DOCKER_CMD -H $DOCKER_HOST load -i ${IMAGES_TAR_PATH}
+  $DOCKER_CMD load -i ${IMAGES_TAR_PATH}
+}
+
+#Upgrade Harbor if higher version of Harbor Bosh Release to be deployed
+upgradeHarbor() {
+  #backup db
+  $DOCKER_CMD run -ti --rm -e DB_USR=root -e DB_PWD=$HARBOR_DB_PWD -v /data/database:/var/lib/mysql -v $HARBOR_DB_BACKUP_DIR:/harbor-migration/backup vmware/harbor-db-migrator:$HARBOR_VERSION backup
+  #upgrade db
+  $DOCKER_CMD run -ti --rm -e DB_USR=root -e DB_PWD=$HARBOR_DB_PWD -v /data/database:/var/lib/mysql vmware/harbor-db-migrator:$HARBOR_VERSION upgrade head
 }
 
 #Enable status checking script
@@ -88,11 +102,18 @@ fi
 case $1 in
 
   start)
-    #TODO: Add image cleaning here if do migration
-    echo "Loading docker images..."
-    loadImages    
+    echo "Starting Harbor $HARBOR_FULL_VERSION at ${HARBOR_PROTOCOL}://${HARBOR_HOSTNAME}"
 
-    echo "Starting harbor at ${HARBOR_PROTOCOL}://${HARBOR_HOSTNAME}"
+    #TODO: Add image cleaning here if do migration
+    echo "Loading docker images ..."
+    loadImages
+
+    #The 1st Harbor Bosh Release for PKS does not need to upgrade from old version.
+    #Uncomment it to enable upgrading.
+    #echo "Upgrading Harbor if not upgraded yet ..."
+    ## upgradeHarbor
+
+    echo "Launching docker-compose up ..."
     COMPOSE_OPTS="${COMPOSE_OPTS} up"
     startHarbor "$COMPOSE_OPTS"
 
@@ -101,7 +122,7 @@ case $1 in
     ;;
 
   stop)
-    echo "Stopping harbor..."
+    echo "Stopping Harbor ..."
     COMPOSE_OPTS="${COMPOSE_OPTS} down"
     stopHarbor "$COMPOSE_OPTS"
 

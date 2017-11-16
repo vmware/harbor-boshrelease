@@ -1,0 +1,4 @@
+set -e
+
+cp -a harbor-common/* ${BOSH_INSTALL_TARGET}
+chmod +x ${BOSH_INSTALL_TARGET}/*.sh
