@@ -65,6 +65,8 @@ $ bosh create-env bosh-deployment/bosh.yml \
     --state=state.json \
     --vars-store=creds.yml \
     -o bosh-deployment/vsphere/cpi.yml \
+    -o bosh-deployment/uaa.yml \
+    -o bosh-deployment/misc/config-server.yml \
     -v director_name=bosh-1 \
     -v internal_cidr=10.0.0.0/24 \
     -v internal_gw=10.0.0.1 \
@@ -79,6 +81,8 @@ $ bosh create-env bosh-deployment/bosh.yml \
     -v vcenter_vms=bosh-1-vms \
     -v vcenter_disks=bosh-1-disks \
     -v vcenter_cluster=cluster1
+    -o bosh-deployment/vsphere/resource-pool.yml \
+    -v vcenter_rp=bosh-rp1
 
 # Create alias for the created env
 bosh alias-env <alias name> -e <director IP> --ca-cert <(bosh int ./creds.yml --path /director_ssl/ca)
@@ -87,7 +91,7 @@ bosh alias-env <alias name> -e <director IP> --ca-cert <(bosh int ./creds.yml --
 $ export BOSH_CLIENT=admin
 $ export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
 
-bosh -e <env name> env
+bosh -e <alias name> env
 
 ```
 
@@ -95,7 +99,7 @@ bosh -e <env name> env
 Before deploy, we need to create and upload the bosh release. You need to git clone this repository before going on.
 ```
 #Clone repostiry
-git clone https://github.com/steven-zou/harbor-bosh-release.git
+git clone https://gitlab.eng.vmware.com/harbor/habo.git
 
 #Download blobs
 cd harbor-bosh-release/scripts
@@ -126,8 +130,9 @@ Now, make the deployment.
 **NOTES: deployment_vsphere.yml is not a manifest file template yet, you need to change some of the contents such as network, director uuid, release and certifications etc. according to your environment.**
 
 ```
-#Current workdir is the release dir
-bosh -e <env> -d <deployment name> deploy templates/deployment_vsphere.yml
+#Make sure current workdir is the harbor bosh release dir
+bosh -n update-cloud-config templates/cloud_config.yml
+bosh -e <env> -d harbor-deployment deploy templates/deployment_vsphere.yml --vars-store /path/to/creds.yml -v hostname=<harbor_vm_fqdn_or_ip>
 
 ```
 After the deployment is completed, you can check the status of the deployment:

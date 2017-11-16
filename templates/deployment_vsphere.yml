@@ -1,5 +1,5 @@
 ---
-name: harbor-deployment-third-try
+name: harbor-deployment
 
 releases:
 - name: harbor
