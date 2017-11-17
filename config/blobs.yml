@@ -1,12 +1,16 @@
 docker/docker-17.06.2-ce.tgz:
   size: 29704322
+  object_id: 031fa477-ddda-480b-64de-5f497250b0bc
   sha: 2a4206fea5d3d3f4373e13569538522417e2c9d3
 docker/docker-compose-Linux-x86_64-1.16.1:
   size: 8855632
+  object_id: af65247d-c3af-4441-5ea5-e2d7c79ecfad
   sha: e2c7c848e1fa388a2e5b8945fdb2660bf8d8adb1
-harbor/harbor-offline-installer-v1.2.0.tgz:
+harbor/harbor-offline-installer-latest.tgz:
   size: 490451083
+  object_id: 8fcc556d-c7fa-46b7-481d-1470b763367f
   sha: 515be712faa7b1c94d510606f33303f2f58a8880
 library/openssl-1.0.2l.tar.gz:
   size: 5365054
+  object_id: bb20477c-2c98-4f13-6e13-97f7229b647f
   sha: b58d5d0e9cea20e571d903aafa853e2ccd914138

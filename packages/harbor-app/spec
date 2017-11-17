@@ -4,4 +4,4 @@ name: harbor-app
 dependencies: []
 
 files:
-- harbor/harbor-offline-installer-v1.2.0.tgz #https://github.com/vmware/harbor/releases/download/v1.2.0/harbor-offline-installer-v1.2.0.tgz
+- harbor/harbor-offline-installer-latest.tgz #wget https://storage.googleapis.com/harbor-builds/latest.build to get the link of latest package
