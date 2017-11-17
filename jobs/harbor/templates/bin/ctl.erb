@@ -2,6 +2,7 @@
 
 set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
+set -o pipefail
 
 JOB_NAME=harbor
 RUN_DIR=/var/vcap/sys/run
@@ -52,13 +53,7 @@ checkHarbor() {
 #Stop the harbor process
 #Require options parameter for $COMPOSE_CMD
 stopHarbor() {
-  $COMPOSE_CMD $1
-  if [ $? != 0 ]; then
-    #Try to kill
-    $CTL_CMD --pidfile $PIDFILE --retry TERM/30/QUIT/5/KILL --oknodo --stop
-  fi
-
-  if [ $? == 0 ]; then
+  if $COMPOSE_CMD $1 || $CTL_CMD --pidfile $PIDFILE --retry TERM/30/QUIT/5/KILL --oknodo --stop; then
     rm -f $PIDFILE
   fi
 }

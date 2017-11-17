@@ -40,14 +40,10 @@ startDockerd() {
 
 #Stop the dockerd process
 stopDockerd() {
-  $CTL_CMD --pidfile $DAEMON_PIDFILE --retry TERM/30/QUIT/5/KILL --oknodo --stop
-  RET=$?
-  if [ RET == 0 ]; then
+  if $CTL_CMD --pidfile $DAEMON_PIDFILE --retry TERM/30/QUIT/5/KILL --oknodo --stop; then
     rm -f $DAEMON_PIDFILE
     rm -f $DAEMON_SOCK
   fi
-
-  return $RET
 }
 
 case $1 in
