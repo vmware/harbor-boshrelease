@@ -73,9 +73,13 @@ properties:
   email.password:
     description: "Password of email server"
   email.from:
-    description: "Emails sent from who"
+    description: "Email address of the sender"
   email.ssl:
-    description: "If ssl is enabled to check"
+    description: "If SSL is enabled"
+    default: false
+  email.insecure:
+    description: "Whether to verify the certificate of email server"
+    default: false
   ldap.url:
     description: "The url for an ldap endpoint"
     default: "ldaps://ldap.mydomain.com"
@@ -110,3 +114,9 @@ properties:
     description: "An option to determine whether install the optional component Clair or not."
   with_notary:
     description: "An option to determine whether install the optional component Notary or not."
+  log_rotate_count:
+    description: "The max count of log files before rotated"
+    default: 50
+  log_rotate_size:
+    description: "The max size of single log file"
+    default: "200M"
