@@ -1,14 +1,13 @@
 set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
 
-#Get the latest version of Harbor app
-HARBOR_VERSION=`ls -r harbor/harbor-offline-installer-*.tgz | sed 's/harbor\/harbor-offline-installer-\(.*\)\.tgz/\1/' | head -1`
+source /var/vcap/packages/harbor-common/common.sh
 
 #Extract harbor package to the destination folder
-echo "Extracting Harbor ${HARBOR_VERSION}..."
-tar xzvf ${BOSH_COMPILE_TARGET}/harbor/harbor-offline-installer-${HARBOR_VERSION}.tgz
+echo "Extracting Harbor ${HARBOR_FULL_VERSION}..."
+tar xzvf ${BOSH_COMPILE_TARGET}/harbor/harbor-offline-installer-*.tgz
 if [[ $? != 0 ]] ; then
-  echo "Failed extracting Harbor ${HARBOR_VERSION}"
+  echo "Failed to extract Harbor ${HARBOR_FULL_VERSION}"
   exit 1
 fi
 

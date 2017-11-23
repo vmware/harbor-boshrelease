@@ -1,7 +1,7 @@
 ---
 name: harbor-app
 
-dependencies: []
+dependencies: [harbor-common]
 
 files:
 - harbor/harbor-offline-installer-latest.tgz #wget https://storage.googleapis.com/harbor-builds/latest.build to get the link of latest package
