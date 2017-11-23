@@ -107,9 +107,11 @@ case $1 in
     log "Loading docker images ..."
     loadImages
 
+    <%- if p("enable_upgrade") %>
     #The 1st Harbor Bosh Release for PKS does not need to upgrade from old version.
     log "Upgrading Harbor if not upgraded yet ..."
     upgradeHarbor
+    <%- end %>
 
     log "Launching docker-compose up ..."
     COMPOSE_OPTS="${COMPOSE_OPTS} up"

@@ -121,3 +121,6 @@ properties:
   log_rotate_size:
     description: "The max size of single log file"
     default: "200M"
+  enable_upgrade:
+    description: "Enable upgrading Harbor"
+    default: false
