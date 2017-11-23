@@ -16,4 +16,4 @@ fi
 cp -a ${BOSH_COMPILE_TARGET}/harbor/* ${BOSH_INSTALL_TARGET}/
 chmod +x ${BOSH_INSTALL_TARGET}/*.sh
 chmod +x ${BOSH_INSTALL_TARGET}/prepare
-chmod +x ${BOSH_INSTALL_TARGET}/upgrade
+
