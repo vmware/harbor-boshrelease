@@ -26,6 +26,7 @@ instance_groups:
         cert: ((harbor_ssl.certificate))
         key: ((harbor_ssl.private_key))
         ca: ((default_ca.ca))
+      enable_upgrade: ((enable_upgrade))
   - name: docker
     release: harbor
   vm_type: standard

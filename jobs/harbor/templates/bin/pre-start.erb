@@ -20,7 +20,6 @@ OPENSSL_BIN_DIR=${PACKAGE_DIR}/openssl/bin
 export PATH=$PATH:$OPENSSL_BIN_DIR
 
 source $PACKAGE_DIR/harbor-common/common.sh
-source $PACKAGE_DIR/harbor-common/utils.sh
 source $HARBOR_JOB_DIR/bin/properties.sh
 
 log "Installing Harbor $HARBOR_FULL_VERSION"
@@ -71,5 +70,5 @@ ${HARBOR_PACKAGE_DIR}/prepare ${PREPARE_OPTS}
 #Workaround to resolve the docker-compose libz issue
 sudo mount /tmp -o remount,exec
 
-echo "Successfully done!"
+log "Successfully done!"
 exit 0

@@ -34,7 +34,6 @@ exec 1>> $LOG_DIR/ctl.stdout.log
 exec 2>> $LOG_DIR/ctl.stderr.log
 
 source $PACKAGE_DIR/harbor-common/common.sh
-source $PACKAGE_DIR/harbor-common/utils.sh
 source $HARBOR_JOB_DIR/bin/properties.sh
 
 #Start the harbor process
@@ -71,10 +70,10 @@ loadImages() {
 
 #Upgrade Harbor if higher version of Harbor Bosh Release to be deployed
 upgradeHarbor() {
-  #backup db
-  $DOCKER_CMD run -ti --rm -e DB_USR=root -e DB_PWD=$HARBOR_DB_PWD -v /data/database:/var/lib/mysql -v $HARBOR_DB_BACKUP_DIR:/harbor-migration/backup vmware/harbor-db-migrator:$HARBOR_VERSION backup
-  #upgrade db
-  $DOCKER_CMD run -ti --rm -e DB_USR=root -e DB_PWD=$HARBOR_DB_PWD -v /data/database:/var/lib/mysql vmware/harbor-db-migrator:$HARBOR_VERSION upgrade head
+  log "Backing up Harbor database"
+  $DOCKER_CMD run -i --rm -e DB_USR=root -e DB_PWD=$HARBOR_DB_PWD -v /data/database:/var/lib/mysql -v $HARBOR_DB_BACKUP_DIR:/harbor-migration/backup vmware/harbor-db-migrator:$HARBOR_VERSION backup
+  log "Migrating Harbor database"
+  $DOCKER_CMD run -i --rm -e SKIP_CONFIRM=y -e DB_USR=root -e DB_PWD=$HARBOR_DB_PWD -v /data/database:/var/lib/mysql vmware/harbor-db-migrator:$HARBOR_VERSION upgrade head
 }
 
 #Enable status checking script
@@ -102,39 +101,41 @@ fi
 case $1 in
 
   start)
-    echo "Starting Harbor $HARBOR_FULL_VERSION at ${HARBOR_PROTOCOL}://${HARBOR_HOSTNAME}"
+    log "Starting Harbor $HARBOR_FULL_VERSION at ${HARBOR_PROTOCOL}://${HARBOR_HOSTNAME}"
 
     #TODO: Add image cleaning here if do migration
-    echo "Loading docker images ..."
+    log "Loading docker images ..."
     loadImages
 
+    <%- if p("enable_upgrade") %>
     #The 1st Harbor Bosh Release for PKS does not need to upgrade from old version.
-    #Uncomment it to enable upgrading.
-    #echo "Upgrading Harbor if not upgraded yet ..."
-    ## upgradeHarbor
+    log "Upgrading Harbor if not upgraded yet ..."
+    upgradeHarbor
+    <%- end %>
 
-    echo "Launching docker-compose up ..."
+    log "Launching docker-compose up ..."
     COMPOSE_OPTS="${COMPOSE_OPTS} up"
     startHarbor "$COMPOSE_OPTS"
 
-    echo "Cron job for status checking up"
+    log "Cron job for status checking up"
     cronJobUp
     ;;
 
   stop)
-    echo "Stopping Harbor ..."
+    log "Stopping Harbor ..."
     COMPOSE_OPTS="${COMPOSE_OPTS} down"
     stopHarbor "$COMPOSE_OPTS"
 
-    echo "Cron job for status checking down"
+    log "Cron job for status checking down"
     cronJobDown
     #TODO: Add instance clean work here if migration is enabled
     ;;
 
   *)
-    echo -n "Usage: ctl {start|stop}"
+    log -n "Usage: ctl {start|stop}"
     ;;
 
 esac
-echo "Successfully done!"
+
+log "Successfully done!"
 exit 0
