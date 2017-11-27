@@ -35,7 +35,7 @@ if docker -H "unix://$DAEMON_SOCK" ps --filter "status=restarting" | grep 'vmwar
 fi
 
 #Check the API
-harbor_url=<%= p("hostname", spec.ip) %>
+harbor_url=<%= spec.ip %>
 protocol=<%= p("ui_url_protocol") %>
 
 curl_command="curl"
@@ -51,7 +51,7 @@ if [ $? != 0 ] ; then
 	myExit 3
 fi
 
-if [ "$harbor_url" != "$url" ]; then
+if [ -z "$url" ]; then
 	myExit 4
 fi
 
