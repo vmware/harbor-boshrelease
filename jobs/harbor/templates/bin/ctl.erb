@@ -117,18 +117,19 @@ case $1 in
     COMPOSE_OPTS="${COMPOSE_OPTS} up"
     startHarbor "$COMPOSE_OPTS"
 
-    log "Cron job for status checking up"
+    log "Add cron job for Harbor status check"
     cronJobUp
     ;;
 
   stop)
-    log "Stopping Harbor ..."
-    COMPOSE_OPTS="${COMPOSE_OPTS} down"
-    stopHarbor "$COMPOSE_OPTS"
-
-    log "Cron job for status checking down"
+    log "Remove cron job for Harbor status check"
     cronJobDown
     #TODO: Add instance clean work here if migration is enabled
+
+    log "Stopping Harbor ..."
+    log "Launching docker-compose down ..."
+    COMPOSE_OPTS="${COMPOSE_OPTS} down"
+    stopHarbor "$COMPOSE_OPTS"
     ;;
 
   *)
