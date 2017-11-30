@@ -25,6 +25,7 @@ DAEMON_SOCK=${RUN_DIR}/docker/dockerd.sock
 DOCKER_HOST="unix://$DAEMON_SOCK"
 DOCKER_CMD="${DOCKER_PACKAGE_DIR}/bin/docker -H $DOCKER_HOST"
 CRON_PATH=/etc/cron.d/$JOB_NAME
+CHECK_SCRIPT_PATH=${HARBOR_JOB_DIR}/bin/status_check
 
 HARBOR_DATA=/data
 HARBOR_DB_BACKUP_DIR=$HARBOR_DATA/db_backup
@@ -45,22 +46,38 @@ startHarbor() {
   --exec $COMPOSE_CMD \
   --start \
   -- $1 \
-  >> $LOG_DIR/$JOB_NAME.stdout.log \
-  2>> $LOG_DIR/$JOB_NAME.stderr.log
-}
-
-#Check the status of harbor(docker-compose) process
-checkHarbor() {
-  $CTL_CMD --pidfile $PIDFILE --exec $COMPOSE_CMD --status
-  return $?
+  1>> $LOG_DIR/ctl.stdout.log \
+  2>> $LOG_DIR/ctl.stdout.log
 }
 
 #Stop the harbor process
 #Require options parameter for $COMPOSE_CMD
 stopHarbor() {
-  if $COMPOSE_CMD $1 || $CTL_CMD --pidfile $PIDFILE --retry TERM/30/QUIT/5/KILL --oknodo --stop; then
+  if $COMPOSE_CMD $1 2>&1 || $CTL_CMD --pidfile $PIDFILE --retry TERM/30/QUIT/5/KILL --oknodo --stop; then
     rm -f $PIDFILE
   fi
+}
+
+#Check availability of Harbor Service
+checkHarborStatus() {
+  ${CHECK_SCRIPT_PATH} >> $LOG_DIR/cron.log 2>&1
+}
+
+waitForHarbor() {
+  sleep_time=5
+  timeout=120
+  count=0
+  log "Waiting $timeout seconds for Harbor Service to be ready ..."
+  while ! checkHarborStatus
+  do
+    count=$((count + sleep_time));
+    if [ $count -ge $timeout ]; then
+      log "Error: Harbor Service failed to start in $timeout seconds"
+      exit 1
+    fi
+    sleep $sleep_time
+  done
+  log "Harbor Service started successfully"
 }
 
 #Load images
@@ -79,7 +96,6 @@ upgradeHarbor() {
 #Enable status checking script
 #Check with 5 minutes interval
 cronJobUp() {
-  CHECK_SCRIPT_PATH=${HARBOR_JOB_DIR}/bin/status_check
   echo "*/5 * * * * root ${CHECK_SCRIPT_PATH} > $LOG_DIR/cron.log 2>&1" > $CRON_PATH
 }
 
@@ -117,16 +133,18 @@ case $1 in
     COMPOSE_OPTS="${COMPOSE_OPTS} up"
     startHarbor "$COMPOSE_OPTS"
 
+    waitForHarbor
+
     log "Add cron job for Harbor status check"
     cronJobUp
     ;;
 
   stop)
+    log "Stopping Harbor ..."
     log "Remove cron job for Harbor status check"
     cronJobDown
     #TODO: Add instance clean work here if migration is enabled
 
-    log "Stopping Harbor ..."
     log "Launching docker-compose down ..."
     COMPOSE_OPTS="${COMPOSE_OPTS} down"
     stopHarbor "$COMPOSE_OPTS"
