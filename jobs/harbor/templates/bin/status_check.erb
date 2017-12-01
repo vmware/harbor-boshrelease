@@ -35,12 +35,12 @@ if docker -H "unix://$DAEMON_SOCK" ps --filter "status=restarting" | grep 'vmwar
 fi
 
 #Check the API
-harbor_url=<%= spec.ip %>
+harbor_url=<%= p("hostname", spec.ip) %>
 protocol=<%= p("ui_url_protocol") %>
 
-curl_command="curl"
+curl_command="curl -s"
 if [ "$protocol" = "https" ]; then
-	curl_command="$curl_command -k"
+	curl_command="$curl_command --cacert $HARBOR_JOB_DIR/config/ca.crt"
 fi
 
 set +e
@@ -55,10 +55,12 @@ if [ -z "$url" ]; then
 	myExit 4
 fi
 
-#Check docker registry
+#Check Docker Registry connectivity
 password=<%= p("admin_password") %>
 login=$(docker -H "unix://$DAEMON_SOCK" login -u admin -p $password $harbor_url)
 if [ $? != 0 ] ; then
+  # In case the admin password is modified on Harbor UI,
+  # the login will fail, but it means the Registry is working well.
   echo $login | grep -q "unauthorized"
   if [ $? != 0 ] ; then
     myExit 5
