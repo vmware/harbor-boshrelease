@@ -35,6 +35,17 @@ done
 #See https://bosh.io/docs/persistent-disks.html
 ln -sf $HARBOR_PERSISTED_DATA $HARBOR_DATA
 
+#Populate /etc/hosts
+<%- if_p("populate_etc_hosts") do %>
+fqdn=<%= p("hostname") %>
+ip=<%= spec.ip %>
+sed -i -e "/$ip/d" /etc/hosts
+<%-   if spec.ip != p("hostname") %>
+sed -i -e "/$fqdn/d" /etc/hosts
+echo "$ip $fqdn" >> /etc/hosts
+<%-   end %>
+<%- end %>
+
 if [ "$HARBOR_PROTOCOL" = "https" ]; then
   #Copy cert to the right place
   mkdir -p $HARBOR_DATA/cert
