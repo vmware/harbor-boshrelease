@@ -47,7 +47,7 @@ startHarbor() {
   --start \
   -- $1 \
   1>> $LOG_DIR/ctl.stdout.log \
-  2>> $LOG_DIR/ctl.stdout.log
+  2>> $LOG_DIR/ctl.stderr.log
 }
 
 #Stop the harbor process
@@ -60,7 +60,14 @@ stopHarbor() {
 
 #Check availability of Harbor Service
 checkHarborStatus() {
-  ${CHECK_SCRIPT_PATH} >> $LOG_DIR/cron.log 2>&1
+  curl_command="curl -s"
+  if [ "$HARBOR_PROTOCOL" = "https" ]; then
+    curl_command="$curl_command --cacert $HARBOR_JOB_DIR/config/ca.crt"
+  fi
+
+  ${curl_command} ${HARBOR_PROTOCOL}://${HARBOR_HOSTNAME}/api/systeminfo \
+  1>> $LOG_DIR/ctl.stdout.log \
+  2>> $LOG_DIR/ctl.stderr.log
 }
 
 waitForHarbor() {
