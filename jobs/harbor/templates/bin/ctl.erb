@@ -65,9 +65,7 @@ checkHarborStatus() {
     curl_command="$curl_command --cacert $HARBOR_JOB_DIR/config/ca.crt"
   fi
 
-  ${curl_command} ${HARBOR_PROTOCOL}://${HARBOR_HOSTNAME}/api/systeminfo \
-  1>> $LOG_DIR/ctl.stdout.log \
-  2>> $LOG_DIR/ctl.stderr.log
+  ${curl_command} ${HARBOR_PROTOCOL}://${HARBOR_HOSTNAME}/api/systeminfo | grep -q registry_url
 }
 
 waitForHarbor() {
