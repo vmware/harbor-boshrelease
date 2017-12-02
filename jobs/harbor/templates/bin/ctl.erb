@@ -22,6 +22,7 @@ IMAGES_TAR_PATH=${HARBOR_PACKAGE_DIR}/harbor*.tar.gz
 CTL_CMD=/sbin/start-stop-daemon
 COMPOSE_CMD=${COMPOSE_PACKAGE_DIR}/bin/docker-compose
 DAEMON_SOCK=${RUN_DIR}/docker/dockerd.sock
+DAEMON_PID=${RUN_DIR}/docker/dockerd.pid
 DOCKER_HOST="unix://$DAEMON_SOCK"
 DOCKER_CMD="${DOCKER_PACKAGE_DIR}/bin/docker -H $DOCKER_HOST"
 CRON_PATH=/etc/cron.d/$JOB_NAME
@@ -29,7 +30,7 @@ CHECK_SCRIPT_PATH=${HARBOR_JOB_DIR}/bin/status_check
 
 HARBOR_DATA=/data
 HARBOR_DB_BACKUP_DIR=$HARBOR_DATA/db_backup
-HARBOR_DB_PWD="<%= p("db_password") %>"
+COMMAND_NAME=$1
 
 exec 1>> $LOG_DIR/ctl.stdout.log
 exec 2>> $LOG_DIR/ctl.stderr.log
@@ -53,8 +54,9 @@ startHarbor() {
 #Stop the harbor process
 #Require options parameter for $COMPOSE_CMD
 stopHarbor() {
-  if $COMPOSE_CMD $1 2>&1 || $CTL_CMD --pidfile $PIDFILE --retry TERM/30/QUIT/5/KILL --oknodo --stop; then
-    rm -f $PIDFILE
+  if $COMPOSE_CMD $1 2>&1 || \
+     ([[ -s $PIDFILE ]] && $CTL_CMD --pidfile $PIDFILE --retry TERM/30/QUIT/5/KILL --oknodo --stop); then
+     [[ -e $PIDFILE ]] && rm -f $PIDFILE
   fi
 }
 
@@ -62,7 +64,11 @@ stopHarbor() {
 checkHarborStatus() {
   curl_command="curl -s"
   if [ "$HARBOR_PROTOCOL" = "https" ]; then
-    curl_command="$curl_command --cacert $HARBOR_JOB_DIR/config/ca.crt"
+    if [ -s $HARBOR_JOB_DIR/config/ca.crt ]; then
+      curl_command="$curl_command --cacert $HARBOR_JOB_DIR/config/ca.crt"
+    else
+      curl_command="$curl_command -k"
+    fi
   fi
 
   ${curl_command} ${HARBOR_PROTOCOL}://${HARBOR_HOSTNAME}/api/systeminfo | grep -q registry_url
@@ -83,6 +89,32 @@ waitForHarbor() {
     sleep $sleep_time
   done
   log "Harbor Service started successfully"
+}
+
+#Check docker daemon status
+checkDockerdStatus() {
+  [[ -e $DAEMON_SOCK ]] && \
+  [[ -e $DAEMON_PID ]] && \
+  pgrep -f dockerd >/dev/null 2>&1
+}
+
+#Make sure dockerd is started
+wait4Dockerd() {
+  sleep_time=5
+  timeout=120
+  count=0
+  log "Check if docker daemon is running"
+  while ! checkDockerdStatus
+  do
+    log "Docker daemon is not running, wating for $sleep_time to check again"
+    count=$((count + sleep_time));
+    if [ $count -ge $timeout ]; then
+      log "Error: Docker daemon is still not running after $timeout seconds"
+      exit 1
+    fi
+    sleep $sleep_time
+  done
+  log "Docker daemon is running"
 }
 
 #Load images
@@ -119,20 +151,22 @@ if [ -n "$WITH_CLAIR" ]; then
   COMPOSE_OPTS="${COMPOSE_OPTS} -f ${HARBOR_CLAIR_YAML}"
 fi
 
-case $1 in
+case $COMMAND_NAME in
 
   start)
     log "Starting Harbor $HARBOR_FULL_VERSION at ${HARBOR_PROTOCOL}://${HARBOR_HOSTNAME}"
+    
+    wait4Dockerd
 
     #TODO: Add image cleaning here if do migration
     log "Loading docker images ..."
     loadImages
 
-    <%- if p("enable_upgrade") %>
-    #The 1st Harbor Bosh Release for PKS does not need to upgrade from old version.
-    log "Upgrading Harbor if not upgraded yet ..."
-    upgradeHarbor
-    <%- end %>
+    if $ENABLE_MIGRATION; then
+      #The 1st Harbor Bosh Release for PKS does not need to upgrade from old version.
+      log "Upgrading Harbor if not upgraded yet ..."
+      upgradeHarbor
+    fi
 
     log "Launching docker-compose up ..."
     COMPOSE_OPTS="${COMPOSE_OPTS} up"
@@ -148,9 +182,10 @@ case $1 in
     log "Stopping Harbor ..."
     log "Remove cron job for Harbor status check"
     cronJobDown
+
     #TODO: Add instance clean work here if migration is enabled
 
-    log "Launching docker-compose down ..."
+    log "Letting docker-compose down ..."
     COMPOSE_OPTS="${COMPOSE_OPTS} down"
     stopHarbor "$COMPOSE_OPTS"
     ;;
@@ -161,5 +196,5 @@ case $1 in
 
 esac
 
-log "Successfully done!"
+log "ctl $COMMAND_NAME is successfully done!"
 exit 0

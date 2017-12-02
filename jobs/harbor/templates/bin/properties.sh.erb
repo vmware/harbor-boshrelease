@@ -11,3 +11,9 @@ export WITH_NOTARY=<%= p("with_notary", "") %>
   
 #If install optional component Clair
 export WITH_CLAIR=<%= p("with_clair", "") %>
+
+#Database password of Harbor
+HARBOR_DB_PWD="<%= p("db_password") %>"
+
+#If do migration
+ENABLE_MIGRATION=<%= p("enable_upgrade") %>
