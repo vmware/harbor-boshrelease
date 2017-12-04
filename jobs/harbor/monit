@@ -1,5 +1,7 @@
 check process harbor with pidfile /var/vcap/sys/run/harbor/harbor.pid
   group vcap
-  start program "/var/vcap/jobs/harbor/bin/ctl start" with timeout 900 seconds
+  start program "/var/vcap/jobs/harbor/bin/ctl start" with timeout 600 seconds
   stop program "/var/vcap/jobs/harbor/bin/ctl stop" with timeout 180 seconds
+  if failed port 80 for 3 cycles then restart
+  if failed port 443 for 3 cycles then restart
   depends on dockerd

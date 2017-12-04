@@ -62,25 +62,31 @@ stopHarbor() {
 
 #Check availability of Harbor Service
 checkHarborStatus() {
-  curl_command="curl -s"
-  if [ "$HARBOR_PROTOCOL" = "https" ]; then
-    if [ -s $HARBOR_JOB_DIR/config/ca.crt ]; then
-      curl_command="$curl_command --cacert $HARBOR_JOB_DIR/config/ca.crt"
-    else
-      curl_command="$curl_command -k"
-    fi
-  fi
+  if [[ -s $PIDFILE ]] && (pgrep -f docker-compose >/dev/null 2>&1); then
+    HPID=$(cat $PIDFILE)
+    log "Checking status of harbor with pid $HPID"
 
-  ${curl_command} ${HARBOR_PROTOCOL}://${HARBOR_HOSTNAME}/api/systeminfo | grep -q registry_url
+    curl_command="curl -s"
+    if [ "$HARBOR_PROTOCOL" = "https" ]; then
+      if [ -s $HARBOR_JOB_DIR/config/ca.crt ]; then
+        curl_command="$curl_command --cacert $HARBOR_JOB_DIR/config/ca.crt"
+      else
+        curl_command="$curl_command -k"
+      fi
+    fi
+
+    ${curl_command} ${HARBOR_PROTOCOL}://${HARBOR_HOSTNAME}/api/systeminfo | grep -q registry_url
+  fi
 }
 
 waitForHarbor() {
   sleep_time=5
   timeout=120
   count=0
-  log "Waiting $timeout seconds for Harbor Service to be ready ..."
+  log "Waiting for Harbor Service to be ready ..."
   while ! checkHarborStatus
   do
+    log "Harbor service is not ready, waiting for $sleep_time to check again"
     count=$((count + sleep_time));
     if [ $count -ge $timeout ]; then
       log "Error: Harbor Service failed to start in $timeout seconds"
@@ -88,7 +94,7 @@ waitForHarbor() {
     fi
     sleep $sleep_time
   done
-  log "Harbor Service started successfully"
+  log "Harbor Service is ready"
 }
 
 #Check docker daemon status
