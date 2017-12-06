@@ -50,6 +50,23 @@ stopDockerd() {
   fi
 }
 
+waitForDockerd() {
+  sleep_time=2
+  timeout=20
+  count=0
+  while ! docker -H $DOCKER_HOST version 2>&1
+  do
+    log "Docker daemon is not running. Waiting for $sleep_time seconds then check again."
+    sleep $sleep_time
+    count=$((count + sleep_time));
+    if [ $count -ge $timeout ]; then
+      log "Error: Docker daemon is still not running after $timeout seconds."
+      exit 1
+    fi
+  done
+  log "Docker daemon is running"
+}
+
 case $1 in
 
   start)
@@ -60,6 +77,7 @@ case $1 in
 
     log "Starting docker daemon..."
     startDockerd
+    waitForDockerd
     ;;
 
   stop)
