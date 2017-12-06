@@ -24,6 +24,10 @@ exec 2>> $LOG_DIR/ctl.stderr.log
 
 source $JOB_DIR/bin/properties.sh
 
+log() {
+  echo [`date`] $*
+}
+
 #Start docker daemon
 startDockerd() {
   OPT="--data-root ${DATA_ROOT_DIR} --host $DOCKER_HOST"
@@ -54,12 +58,12 @@ case $1 in
       chmod 770 $DATA_ROOT_DIR
     fi
 
-    echo "Starting docker daemon..."
+    log "Starting docker daemon..."
     startDockerd
     ;;
 
   stop)
-    echo "Stopping docker containers..."
+    log "Stopping docker containers..."
     containers="$(docker -H $DOCKER_HOST ps -q)"
     if [[ ! -z $containers ]]; then
       for container in $containers
@@ -69,7 +73,7 @@ case $1 in
         done
     fi
 
-    echo "Stopping docker daemon"
+    log "Stopping docker daemon"
     stopDockerd
     ;;
 
@@ -78,5 +82,5 @@ case $1 in
     ;;
 
 esac
-echo "Successfully done!"
+log "Successfully done!"
 exit 0
