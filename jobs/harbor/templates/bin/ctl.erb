@@ -86,13 +86,13 @@ waitForHarbor() {
   log "Waiting for Harbor Service to be ready ..."
   while ! checkHarborStatus
   do
-    log "Harbor service is not ready, waiting for $sleep_time to check again"
+    log "Harbor service is not ready. Waiting for $sleep_time seconds then check again."
+    sleep $sleep_time
     count=$((count + sleep_time));
     if [ $count -ge $timeout ]; then
-      log "Error: Harbor Service failed to start in $timeout seconds"
+      log "Error: Harbor Service failed to start in $timeout seconds."
       exit 1
     fi
-    sleep $sleep_time
   done
   log "Harbor Service is ready"
 }
@@ -105,27 +105,26 @@ checkDockerdStatus() {
 }
 
 #Make sure dockerd is started
-wait4Dockerd() {
+waitForDockerd() {
   sleep_time=5
   timeout=120
   count=0
-  log "Check if docker daemon is running"
   while ! checkDockerdStatus
   do
-    log "Docker daemon is not running, wating for $sleep_time to check again"
+    log "Docker daemon is not running. Waiting for $sleep_time seconds then check again."
+    sleep $sleep_time
     count=$((count + sleep_time));
     if [ $count -ge $timeout ]; then
-      log "Error: Docker daemon is still not running after $timeout seconds"
+      log "Error: Docker daemon is still not running after $timeout seconds."
       exit 1
     fi
-    sleep $sleep_time
   done
   log "Docker daemon is running"
 }
 
 #Load images
 loadImages() {
-  $DOCKER_CMD load -i ${IMAGES_TAR_PATH}
+  $DOCKER_CMD load -i ${IMAGES_TAR_PATH} 2>&1
 }
 
 #Upgrade Harbor if higher version of Harbor Bosh Release to be deployed
@@ -162,7 +161,7 @@ case $COMMAND_NAME in
   start)
     log "Starting Harbor $HARBOR_FULL_VERSION at ${HARBOR_PROTOCOL}://${HARBOR_HOSTNAME}"
     
-    wait4Dockerd
+    waitForDockerd
 
     #TODO: Add image cleaning here if do migration
     log "Loading docker images ..."
@@ -174,7 +173,7 @@ case $COMMAND_NAME in
       upgradeHarbor
     fi
 
-    log "Launching docker-compose up ..."
+    log "Launching 'docker-compose up' ..."
     COMPOSE_OPTS="${COMPOSE_OPTS} up"
     startHarbor "$COMPOSE_OPTS"
 
@@ -191,7 +190,7 @@ case $COMMAND_NAME in
 
     #TODO: Add instance clean work here if migration is enabled
 
-    log "Letting docker-compose down ..."
+    log "Launching 'docker-compose down' ..."
     COMPOSE_OPTS="${COMPOSE_OPTS} down"
     stopHarbor "$COMPOSE_OPTS"
     ;;
