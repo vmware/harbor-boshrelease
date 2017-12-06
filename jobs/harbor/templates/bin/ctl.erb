@@ -45,7 +45,7 @@ startHarbor() {
   --make-pidfile \
   --background \
   --exec $COMPOSE_CMD \
-  --start \
+  --start --oknodo \
   -- $1 \
   1>> $LOG_DIR/ctl.stdout.log \
   2>> $LOG_DIR/ctl.stderr.log
