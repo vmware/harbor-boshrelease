@@ -18,9 +18,11 @@ Timestamp=`date '+%Y-%m-%d %H:%M:%S'`
 
 #Exit function with pid file deletion
 myExit() {
-	echo "$Timestamp Harbor status check: [FAILED]"
-	rm -f $PIDFILE
-	exit $1
+  echo "$Timestamp Harbor status check: [FAILED]"
+  echo "$Timestamp Now restart harbor job"
+  rm -f /etc/cron.d/harbor
+  /var/vcap/bosh/bin/monit restart harbor
+  exit $1
 }
 
 #Check if containers existing
@@ -40,7 +42,7 @@ protocol=<%= p("ui_url_protocol") %>
 
 curl_command="curl -s"
 if [ "$protocol" = "https" ]; then
-	curl_command="$curl_command --cacert $HARBOR_JOB_DIR/config/ca.crt"
+  curl_command="$curl_command --cacert $HARBOR_JOB_DIR/config/ca.crt"
 fi
 
 set +e
@@ -48,11 +50,11 @@ set +e
 echo "${curl_command} ${protocol}://${harbor_url}/api/systeminfo"
 url=`${curl_command} ${protocol}://${harbor_url}/api/systeminfo | python -c "import sys, json; print json.load(sys.stdin)['registry_url']"`
 if [ $? != 0 ] ; then
-	myExit 3
+  myExit 3
 fi
 
 if [ -z "$url" ]; then
-	myExit 4
+  myExit 4
 fi
 
 #Check Docker Registry connectivity
