@@ -26,6 +26,7 @@ DAEMON_PID=${RUN_DIR}/docker/dockerd.pid
 DOCKER_HOST="unix://$DAEMON_SOCK"
 DOCKER_CMD="${DOCKER_PACKAGE_DIR}/bin/docker -H $DOCKER_HOST"
 CRON_PATH=/etc/cron.d/$JOB_NAME
+CRON_JOB_INTERVAL=2
 CHECK_SCRIPT_PATH=${HARBOR_JOB_DIR}/bin/status_check
 
 HARBOR_DATA=/data
@@ -135,10 +136,10 @@ upgradeHarbor() {
   $DOCKER_CMD run -i --rm -e SKIP_CONFIRM=y -e DB_USR=root -e DB_PWD=$HARBOR_DB_PWD -v /data/database:/var/lib/mysql vmware/harbor-db-migrator:$HARBOR_VERSION upgrade head
 }
 
-#Enable status checking script
-#Check with 5 minutes interval
+#Add cron job to check Harbor service availability.
+#If harbor service is not running well, remove the harbor pid file, then monit will restart it.
 cronJobUp() {
-  echo "*/5 * * * * root ${CHECK_SCRIPT_PATH} > $LOG_DIR/cron.log 2>&1" > $CRON_PATH
+  echo "*/$CRON_JOB_INTERVAL * * * * root ${CHECK_SCRIPT_PATH} > $LOG_DIR/cron.log 2>&1" > $CRON_PATH
 }
 
 #Stop the cron job
