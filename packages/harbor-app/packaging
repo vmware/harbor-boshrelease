@@ -5,14 +5,15 @@ source /var/vcap/packages/harbor-common/common.sh
 
 #Extract harbor package to the destination folder
 echo "Extracting Harbor ${HARBOR_FULL_VERSION}..."
-tar xzvf ${BOSH_COMPILE_TARGET}/harbor/harbor-offline-installer-*.tgz
-if [[ $? != 0 ]] ; then
-  echo "Failed to extract Harbor ${HARBOR_FULL_VERSION}"
+file=`ls ${BOSH_COMPILE_TARGET}/harbor/harbor-offline-installer-*.tgz`
+if ! tar -xzvf $file --strip 1 -C ${BOSH_INSTALL_TARGET} ; then
+  echo "Failed to extract Harbor ${HARBOR_FULL_VERSION} tarball"
   exit 1
 fi
 
-#Copy the Harbor files to destination folder
-cp -a ${BOSH_COMPILE_TARGET}/harbor/* ${BOSH_INSTALL_TARGET}/
 chmod +x ${BOSH_INSTALL_TARGET}/*.sh
 chmod +x ${BOSH_INSTALL_TARGET}/prepare
 
+#Unzip the harbor images tgz file to a tar file,
+#then docker loading images in 'ctl start' could be faster.
+gunzip ${BOSH_INSTALL_TARGET}/harbor*.tar.gz
