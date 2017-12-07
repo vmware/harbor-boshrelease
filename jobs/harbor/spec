@@ -12,10 +12,11 @@ templates:
   config/ca.crt: config/ca.crt
 
 packages:
+- common
+- harbor-common
 - docker-compose
 - harbor-app
 - openssl
-- harbor-common
 
 properties:
   hostname:

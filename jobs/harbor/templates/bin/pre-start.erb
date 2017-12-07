@@ -4,6 +4,8 @@ set -e # exit immediately if a simple command exits with a non-zero status
 
 [ -z "${DEBUG:-}" ] || set -x
 
+source /var/vcap/packages/common/utils.sh
+
 PACKAGE_DIR=/var/vcap/packages
 JOB_NAME=harbor
 RUN_DIR=/var/vcap/sys/run/$JOB_NAME
@@ -11,6 +13,7 @@ LOG_DIR=/var/vcap/sys/log/$JOB_NAME
 HARBOR_JOB_DIR=/var/vcap/jobs/$JOB_NAME
 HARBOR_PACKAGE_DIR=${PACKAGE_DIR}/harbor-app
 HARBOR_PERSISTED_DATA=/var/vcap/store/$JOB_NAME
+HARBOR_IMAGES_TAR_PATH=${HARBOR_PACKAGE_DIR}/harbor*.tar
 HARBOR_DATA=/data
 CFG_FILE=${HARBOR_JOB_DIR}/config/harbor.cfg
 CRON_PATH=/etc/cron.d/$JOB_NAME
@@ -80,6 +83,23 @@ ${HARBOR_PACKAGE_DIR}/prepare ${PREPARE_OPTS}
 
 #Workaround to resolve the docker-compose libz issue
 sudo mount /tmp -o remount,exec
+
+#Load Harbor images
+loadImages() {
+  #Start dockerd
+  /var/vcap/jobs/docker/bin/ctl start
+  waitForDockerd
+  #TODO(szou): Add image cleaning here if do migration
+  #Load images
+  log "Loading docker images ..."
+  $DOCKER_CMD load -i $HARBOR_IMAGES_TAR_PATH 2>&1
+  /var/vcap/jobs/docker/bin/ctl stop
+  # wait for 3 seconds to avoid possible race condition
+  sleep 3
+}
+
+waitForDockerJobPrestart
+loadImages
 
 log "Successfully done!"
 exit 0

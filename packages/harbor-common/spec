@@ -1,7 +1,7 @@
 ---
 name: harbor-common
 
-dependencies: []
+dependencies: [common]
 
 files:
 - harbor-common/common.sh

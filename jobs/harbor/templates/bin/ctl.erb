@@ -4,27 +4,23 @@ set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
 set -o pipefail
 
+source /var/vcap/packages/common/utils.sh
+
 JOB_NAME=harbor
-RUN_DIR=/var/vcap/sys/run
 HARBOR_RUN_DIR=$RUN_DIR/$JOB_NAME
-LOG_DIR=/var/vcap/sys/log/$JOB_NAME
-HARBOR_JOB_DIR=/var/vcap/jobs/$JOB_NAME
+HARBOR_LOG_DIR=$LOG_DIR/$JOB_NAME
+HARBOR_JOB_DIR=$JOB_DIR/$JOB_NAME
 PIDFILE=${HARBOR_RUN_DIR}/harbor.pid
-PACKAGE_DIR=/var/vcap/packages
 HARBOR_PACKAGE_DIR=${PACKAGE_DIR}/harbor-app
 COMPOSE_PACKAGE_DIR=${PACKAGE_DIR}/docker-compose
-DOCKER_PACKAGE_DIR=${PACKAGE_DIR}/docker
 HARBOR_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.yml
 HARBOR_CLAIR_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.clair.yml
 HARBOR_NOTARY_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.notary.yml
-IMAGES_TAR_PATH=${HARBOR_PACKAGE_DIR}/harbor*.tar
 
 CTL_CMD=/sbin/start-stop-daemon
 COMPOSE_CMD=${COMPOSE_PACKAGE_DIR}/bin/docker-compose
 DAEMON_SOCK=${RUN_DIR}/docker/dockerd.sock
 DAEMON_PID=${RUN_DIR}/docker/dockerd.pid
-DOCKER_HOST="unix://$DAEMON_SOCK"
-DOCKER_CMD="${DOCKER_PACKAGE_DIR}/bin/docker -H $DOCKER_HOST"
 CRON_PATH=/etc/cron.d/$JOB_NAME
 CRON_JOB_INTERVAL=2
 CHECK_SCRIPT_PATH=${HARBOR_JOB_DIR}/bin/status_check
@@ -33,8 +29,8 @@ HARBOR_DATA=/data
 HARBOR_DB_BACKUP_DIR=$HARBOR_DATA/db_backup
 COMMAND_NAME=$1
 
-exec 1>> $LOG_DIR/ctl.stdout.log
-exec 2>> $LOG_DIR/ctl.stderr.log
+exec 1>> $HARBOR_LOG_DIR/ctl.stdout.log
+exec 2>> $HARBOR_LOG_DIR/ctl.stderr.log
 
 source $PACKAGE_DIR/harbor-common/common.sh
 source $HARBOR_JOB_DIR/bin/properties.sh
@@ -48,8 +44,8 @@ startHarbor() {
   --exec $COMPOSE_CMD \
   --start --oknodo \
   -- $1 \
-  1>> $LOG_DIR/ctl.stdout.log \
-  2>> $LOG_DIR/ctl.stderr.log
+  1>> $HARBOR_LOG_DIR/ctl.stdout.log \
+  2>> $HARBOR_LOG_DIR/ctl.stderr.log
 }
 
 #Stop the harbor process
@@ -105,29 +101,6 @@ checkDockerdStatus() {
   pgrep -f dockerd >/dev/null 2>&1
 }
 
-#Make sure dockerd is started
-waitForDockerd() {
-  sleep_time=5
-  timeout=120
-  count=0
-  while ! checkDockerdStatus
-  do
-    log "Docker daemon is not running. Waiting for $sleep_time seconds then check again."
-    sleep $sleep_time
-    count=$((count + sleep_time));
-    if [ $count -ge $timeout ]; then
-      log "Error: Docker daemon is still not running after $timeout seconds."
-      exit 1
-    fi
-  done
-  log "Docker daemon is running"
-}
-
-#Load images
-loadImages() {
-  $DOCKER_CMD load -i ${IMAGES_TAR_PATH} 2>&1
-}
-
 #Upgrade Harbor if higher version of Harbor Bosh Release to be deployed
 upgradeHarbor() {
   log "Backing up Harbor database"
@@ -139,7 +112,7 @@ upgradeHarbor() {
 #Add cron job to check Harbor service availability.
 #If harbor service is not running well, remove the harbor pid file, then monit will restart it.
 cronJobUp() {
-  echo "*/$CRON_JOB_INTERVAL * * * * root ${CHECK_SCRIPT_PATH} > $LOG_DIR/cron.log 2>&1" > $CRON_PATH
+  echo "*/$CRON_JOB_INTERVAL * * * * root ${CHECK_SCRIPT_PATH} > $HARBOR_LOG_DIR/cron.log 2>&1" > $CRON_PATH
 }
 
 #Stop the cron job
@@ -161,12 +134,8 @@ case $COMMAND_NAME in
 
   start)
     log "Starting Harbor $HARBOR_FULL_VERSION at ${HARBOR_PROTOCOL}://${HARBOR_HOSTNAME}"
-    
-    waitForDockerd
 
-    #TODO: Add image cleaning here if do migration
-    log "Loading docker images ..."
-    loadImages
+    waitForDockerd
 
     if $ENABLE_MIGRATION; then
       #The 1st Harbor Bosh Release for PKS does not need to upgrade from old version.

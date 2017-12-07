@@ -4,67 +4,47 @@ set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
 set -x
 
+source /var/vcap/packages/common/utils.sh
+
 JOB_NAME=docker
-RUN_DIR="/var/vcap/sys/run/${JOB_NAME}"
-LOG_DIR="/var/vcap/sys/log/${JOB_NAME}"
-JOB_DIR="/var/vcap/jobs/${JOB_NAME}"
-PACKAGE_DIR=/var/vcap/packages
-DOCKER_PACKAGE_DIR=${PACKAGE_DIR}/docker
-DAEMON_PIDFILE=${RUN_DIR}/dockerd.pid
-DAEMON_SOCK=${RUN_DIR}/dockerd.sock
+DOCKER_RUN_DIR=$RUN_DIR/$JOB_NAME
+DOCKER_LOG_DIR=$LOG_DIR/$JOB_NAME
+DOCKER_JOB_DIR=$JOB_DIR/$JOB_NAME
+DOCKER_PACKAGE_DIR=$PACKAGE_DIR/docker
+DOCKER_DAEMON_PIDFILE=$DOCKER_RUN_DIR/dockerd.pid
+DOCKER_DAEMON_SOCK=$DOCKER_RUN_DIR/dockerd.sock
 
 export PATH=$PATH:${DOCKER_PACKAGE_DIR}/bin
 
 CTL_CMD=/sbin/start-stop-daemon
 DOCKERD_CMD=${DOCKER_PACKAGE_DIR}/bin/dockerd
-DOCKER_HOST="unix://$DAEMON_SOCK"
+DOCKER_HOST="unix://$DOCKER_DAEMON_SOCK"
 
-exec 1>> $LOG_DIR/ctl.stdout.log
-exec 2>> $LOG_DIR/ctl.stderr.log
+exec 1>> $DOCKER_LOG_DIR/ctl.stdout.log
+exec 2>> $DOCKER_LOG_DIR/ctl.stderr.log
 
-source $JOB_DIR/bin/properties.sh
-
-log() {
-  echo [`date`] $*
-}
+source $DOCKER_JOB_DIR/bin/properties.sh
 
 #Start docker daemon
 startDockerd() {
   OPT="--data-root ${DATA_ROOT_DIR} --host $DOCKER_HOST"
 
-  $CTL_CMD --pidfile $DAEMON_PIDFILE \
+  $CTL_CMD --pidfile $DOCKER_DAEMON_PIDFILE \
   --make-pidfile \
   --background \
   --exec $DOCKERD_CMD \
-  --start \
+  --start --oknodo \
   -- $OPT \
-  >> $LOG_DIR/dockerd.stdout.log \
-  2>> $LOG_DIR/dockerd.stderr.log
+  >> $DOCKER_LOG_DIR/dockerd.stdout.log \
+  2>> $DOCKER_LOG_DIR/dockerd.stderr.log
 }
 
 #Stop the dockerd process
 stopDockerd() {
-  if $CTL_CMD --pidfile $DAEMON_PIDFILE --retry TERM/30/QUIT/5/KILL --oknodo --stop; then
-    rm -f $DAEMON_PIDFILE
-    rm -f $DAEMON_SOCK
+  if $CTL_CMD --pidfile $DOCKER_DAEMON_PIDFILE --retry TERM/30/QUIT/5/KILL --oknodo --stop; then
+    rm -f $DOCKER_DAEMON_PIDFILE
+    rm -f $DOCKER_DAEMON_SOCK
   fi
-}
-
-waitForDockerd() {
-  sleep_time=2
-  timeout=20
-  count=0
-  while ! docker -H $DOCKER_HOST version 2>&1
-  do
-    log "Docker daemon is not running. Waiting for $sleep_time seconds then check again."
-    sleep $sleep_time
-    count=$((count + sleep_time));
-    if [ $count -ge $timeout ]; then
-      log "Error: Docker daemon is still not running after $timeout seconds."
-      exit 1
-    fi
-  done
-  log "Docker daemon is running"
 }
 
 case $1 in
