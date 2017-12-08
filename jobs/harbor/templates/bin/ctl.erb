@@ -11,6 +11,7 @@ HARBOR_RUN_DIR=$RUN_DIR/$JOB_NAME
 HARBOR_LOG_DIR=$LOG_DIR/$JOB_NAME
 HARBOR_JOB_DIR=$JOB_DIR/$JOB_NAME
 PIDFILE=${HARBOR_RUN_DIR}/harbor.pid
+TEMP_PIDFILE=${HARBOR_RUN_DIR}/harbor.tmp.pid
 HARBOR_PACKAGE_DIR=${PACKAGE_DIR}/harbor-app
 COMPOSE_PACKAGE_DIR=${PACKAGE_DIR}/docker-compose
 HARBOR_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.yml
@@ -38,7 +39,7 @@ source $HARBOR_JOB_DIR/bin/properties.sh
 #Start the harbor process
 #Require options parameter for $COMPOSE_CMD
 startHarbor() {
-  $CTL_CMD --pidfile $PIDFILE \
+  $CTL_CMD --pidfile $TEMP_PIDFILE \
   --make-pidfile \
   --background \
   --exec $COMPOSE_CMD \
@@ -147,7 +148,10 @@ case $COMMAND_NAME in
     COMPOSE_OPTS="${COMPOSE_OPTS} up"
     startHarbor "$COMPOSE_OPTS"
 
+    #Wait for Harbor Service
     waitForHarbor
+    #Now let monit detect the real harbor pid
+    mv $TEMP_PIDFILE $PIDFILE
 
     log "Add cron job for Harbor status check"
     cronJobUp
