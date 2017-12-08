@@ -1,7 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
+
+source /var/vcap/packages/common/utils.sh
 
 JOB_NAME=harbor
 HARBOR_JOB_DIR=/var/vcap/jobs/$JOB_NAME
@@ -14,16 +16,30 @@ DAEMON_SOCK=${RUN_DIR}/docker/dockerd.sock
 
 export PATH=$PATH:${DOCKER_PACKAGE_DIR}/bin
 
-Timestamp=`date '+%Y-%m-%d %H:%M:%S'`
-
 #Exit function with pid file deletion
 myExit() {
-  echo "$Timestamp Harbor status check: [FAILED]"
-  echo "$Timestamp Now restart harbor job"
-  rm -f /etc/cron.d/harbor
-  /var/vcap/bosh/bin/monit restart harbor
+  log "Harbor status check: [FAILED]"
+  parseOpts
+  if [ "$RESTART_HARBOR" = true ]; then
+    log "Now restart harbor job"
+    rm -f /etc/cron.d/harbor
+    /var/vcap/bosh/bin/monit restart harbor
+  fi
   exit $1
 }
+
+parseOpts() {
+  RESTART_HARBOR=false
+  while getopts "r" opt; do
+    case $opt in
+      r)
+        RESTART_HARBOR=true
+        ;;
+    esac
+  done
+}
+
+parseOpts $@
 
 #Check if containers existing
 harbor_containers=$(docker -H "unix://$DAEMON_SOCK" ps | awk '{print $2}' | grep vmware)
@@ -69,5 +85,5 @@ if [ $? != 0 ] ; then
   fi
 fi
 
-echo "$Timestamp Harbor status check: [PASSED]"
+log "Harbor status check: [PASSED]"
 exit 0

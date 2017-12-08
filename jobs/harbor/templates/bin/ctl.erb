@@ -58,31 +58,12 @@ stopHarbor() {
   fi
 }
 
-#Check availability of Harbor Service
-checkHarborStatus() {
-  if [[ -s $PIDFILE ]] && (pgrep -f docker-compose >/dev/null 2>&1); then
-    HPID=$(cat $PIDFILE)
-    log "Checking status of harbor with pid $HPID"
-
-    curl_command="curl -s"
-    if [ "$HARBOR_PROTOCOL" = "https" ]; then
-      if [ -s $HARBOR_JOB_DIR/config/ca.crt ]; then
-        curl_command="$curl_command --cacert $HARBOR_JOB_DIR/config/ca.crt"
-      else
-        curl_command="$curl_command -k"
-      fi
-    fi
-
-    ${curl_command} ${HARBOR_PROTOCOL}://${HARBOR_HOSTNAME}/api/systeminfo | grep -q registry_url
-  fi
-}
-
 waitForHarbor() {
   sleep_time=5
-  timeout=120
+  timeout=180
   count=0
   log "Waiting for Harbor Service to be ready ..."
-  while ! checkHarborStatus
+  while ! $CHECK_SCRIPT_PATH >> $HARBOR_LOG_DIR/cron.log 2>&1
   do
     log "Harbor service is not ready. Waiting for $sleep_time seconds then check again."
     sleep $sleep_time
@@ -113,7 +94,7 @@ upgradeHarbor() {
 #Add cron job to check Harbor service availability.
 #If harbor service is not running well, remove the harbor pid file, then monit will restart it.
 cronJobUp() {
-  echo "*/$CRON_JOB_INTERVAL * * * * root ${CHECK_SCRIPT_PATH} > $HARBOR_LOG_DIR/cron.log 2>&1" > $CRON_PATH
+  echo "*/$CRON_JOB_INTERVAL * * * * root $CHECK_SCRIPT_PATH -r >> $HARBOR_LOG_DIR/cron.log 2>&1" > $CRON_PATH
 }
 
 #Stop the cron job
