@@ -109,14 +109,11 @@ bash download_blobs.sh
 bosh create-release --force
 
 #Or create a final release
-#bosh -e <env> create-release --name <release name> --version <version> --final
+#bosh -e <env> create-release --final [--name <release_name> --version <version>]
 
 #Upload your release
 #Current workdir is the release dir
 bosh -e <env> upload-release
-
-#Additionally you can specify the release name and version
-#bosh -e <env> upload-release --name <name> --version <version> <PATH>
 
 ```
 

@@ -3,4 +3,4 @@ blobstore:
   provider: local
   options:
     blobstore_path: /tmp/harbor-blob-store
-final_name: harbor
+final_name: harbor-container-registry
