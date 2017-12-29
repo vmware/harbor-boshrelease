@@ -5,8 +5,8 @@ docker/docker-compose-Linux-x86_64-1.16.1:
   size: 8855632
   sha: e2c7c848e1fa388a2e5b8945fdb2660bf8d8adb1
 harbor/harbor-offline-installer-latest.tgz:
-  size: 817725606
-  sha: eeeea982e6d515a96b6e74f1f525ea843db820d9
+  size: 807558999
+  sha: 8c1fa44eac487bc293c0d49953cfd4003477e094
 library/openssl-1.0.2l.tar.gz:
   size: 5365054
   sha: b58d5d0e9cea20e571d903aafa853e2ccd914138
