@@ -10,6 +10,7 @@ templates:
   config/server.crt: config/server.crt
   config/server.key: config/server.key
   config/ca.crt: config/ca.crt
+  config/uaa_ca.crt: config/uaa_ca.crt
 
 packages:
 - common
@@ -131,3 +132,18 @@ properties:
   populate_etc_hosts:
     description: "Whether to add IP to hostname mapping for Harbor instance in /etc/hosts."
     default: true
+  uaa.url:
+    description: "UAA Server URL"
+    default: ~
+  uaa.client_id:
+    description: "The client id for connecting to UAA Server."
+    default: ~
+  uaa.client_secret:
+    description: "The client secret for connecting to UAA Server."
+    default: ~
+  uaa.verify_cert:
+    description: "Whether to verify UAA Server certificate."
+    default: true
+  uaa.ca_cert:
+    description: "The root CA of UAA Server certificate."
+    default: ~
