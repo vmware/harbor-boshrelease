@@ -134,16 +134,16 @@ properties:
     default: true
   uaa.url:
     description: "UAA Server URL"
-    default: ~
+    default: ""
   uaa.client_id:
     description: "The client id for connecting to UAA Server."
-    default: ~
+    default: ""
   uaa.client_secret:
     description: "The client secret for connecting to UAA Server."
-    default: ~
+    default: ""
   uaa.verify_cert:
     description: "Whether to verify UAA Server certificate."
     default: true
   uaa.ca_cert:
     description: "The root CA of UAA Server certificate."
-    default: ~
+    default: ""
