@@ -18,6 +18,18 @@ packages:
 - harbor-app
 - openssl
 
+provides:
+- name: harbor
+  type: harbor_conn
+  properties:
+  - hostname
+  - ui_url_protocol
+  - admin_password
+  - ssl.cert
+  - ssl.key
+  - ssl.ca
+  - populate_etc_hosts
+  
 properties:
   hostname:
     description: "The IP address or hostname to access admin UI and registry service"

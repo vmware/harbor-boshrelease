@@ -1,0 +1,19 @@
+---
+name: smoke-test
+
+templates:
+  run.sh: bin/run
+  config/ca.crt: config/ca.crt
+  config/cert.crt: config/cert.crt
+  config/key.crt: config/key.crt
+
+packages:
+  - smoke-test
+  - docker
+  - busybox
+
+consumes:
+- name: harbor_reference
+  type: harbor_conn
+
+properties: {}

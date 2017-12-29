@@ -2,7 +2,7 @@
 name: harbor-deployment-third-try
 
 releases:
-- name: harbor
+- name: harbor-container-registry
   version: latest
 
 stemcells:
@@ -16,7 +16,7 @@ instance_groups:
   instances: 1
   jobs:
   - name: harbor
-    release: harbor
+    release: harbor-container-registry
     properties:
       hostname: ((hostname))
       db_password: ((harbor_db_password))

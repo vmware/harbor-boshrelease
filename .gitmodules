@@ -1,0 +1,3 @@
+[submodule "src/harbor-api-testing"]
+	path = src/harbor-api-testing
+	url = https://gitlab.eng.vmware.com/harbor/harbor-api-testing.git

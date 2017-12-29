@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -e -u
+
+# Set package dependencies directory
+PACKAGES_DIR=${BOSH_PACKAGES_DIR:-/var/vcap/packages}
+
+# Set Golang dependency
+export GOROOT=$(cd "${PACKAGES_DIR}/golang" && pwd -P)
+export PATH=${GOROOT}/bin:${PATH}
+
+# Setup Golang compile workspace
+mkdir -p go_workspace/src
+cp -R harbor-api-testing go_workspace/src
+export GOPATH=$(pwd -P)/go_workspace
+
+mkdir -p $BOSH_INSTALL_TARGET/bin/
+go build -o $BOSH_INSTALL_TARGET/bin/smoke-test $GOPATH/src/harbor-api-testing/main.go
+
+

@@ -1,5 +1,5 @@
 ---
-name: harbor-deployment-third-try
+name: harbor-deployment-4th-try
 
 releases:
 - name: harbor-container-registry
@@ -26,13 +26,26 @@ instance_groups:
         cert: ((harbor_ssl.certificate))
         key: ((harbor_ssl.private_key))
         ca: ((default_ca.ca))
+      with_clair: true
+      with_notary: true
+    provides:
+      harbor: {as: harbor_app_link}
+
   - name: docker
-    release: harbor
+    release: harbor-container-registry
+
+  - name: smoke-test
+    release: harbor-container-registry
+    properties: {}
+    consumes:
+      harbor_reference: {from: harbor_app_link}
   vm_type: standard
   stemcell: default
   persistent_disk_type: 20G
   networks:
   - name: default
+    static_ips:
+    - 10.112.122.1
 
 update:
   canaries: 2
