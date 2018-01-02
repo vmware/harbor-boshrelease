@@ -85,6 +85,9 @@ properties:
   ldap.url:
     description: "The url for an ldap endpoint"
     default: "ldaps://ldap.mydomain.com"
+  ldap.verify_cert:
+    description: "Verify SSL certificate of LDAP server"
+    default: true
   ldap.searchdn:
     description: "A user's DN who has the permission to search the LDAP/AD server. If your LDAP/AD server does not support anonymous search, you should configure this DN and ldap.searchpwd."
     default: ~
