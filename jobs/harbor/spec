@@ -147,3 +147,9 @@ properties:
   uaa.ca_cert:
     description: "The root CA of UAA Server certificate."
     default: ""
+  registry_storage_provider.name:
+    description: "The name of Docker Registry storage provider."
+    default: filesystem
+  registry_storage_provider.config:
+    description: "The comma separated 'key: value' pairs for configuring Docker Registry storage provider."
+    default: ""
