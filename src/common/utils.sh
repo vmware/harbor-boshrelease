@@ -32,23 +32,3 @@ waitForDockerd() {
   log "Docker daemon is running"
 }
 
-waitForDockerJobPrestart() {
-  # All prestart scripts run in parallel.
-  # The docker job prestart (jobs/docker/templates/bin/pre-start.erb
-  # should be able to complete in 5 seconds.
-  sleep 5
-
-  sleep_time=2
-  timeout=60
-  count=0
-  while ! grep -q "^docker:" /etc/group
-  do
-    sleep $sleep_time
-    count=$((count + sleep_time));
-    if [ $count -ge $timeout ]; then
-      log "Error: docker job prestart doesn't exit in $timeout seconds."
-      exit 1
-    fi
-  done
-  log "docker job prestart completed"
-}

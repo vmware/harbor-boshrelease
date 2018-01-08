@@ -20,12 +20,30 @@ CTL_CMD=/sbin/start-stop-daemon
 DOCKERD_CMD=${DOCKER_PACKAGE_DIR}/bin/dockerd
 DOCKER_HOST="unix://$DOCKER_DAEMON_SOCK"
 
+# Make sure folders are ready
+for dir in $DOCKER_RUN_DIR $DOCKER_LOG_DIR ; do
+  mkdir -p ${dir}
+  chown vcap:vcap ${dir}
+  chmod 755 ${dir}
+done
+
 exec 1>> $DOCKER_LOG_DIR/ctl.stdout.log
 exec 2>> $DOCKER_LOG_DIR/ctl.stderr.log
 
 source $DOCKER_JOB_DIR/bin/properties.sh
 
-#Start docker daemon
+# Set ulimits
+export DOCKER_ULIMIT_NOFILE=<%= p('ulimit_nofile') %>
+ulimit -n ${DOCKER_ULIMIT_NOFILE}
+
+# Set vm.max_map_count
+export DOCKER_VM_MAX_MAP_COUNT=<%= p('vm.max_map_count') %>
+[ -n "${DOCKER_VM_MAX_MAP_COUNT}" ] && sysctl -w vm.max_map_count=${DOCKER_VM_MAX_MAP_COUNT}
+
+# Setup docker environment
+$DOCKER_JOB_DIR/bin/setup-env
+
+# Start dockerd daemon
 startDockerd() {
   OPT="--data-root ${DATA_ROOT_DIR} --host $DOCKER_HOST"
 
@@ -39,7 +57,7 @@ startDockerd() {
   2>> $DOCKER_LOG_DIR/dockerd.stderr.log
 }
 
-#Stop the dockerd process
+# Stop dockerd daemon
 stopDockerd() {
   if $CTL_CMD --pidfile $DOCKER_DAEMON_PIDFILE --retry TERM/30/QUIT/5/KILL --oknodo --stop; then
     rm -f $DOCKER_DAEMON_PIDFILE

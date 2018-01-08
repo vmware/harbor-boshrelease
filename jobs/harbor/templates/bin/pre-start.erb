@@ -8,8 +8,6 @@ source /var/vcap/packages/common/utils.sh
 
 PACKAGE_DIR=/var/vcap/packages
 JOB_NAME=harbor
-RUN_DIR=/var/vcap/sys/run/$JOB_NAME
-LOG_DIR=/var/vcap/sys/log/$JOB_NAME
 HARBOR_JOB_DIR=/var/vcap/jobs/$JOB_NAME
 HARBOR_PACKAGE_DIR=${PACKAGE_DIR}/harbor-app
 HARBOR_PERSISTED_DATA=/var/vcap/store/$JOB_NAME
@@ -28,7 +26,7 @@ source $HARBOR_JOB_DIR/bin/properties.sh
 log "Installing Harbor $HARBOR_FULL_VERSION"
 
 #Make sure folders are ready
-for dir in $RUN_DIR $LOG_DIR $HARBOR_PERSISTED_DATA ; do
+for dir in $HARBOR_PERSISTED_DATA ; do
   mkdir -p ${dir}
   chown vcap:vcap ${dir}
   chmod 755 ${dir}
@@ -36,7 +34,7 @@ done
 
 #Link Harbor Data dir to Bosh Persistent Disk
 #See https://bosh.io/docs/persistent-disks.html
-ln -sf $HARBOR_PERSISTED_DATA $HARBOR_DATA
+ln -sfT $HARBOR_PERSISTED_DATA $HARBOR_DATA
 
 #Populate /etc/hosts
 <%- if_p("populate_etc_hosts") do %>
@@ -81,9 +79,6 @@ fi
 
 ${HARBOR_PACKAGE_DIR}/prepare ${PREPARE_OPTS}
 
-#Workaround to resolve the docker-compose libz issue
-sudo mount /tmp -o remount,exec
-
 #Load Harbor images
 loadImages() {
   #Start dockerd
@@ -98,7 +93,6 @@ loadImages() {
   sleep 3
 }
 
-waitForDockerJobPrestart
 loadImages
 
 log "Successfully done!"
