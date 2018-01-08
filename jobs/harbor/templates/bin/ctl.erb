@@ -30,6 +30,16 @@ HARBOR_DATA=/data
 HARBOR_DB_BACKUP_DIR=$HARBOR_DATA/db_backup
 COMMAND_NAME=$1
 
+#Make sure folders are ready
+for dir in $HARBOR_RUN_DIR $HARBOR_LOG_DIR ; do
+  mkdir -p ${dir}
+  chown vcap:vcap ${dir}
+  chmod 755 ${dir}
+done
+
+#Workaround to resolve the docker-compose libz issue
+sudo mount /tmp -o remount,exec
+
 exec 1>> $HARBOR_LOG_DIR/ctl.stdout.log
 exec 2>> $HARBOR_LOG_DIR/ctl.stderr.log
 

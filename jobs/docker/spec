@@ -3,7 +3,7 @@ name: docker
 
 templates:
   bin/ctl.erb: bin/ctl
-  bin/pre-start.erb: bin/pre-start
+  bin/setup-env.erb: bin/setup-env
   bin/properties.sh.erb: bin/properties.sh
 
 packages:
