@@ -10,6 +10,7 @@ templates:
   config/server.crt: config/server.crt
   config/server.key: config/server.key
   config/ca.crt: config/ca.crt
+  config/uaa_ca.crt: config/uaa_ca.crt
 
 packages:
 - common
@@ -97,6 +98,9 @@ properties:
   ldap.url:
     description: "The url for an ldap endpoint"
     default: "ldaps://ldap.mydomain.com"
+  ldap.verify_cert:
+    description: "Verify SSL certificate of LDAP server"
+    default: true
   ldap.searchdn:
     description: "A user's DN who has the permission to search the LDAP/AD server. If your LDAP/AD server does not support anonymous search, you should configure this DN and ldap.searchpwd."
     default: ~
@@ -140,3 +144,24 @@ properties:
   populate_etc_hosts:
     description: "Whether to add IP to hostname mapping for Harbor instance in /etc/hosts."
     default: true
+  uaa.url:
+    description: "UAA Server URL"
+    default: ""
+  uaa.client_id:
+    description: "The client id for connecting to UAA Server."
+    default: ""
+  uaa.client_secret:
+    description: "The client secret for connecting to UAA Server."
+    default: ""
+  uaa.verify_cert:
+    description: "Whether to verify UAA Server certificate."
+    default: true
+  uaa.ca_cert:
+    description: "The root CA of UAA Server certificate."
+    default: ""
+  registry_storage_provider.name:
+    description: "The name of Docker Registry storage provider."
+    default: filesystem
+  registry_storage_provider.config:
+    description: "The comma separated 'key: value' pairs for configuring Docker Registry storage provider."
+    default: ""
