@@ -32,6 +32,9 @@ provides:
   - populate_etc_hosts
   
 properties:
+  reload_config:
+    description: "Whether to reload all configurations in harbor.cfg"
+    default: true
   hostname:
     description: "The IP address or hostname to access admin UI and registry service"
   ui_url_protocol:
