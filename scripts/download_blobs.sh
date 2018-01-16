@@ -9,6 +9,7 @@ wget https://download.docker.com/linux/static/stable/x86_64/docker-17.06.2-ce.tg
 wget -O docker-compose-Linux-x86_64-1.16.1 https://github.com/docker/compose/releases/download/1.16.1/docker-compose-Linux-x86_64
 wget https://www.openssl.org/source/openssl-1.0.2l.tar.gz
 wget -O harbor-offline-installer-latest.tgz https://storage.googleapis.com/harbor-builds/harbor-offline-installer-v1.3.0-rc1-93-g051d16d.tgz
+wget https://dl.google.com/go/go1.9.2.linux-amd64.tar.gz
 
 cd -
 cd ..
@@ -16,4 +17,5 @@ bosh add-blob $files_dir/docker-17.06.2-ce.tgz docker/docker-17.06.2-ce.tgz
 bosh add-blob $files_dir/docker-compose-Linux-x86_64-1.16.1 docker/docker-compose-Linux-x86_64-1.16.1
 bosh add-blob $files_dir/openssl-1.0.2l.tar.gz library/openssl-1.0.2l.tar.gz
 bosh add-blob $files_dir/harbor-offline-installer-latest.tgz harbor/harbor-offline-installer-latest.tgz
+bosh add-blob $files_dir/go1.9.2.linux-amd64.tar.gz go/go1.9.2.linux-amd64.tar.gz
 

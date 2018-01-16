@@ -5,4 +5,4 @@ dependencies:
   - golang
 
 files:
-  - harbor-api-testing/** #git submodule add https://gitlab.eng.vmware.com/harbor/harbor-api-testing.git
+  - harbor-api-testing/** #git submodule add git@gitlab.eng.vmware.com:harbor/harbor-api-testing.git

@@ -2,4 +2,4 @@
 name: golang
 
 files:
-  - go/go1.9.2.linux-amd64.tar.gz
+  - go/go1.9.2.linux-amd64.tar.gz # wget https://dl.google.com/go/go1.9.2.linux-amd64.tar.gz

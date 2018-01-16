@@ -99,7 +99,8 @@ bosh -e <alias name> env
 Before deploy, we need to create and upload the bosh release. You need to git clone this repository before going on.
 ```
 #Clone repostiry
-git clone https://gitlab.eng.vmware.com/harbor/habo.git
+git clone git@gitlab.eng.vmware.com:harbor/habo.git
+git submodule update --init --recursive
 
 #Download blobs
 cd harbor-bosh-release/scripts
