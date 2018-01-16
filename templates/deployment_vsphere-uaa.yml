@@ -1,0 +1,87 @@
+---
+name: harbor-deployment-5th-try
+
+releases:
+- name: harbor-container-registry
+  version: latest
+
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: latest
+
+instance_groups:
+- name: harbor
+  azs: [az1]
+  instances: 1
+  jobs:
+  - name: harbor
+    release: harbor-container-registry
+    properties:
+      hostname: ((hostname))
+      db_password: ((harbor_db_password))
+      admin_password: ((harbor_admin_password))
+      clair_db_password: ((clair_db_password))
+      ssl:
+        cert: ((harbor_ssl.certificate))
+        key: ((harbor_ssl.private_key))
+        ca: ((default_ca.ca))
+      with_clair: true
+      with_notary: true
+      auth_mode: "uaa_auth"
+      uaa:
+        url: "https://localhost/uaa"
+        client_id: "harbor_uaa_client"
+        client_secret: ((harbor_uaa_client_secret))
+        verify_cert: false
+        admin:
+          client_id: "admin"
+          client_secret: "secret"
+    provides:
+      harbor: {as: harbor_app_link}
+  - name: docker
+    release: harbor-container-registry
+  vm_type: standard
+  stemcell: default
+  persistent_disk_type: 20G
+  networks:
+  - name: default
+    static_ips:
+    - 10.112.122.1
+
+- name: testing
+  azs: [az1]
+  lifecycle: errand
+  instances: 1
+  jobs:
+  - name: smoke-test
+    release: harbor-container-registry
+    properties: {}
+    consumes:
+      harbor_reference: {from: harbor_app_link}
+  vm_type: standard
+  stemcell: default
+  networks:
+  - name: default
+
+update:
+  canaries: 2
+  max_in_flight: 1
+  canary_watch_time: 30000-600000
+  update_watch_time: 30000-600000
+
+variables:
+- name: harbor_admin_password
+  type: password
+- name: clair_db_password
+  type: password
+- name: harbor_db_password
+  type: password
+- name: harbor_uaa_client_secret
+  type: password
+- name: harbor_ssl
+  type: certificate
+  options:
+    ca: default_ca
+    common_name: ((hostname))
+    alternative_names: [((hostname))]

@@ -1,0 +1,14 @@
+<% range = [*'0'..'9',*'A'..'Z',*'a'..'z'] -%>
+{
+    "scope": ["openid"],
+    "client_id": "<%= p('uaa.client_id') %>",
+    "client_secret": "<%= p('uaa.client_secret') %>",
+    "resource_ids": [],
+    "authorized_grant_types": ["client_credentials", "password"],
+    "redirect_uri": ["<%= p('ui_url_protocol') %>://<%= p('hostname', spec.ip) %>, <%= p('ui_url_protocol') %>://<%= p('hostname', spec.ip) %>/*"],
+    "authorities": ["openid", "clients.read", "clients.secret", "uaa.resource", "scim.read", "scim.write"],
+    "token_salt": "<%= Array.new(8){range.sample}.join %>",
+    "autoapprove": true,
+    "allowedproviders": ["uaa", "ldap"],
+    "name": "Harbor UAA Client"
+}

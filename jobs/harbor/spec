@@ -11,6 +11,8 @@ templates:
   config/server.key: config/server.key
   config/ca.crt: config/ca.crt
   config/uaa_ca.crt: config/uaa_ca.crt
+  config/uaa.json.erb: config/uaa.json
+  bin/uaa.sh.erb: bin/uaa.sh
 
 packages:
 - common
@@ -161,6 +163,12 @@ properties:
     default: true
   uaa.ca_cert:
     description: "The root CA of UAA Server certificate."
+    default: ""
+  uaa.admin.client_id:
+    description: "ID of UAA admin client"
+    default: ""
+  uaa.admin.client_secret:
+    description: "Secret of UAA admin client"
     default: ""
   registry_storage_provider.name:
     description: "The name of Docker Registry storage provider."

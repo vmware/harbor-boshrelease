@@ -96,5 +96,11 @@ loadImages() {
 
 loadImages
 
+#If auth mode is 'uaa_auth' and admin client existing, try to register UAA client for Harbor registry
+if [ $AUTH_MODE = 'uaa_auth' ] && [[ ! -z "${UAA_ADMIN// }" ]]; then
+  source $HARBOR_JOB_DIR/bin/uaa.sh
+  register_harbor_uaa_client
+fi
+
 log "Successfully done!"
 exit 0

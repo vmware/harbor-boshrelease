@@ -32,3 +32,20 @@ waitForDockerd() {
   log "Docker daemon is running"
 }
 
+#Read json from stdin
+readJson(){
+  #At least one argument
+  if [ $# -lt 1 ]; then
+    exit 1
+  fi
+
+  #Generate the key accessor
+  accessor="doc"
+  for key in $@; do
+    accessor="$accessor['$key']"
+  done
+
+  #Read value
+  python -c "import sys, json; doc = json.load(sys.stdin); print $accessor"
+}
+
