@@ -1,4 +1,5 @@
 #readJson is util function in common package
+#log is util function in common package
 
 #Get access token of UAA
 #Access token will be returned if succeed
@@ -91,5 +92,64 @@ register_uaa_client() {
   -d "$uaa_properties" | readJson "client_id" >/dev/null
 
   return $?
+}
+
+#Unregister the Harbor UAA client if it exists; register the Harbor UAA client if renew flag is specified
+#e.g: handle_harbor_uaa_client \
+#      true \
+#      "/var/vcap/jobs/harbor/config/uaa_ca.crt" \
+#      "https://localhost/uaa" \
+#      "admin" \
+#      "secret" \
+#      "harbor_uaa_client" \
+#      "/var/vcap/jobs/harbor/config/uaa.json" #If registering needed
+handle_harbor_uaa_client() {
+  #Check verify cert parameter
+  uaa_verify_cert=$1;shift;
+  uaa_ca_file=$1;shift;
+
+  #Build curl command prefix
+  curl_cmd="curl -k"
+  if [ "$uaa_verify_cert" = "true" ] && [ -f "$uaa_ca_file" ]; then
+    curl_cmd="curl --cacert $uaa_ca_file"
+  fi
+
+  #Required parameters
+  uaa_server_address=$1;shift;
+  uaa_admin=$1;shift;
+  uaa_admin_secret=$1;shift;
+  harbor_uaa_client_id=$1;shift;
+
+  #Get OAuth admin token
+  log "Getting access token from UAA server..."
+  access_token=$(get_uaa_access_token "$curl_cmd" $uaa_server_address $uaa_admin $uaa_admin_secret)
+
+  #Try to get and check if the specified harbor uaa client existing
+  log "Checking if Harbor UAA client id '$harbor_uaa_client_id' exists"
+  harbor_uaa_client_curled=$(get_uaa_client_info "$curl_cmd" $uaa_server_address $harbor_uaa_client_id $access_token)
+
+  #Existing
+  if [ "x$harbor_uaa_client_curled" = "x$harbor_uaa_client_id" ]; then
+    log "Harbor UAA client id '$harbor_uaa_client_id' existing, trying to unregister"
+    #Try to delete
+    delete_uaa_client "$curl_cmd" $uaa_server_address $harbor_uaa_client_id $access_token
+
+    log "Harbor UAA client '$harbor_uaa_client_id' is successfully unregistered!"
+  fi
+
+  #More parameter for registering harbor uaa client?
+  if [ $# -gt 0 ]; then
+    uaa_json_file=$1
+    if [ -f $uaa_json_file ]; then
+      #Create harbor UAA client
+      uaa_properties=$(cat $uaa_json_file)
+
+      log "Registering Harbor UAA client '$harbor_uaa_client_id'..."
+      register_uaa_client "$curl_cmd" $uaa_server_address $access_token "$uaa_properties" 
+  
+      log "Harbor UAA client '$harbor_uaa_client_id' is successfully registered!"
+    fi
+  fi
+  
 }
 

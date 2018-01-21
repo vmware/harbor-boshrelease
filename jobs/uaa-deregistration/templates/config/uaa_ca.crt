@@ -1,0 +1,1 @@
+<%= link('harbor_uaa_reference').p('uaa.ca_cert', '') %>

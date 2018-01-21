@@ -39,8 +39,17 @@ instance_groups:
           client_secret: "secret"
     provides:
       harbor: {as: harbor_app_link}
+      harbor_uaa: {as: harbor_uaa_link}
+
   - name: docker
     release: harbor-container-registry
+  
+  - name: uaa-deregistration
+    release: harbor-container-registry
+    properties: {}
+    consumes:
+      harbor_uaa_reference: {from: harbor_uaa_link}
+  
   vm_type: standard
   stemcell: default
   persistent_disk_type: 20G

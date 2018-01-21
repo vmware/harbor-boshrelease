@@ -20,6 +20,7 @@ packages:
 - docker-compose
 - harbor-app
 - openssl
+- uaa
 
 provides:
 - name: harbor
@@ -32,6 +33,17 @@ provides:
   - ssl.key
   - ssl.ca
   - populate_etc_hosts
+
+- name: harbor_uaa
+  type: harbor_uaa_conn
+  properties:
+  - auth_mode
+  - uaa.url
+  - uaa.client_id
+  - uaa.verify_cert
+  - uaa.admin.client_id
+  - uaa.admin.client_secret
+  - uaa.ca_cert
   
 properties:
   reload_config:

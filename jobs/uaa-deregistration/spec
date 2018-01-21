@@ -1,0 +1,16 @@
+---
+name: uaa-deregistration
+
+templates:
+  run.sh: bin/run
+  config/uaa_ca.crt: config/uaa_ca.crt
+
+packages:
+- common
+- uaa
+
+properties: {}
+
+consumes:
+- name: harbor_uaa_reference
+  type: harbor_uaa_conn

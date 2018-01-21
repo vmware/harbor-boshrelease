@@ -3,43 +3,17 @@ source /var/vcap/packages/uaa/uaa.sh
 
 #Function is used to register UAA client for harbor
 register_harbor_uaa_client() {
-  ####Register Harbor UAA client
-  ####
   #Related files
   UAA_JSON_FILE=${HARBOR_JOB_DIR}/config/uaa.json
   UAA_CA_FILE=${HARBOR_JOB_DIR}/config/uaa_ca.crt
 
-  #Build curl command prefix
-  CURL_CMD="curl -k"
-  if [ "$UAA_VERIFY_CERT" = "true" ] && [ -f $UAA_CA_FILE ]; then
-    CURL_CMD="curl --cacert $UAA_CA_FILE"
-  fi
-
-  #Get OAuth admin token
-  log "Getting access token from UAA server..."
-  ACCESS_TOKEN=$(get_uaa_access_token "$CURL_CMD" $UAA_SERVER_ADDRESS $UAA_ADMIN $UAA_ADMIN_SECRET)
-  log "Got access token:"
-  echo "$ACCESS_TOKEN"
-
-  #Try to get and check if the specified harbor uaa client existing
-  log "Checking if Harbor UAA client id '$HARBOR_UAA_CLIENT_ID' existing"
-  HARBOR_UAA_CLIENT_CURLED=$(get_uaa_client_info "$CURL_CMD" $UAA_SERVER_ADDRESS $HARBOR_UAA_CLIENT_ID $ACCESS_TOKEN)
-
-  #Existing
-  if [ $HARBOR_UAA_CLIENT_CURLED = $HARBOR_UAA_CLIENT_ID ]; then
-    log "Harbor UAA client id '$HARBOR_UAA_CLIENT_ID' existing, trying to clean"
-    #Try to delete
-    delete_uaa_client "$CURL_CMD" $UAA_SERVER_ADDRESS $HARBOR_UAA_CLIENT_ID $ACCESS_TOKEN
-  fi
-
-
-  #Create harbor UAA client
-  UAA_PROPERTIES=$(cat $UAA_JSON_FILE)
-
-  log "Registering Harbor UAA client '$HARBOR_UAA_CLIENT_ID'..."
-  register_uaa_client "$CURL_CMD" $UAA_SERVER_ADDRESS $ACCESS_TOKEN "$UAA_PROPERTIES" 
-  
-  log "Harbor UAA client '$HARBOR_UAA_CLIENT_ID' is successfully registered!"
-  ###Register end
-  ###
+  #Start to register Harbor UAA client
+  handle_harbor_uaa_client \
+    $UAA_VERIFY_CERT \
+    $UAA_CA_FILE \
+    $UAA_SERVER_ADDRESS \
+    $UAA_ADMIN \
+    $UAA_ADMIN_SECRET \
+    $HARBOR_UAA_CLIENT_ID \
+    $UAA_JSON_FILE
 }
