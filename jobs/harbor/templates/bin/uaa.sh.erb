@@ -1,3 +1,6 @@
+#Import UAA util functions
+source /var/vcap/packages/uaa/uaa.sh
+
 #Function is used to register UAA client for harbor
 register_harbor_uaa_client() {
   ####Register Harbor UAA client
@@ -14,41 +17,27 @@ register_harbor_uaa_client() {
 
   #Get OAuth admin token
   log "Getting access token from UAA server..."
-  access_token=$($CURL_CMD "${UAA_SERVER_ADDRESS}/oauth/token" -X POST \
-  -H 'Content-Type: application/x-www-form-urlencoded' \
-  -H 'Accept: application/json' \
-  -d "client_id=$UAA_ADMIN&client_secret=$UAA_ADMIN_SECRET&grant_type=client_credentials&token_format=opaque&response_type=token" | \
-  readJson "access_token")
-
+  ACCESS_TOKEN=$(get_uaa_access_token "$CURL_CMD" $UAA_SERVER_ADDRESS $UAA_ADMIN $UAA_ADMIN_SECRET)
   log "Got access token:"
-  echo "$access_token"
+  echo "$ACCESS_TOKEN"
 
   #Try to get and check if the specified harbor uaa client existing
   log "Checking if Harbor UAA client id '$HARBOR_UAA_CLIENT_ID' existing"
-  harbor_uaa_client_curled=$($CURL_CMD "${UAA_SERVER_ADDRESS}/oauth/clients/$HARBOR_UAA_CLIENT_ID" \
-  -H "Authorization: Bearer $access_token" \
-  -H 'Accept: application/json' | \
-  readJson "client_id")
+  HARBOR_UAA_CLIENT_CURLED=$(get_uaa_client_info "$CURL_CMD" $UAA_SERVER_ADDRESS $HARBOR_UAA_CLIENT_ID $ACCESS_TOKEN)
 
   #Existing
-  if [ $harbor_uaa_client_curled = $HARBOR_UAA_CLIENT_ID ]; then
+  if [ $HARBOR_UAA_CLIENT_CURLED = $HARBOR_UAA_CLIENT_ID ]; then
     log "Harbor UAA client id '$HARBOR_UAA_CLIENT_ID' existing, trying to clean"
     #Try to delete
-    $CURL_CMD "${UAA_SERVER_ADDRESS}/oauth/clients/$HARBOR_UAA_CLIENT_ID" -X DELETE \
-    -H "Authorization: Bearer $access_token" \
-    -H 'Accept: application/json' | readJson "client_id" >/dev/null
+    delete_uaa_client "$CURL_CMD" $UAA_SERVER_ADDRESS $HARBOR_UAA_CLIENT_ID $ACCESS_TOKEN
   fi
 
 
   #Create harbor UAA client
-  uaa_properties=$(cat $UAA_JSON_FILE)
+  UAA_PROPERTIES=$(cat $UAA_JSON_FILE)
 
   log "Registering Harbor UAA client '$HARBOR_UAA_CLIENT_ID'..."
-  $CURL_CMD "${UAA_SERVER_ADDRESS}/oauth/clients" -X POST \
-  -H 'Content-Type: application/json' \
-  -H "Authorization: Bearer $access_token" \
-  -H 'Accept: application/json' \
-  -d "$uaa_properties" | readJson "client_id" >/dev/null
+  register_uaa_client "$CURL_CMD" $UAA_SERVER_ADDRESS $ACCESS_TOKEN "$UAA_PROPERTIES" 
   
   log "Harbor UAA client '$HARBOR_UAA_CLIENT_ID' is successfully registered!"
   ###Register end

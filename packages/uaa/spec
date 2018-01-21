@@ -1,0 +1,7 @@
+---
+name: uaa
+
+dependencies: []
+
+files:
+- uaa/uaa.sh
