@@ -1,0 +1,9 @@
+---
+name: harbor-dns-aliases
+
+templates:
+  dns/aliases.json.erb: dns/aliases.json
+
+properties:
+  aliases:
+    description: "A hash of domain key to target domains array for aliased DNS lookups"

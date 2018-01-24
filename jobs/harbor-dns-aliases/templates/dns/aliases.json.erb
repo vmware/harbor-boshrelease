@@ -1,0 +1,7 @@
+<%=
+aliases = {}
+if_p('aliases') do |property|
+  aliases = property
+end
+JSON.dump(aliases)
+%>
