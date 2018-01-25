@@ -37,6 +37,9 @@ for dir in $HARBOR_RUN_DIR $HARBOR_LOG_DIR ; do
   chmod 755 ${dir}
 done
 
+#Add symbol link to harbor logs dir, then 'bosh logs' can collect them.
+ln -sfT /var/log/harbor $HARBOR_LOG_DIR/harbor-app-logs
+
 #Workaround to resolve the docker-compose libz issue
 sudo mount /tmp -o remount,exec
 
