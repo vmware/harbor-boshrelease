@@ -36,7 +36,7 @@ done
 #See https://bosh.io/docs/persistent-disks.html
 ln -sfT $HARBOR_PERSISTED_DATA $HARBOR_DATA
 
-<%- if p("populate_etc_hosts") do %>
+<%- if p("populate_etc_hosts") %>
 #Populate /etc/hosts
 fqdn=<%= p("hostname") %>
 ip=<%= spec.ip %>
