@@ -19,7 +19,6 @@ packages:
 - harbor-common
 - docker-compose
 - harbor-app
-- openssl
 - uaa
 
 provides:
