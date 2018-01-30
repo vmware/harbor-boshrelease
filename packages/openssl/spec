@@ -1,7 +1,0 @@
----
-name: openssl
-
-dependencies: []
-
-files:
-- library/openssl-1.0.2l.tar.gz #https://www.openssl.org/source/openssl-1.0.2l.tar.gz

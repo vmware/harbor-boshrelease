@@ -16,9 +16,6 @@ HARBOR_DATA=/data
 CFG_FILE=${HARBOR_JOB_DIR}/config/harbor.cfg
 CRON_PATH=/etc/cron.d/$JOB_NAME
 CERTS_D=/etc/docker/certs.d
-OPENSSL_BIN_DIR=${PACKAGE_DIR}/openssl/bin
-
-export PATH=$PATH:$OPENSSL_BIN_DIR
 
 source $PACKAGE_DIR/harbor-common/common.sh
 source $HARBOR_JOB_DIR/bin/properties.sh
