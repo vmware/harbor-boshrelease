@@ -1,0 +1,10 @@
+---
+name: enable-bosh-dns
+
+templates:
+  pre-start: bin/pre-start
+  prepend-nameserver.sh: bin/prepend-nameserver.sh
+
+packages: []
+
+properties: {}
