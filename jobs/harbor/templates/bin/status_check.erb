@@ -53,8 +53,8 @@ if docker -H "unix://$DAEMON_SOCK" ps --filter "status=restarting" | grep 'vmwar
 fi
 
 #Check the API
-harbor_url=<%= p("hostname", spec.ip) %>
-protocol=<%= p("ui_url_protocol") %>
+harbor_url='<%= p("hostname", spec.ip) %>'
+protocol='<%= p("ui_url_protocol") %>'
 
 curl_command="curl -s"
 if [ "$protocol" = "https" ]; then
@@ -74,7 +74,7 @@ if [ -z "$url" ]; then
 fi
 
 #Check Docker Registry connectivity
-password=<%= p("admin_password") %>
+password='<%= p("admin_password") %>'
 login=$(docker -H "unix://$DAEMON_SOCK" login -u admin -p $password $harbor_url)
 if [ $? != 0 ] ; then
   # In case the admin password is modified on Harbor UI,

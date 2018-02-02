@@ -33,11 +33,11 @@ exec 2>> $DOCKER_LOG_DIR/ctl.stderr.log
 source $DOCKER_JOB_DIR/bin/properties.sh
 
 # Set ulimits
-export DOCKER_ULIMIT_NOFILE=<%= p('ulimit_nofile') %>
+export DOCKER_ULIMIT_NOFILE='<%= p('ulimit_nofile') %>'
 ulimit -n ${DOCKER_ULIMIT_NOFILE}
 
 # Set vm.max_map_count
-export DOCKER_VM_MAX_MAP_COUNT=<%= p('vm.max_map_count') %>
+export DOCKER_VM_MAX_MAP_COUNT='<%= p('vm.max_map_count') %>'
 [ -n "${DOCKER_VM_MAX_MAP_COUNT}" ] && sysctl -w vm.max_map_count=${DOCKER_VM_MAX_MAP_COUNT}
 
 # Setup docker environment
