@@ -3,5 +3,5 @@ aliases = {}
 if_p('aliases') do |property|
   aliases = property
 end
-JSON.dump(aliases)
+JSON.dump(aliases).downcase.gsub('_', '-')
 %>
