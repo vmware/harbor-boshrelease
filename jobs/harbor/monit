@@ -3,3 +3,4 @@ check process harbor with pidfile /var/vcap/sys/run/harbor/harbor.pid
   start program "/var/vcap/jobs/harbor/bin/ctl start" with timeout 300 seconds
   stop program "/var/vcap/jobs/harbor/bin/ctl stop" with timeout 180 seconds
   depends on dockerd
+  depends on harbor-enable-bosh-dns
