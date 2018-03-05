@@ -134,6 +134,9 @@ fi
 mkdir -p /etc/docker/certs.d/${TESTING_ENV_HOSTNAME}/
 cp $CA_FILE_PATH /etc/docker/certs.d/${TESTING_ENV_HOSTNAME}/
 
+# Enable bosh dns
+/var/vcap/jobs/bosh-dns/bin/bosh_dns_resolvconf_ctl start
+
 # Run smoke test
 set +e
 $TEST_ENTRYPOINT

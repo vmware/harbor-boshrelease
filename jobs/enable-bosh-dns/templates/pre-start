@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -e
-
-JOB_DIR=/var/vcap/jobs/enable-bosh-dns
-source ${JOB_DIR}/bin/prepend-nameserver.sh
-prepend_nameserver "/etc/resolv.conf"

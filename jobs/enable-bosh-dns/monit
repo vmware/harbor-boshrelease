@@ -1,0 +1,6 @@
+check process harbor-enable-bosh-dns
+  group vcap
+  with pidfile /var/vcap/sys/run/bosh-dns/bosh_dns_resolvconf.pid
+  start program "/var/vcap/jobs/bosh-dns/bin/bosh_dns_resolvconf_ctl start"
+  stop program "/var/vcap/jobs/bosh-dns/bin/bosh_dns_resolvconf_ctl stop"
+  depends on bosh-dns
