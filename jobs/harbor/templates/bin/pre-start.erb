@@ -96,6 +96,9 @@ loadImages() {
 
 loadImages
 
+#Wait for bosh dns service. uaa.sh depends on it to resolve PKS/PAS UAA FQDN.
+/var/vcap/jobs/bosh-dns/bin/wait
+
 #If auth mode is 'uaa_auth' and admin client existing, try to register UAA client for Harbor registry
 if [ $AUTH_MODE = 'uaa_auth' ] && [[ ! -z "${UAA_ADMIN// }" ]]; then
   source $HARBOR_JOB_DIR/bin/uaa.sh

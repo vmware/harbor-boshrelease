@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Enable bosh dns in pre-start because harbor pre-start script requires it.
+/var/vcap/jobs/bosh-dns/bin/bosh_dns_resolvconf_ctl start
