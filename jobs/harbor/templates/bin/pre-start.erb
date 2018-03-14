@@ -77,6 +77,9 @@ fi
 
 ${HARBOR_PACKAGE_DIR}/prepare ${PREPARE_OPTS}
 
+log 'Copy GCS keyfile'
+cp ${HARBOR_JOB_DIR}/config/gcs_keyfile ${HARBOR_PACKAGE_DIR}/common/config/registry/
+
 #Load Harbor images
 loadImages() {
   #Start dockerd
