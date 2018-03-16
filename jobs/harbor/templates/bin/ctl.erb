@@ -55,20 +55,22 @@ startHarbor() {
   $CTL_CMD --pidfile $TEMP_PIDFILE \
   --make-pidfile \
   --background \
-  --exec $COMPOSE_CMD \
   --start --oknodo \
-  -- $1 \
-  1>> $HARBOR_LOG_DIR/ctl.stdout.log \
-  2>> $HARBOR_LOG_DIR/ctl.stderr.log
+  --startas /bin/bash \
+  -- -c "$COMPOSE_CMD $1 1>> $HARBOR_LOG_DIR/ctl.stdout.log 2>&1"
+  #Wait for a while to let docker-compose initialize
+  sleep 5
 }
 
 #Stop the harbor process
-#Require options parameter for $COMPOSE_CMD
 stopHarbor() {
-  if $COMPOSE_CMD $1 2>&1 || \
-     ([[ -s $PIDFILE ]] && $CTL_CMD --pidfile $PIDFILE --retry TERM/30/QUIT/5/KILL --oknodo --stop); then
-     [[ -e $PIDFILE ]] && rm -f $PIDFILE
-  fi
+  $COMPOSE_CMD $1 2>&1 &
+  pid=$!
+  # monit will use pid in $PIDFILE to check if harbor job is stopped,
+  # then stop dockerd job if running 'monit stop all'.
+  echo $pid > $PIDFILE
+  wait $pid
+  rm -f $PIDFILE $TEMP_PIDFILE
 }
 
 waitForHarbor() {
@@ -138,14 +140,18 @@ case $COMMAND_NAME in
       upgradeHarbor
     fi
 
+    #Dead harbor containers will prevent Harbor service to start.
+    log "Remove dead docker containers if exist"
+    $DOCKER_CMD ps -aq -f 'status=dead'
+
     log "Launching 'docker-compose up' ..."
     COMPOSE_OPTS="${COMPOSE_OPTS} up"
     startHarbor "$COMPOSE_OPTS"
 
     #Wait for Harbor Service
     waitForHarbor
-    #Now let monit detect the real harbor pid
-    mv $TEMP_PIDFILE $PIDFILE
+    #Now let monit detect the real harbor pid. Keep the TEMP_PIDFILE to be detected by startHarbor().
+    cp $TEMP_PIDFILE $PIDFILE
 
     log "Add cron job for Harbor status check"
     cronJobUp
