@@ -19,7 +19,6 @@ for sys in $(awk '!/^#/ { if ($4 == 1) print $1 }' /proc/cgroups); do
     fi
   fi
 done
-echo "Successfully set cgroup mount point"
 
 # Add group docker
 if ! grep -q "^docker:" /etc/group; then

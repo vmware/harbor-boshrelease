@@ -2,7 +2,6 @@
 
 set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
-set -x
 
 source /var/vcap/packages/common/utils.sh
 
@@ -45,16 +44,10 @@ $DOCKER_JOB_DIR/bin/setup-env
 
 # Start dockerd daemon
 startDockerd() {
-  OPT="--data-root ${DATA_ROOT_DIR} --host $DOCKER_HOST"
-
-  $CTL_CMD --pidfile $DOCKER_DAEMON_PIDFILE \
-  --make-pidfile \
-  --background \
-  --exec $DOCKERD_CMD \
-  --start --oknodo \
-  -- $OPT \
-  >> $DOCKER_LOG_DIR/dockerd.stdout.log \
-  2>> $DOCKER_LOG_DIR/dockerd.stderr.log
+  OPT="--data-root ${DATA_ROOT_DIR} --host $DOCKER_HOST --pidfile $DOCKER_DAEMON_PIDFILE"
+  exec $DOCKERD_CMD $OPT \
+    1>>$DOCKER_LOG_DIR/dockerd.stdout.log \
+    2>>$DOCKER_LOG_DIR/dockerd.stderr.log &
 }
 
 # Stop dockerd daemon
@@ -65,7 +58,9 @@ stopDockerd() {
   fi
 }
 
-case $1 in
+COMMAND="${1:-}"
+
+case "$COMMAND" in
 
   start)
     if [ ! -d $DATA_ROOT_DIR ]; then
@@ -84,19 +79,21 @@ case $1 in
     if [[ ! -z $containers ]]; then
       for container in $containers
         do
-          echo "Stopping docker container ${container}"
+          log "Stopping docker container ${container}"
           docker -H $DOCKER_HOST stop ${container}
         done
     fi
 
-    log "Stopping docker daemon"
+    log "Stopping docker daemon..."
     stopDockerd
     ;;
 
   *)
-    echo -n "Usage: ctl {start|stop}"
+    log "Usage: ctl [start|stop]"
+    exit 0
     ;;
 
 esac
-log "Successfully done!"
+
+log "ctl $COMMAND is successfully done!"
 exit 0
