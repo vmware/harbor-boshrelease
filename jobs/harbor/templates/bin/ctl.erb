@@ -47,6 +47,16 @@ exec 2>> $HARBOR_LOG_DIR/ctl.stderr.log
 source $PACKAGE_DIR/harbor-common/common.sh
 source $HARBOR_JOB_DIR/bin/properties.sh
 
+<%- if_p("registry_storage_provider.nfs.server_uri") do |uri| -%>
+#Mount NFS Server
+mount_point='<%= p("registry_storage_provider.nfs.mount_point") %>'
+nfs_uri='<%= uri %>'
+mkdir -p $mount_point
+if ! mount | grep -q $nfs_uri ; then
+  mount $nfs_uri $mount_point
+fi
+<%- end -%>
+
 #Start the harbor process
 #Require options parameter for $COMPOSE_CMD
 startHarbor() {

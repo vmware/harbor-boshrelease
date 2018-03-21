@@ -191,3 +191,8 @@ properties:
   registry_storage_provider.gcs.keyfile_content:
     description: "The text content of the GCS key file."
     default: ""
+  registry_storage_provider.nfs.server_uri:
+    description: "The URI of NFS Server, e.g. nfs_server_ip:/path/to/exported_directory ."
+  registry_storage_provider.nfs.mount_point:
+    description: "The local mount point for remote NFS Server."
+    default: "/data/registry"
