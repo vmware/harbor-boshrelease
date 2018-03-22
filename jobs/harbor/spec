@@ -157,7 +157,7 @@ properties:
     default: "200M"
   enable_upgrade:
     description: "Enable upgrading Harbor"
-    default: false
+    default: true
   populate_etc_hosts:
     description: "Whether to add IP to hostname mapping for Harbor instance in /etc/hosts."
     default: true

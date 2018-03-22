@@ -49,3 +49,23 @@ readJson(){
   python -c "import sys, json; doc = json.load(sys.stdin); print $accessor"
 }
 
+#Compare two version strings. Return value is -1, 0, or 1.
+compareVersion() {
+  v1="${1:-0.0.1}"
+  v2="${2:-0.0.1}"
+  cmd="
+import sys
+from distutils.version import StrictVersion
+
+v1 = StrictVersion(sys.argv[1])
+v2 = StrictVersion(sys.argv[2])
+
+if v1 < v2:
+  print -1
+elif v1 > v2:
+  print 1
+else:
+  print 0
+"
+  python -c "$cmd" $v1 $v2
+}

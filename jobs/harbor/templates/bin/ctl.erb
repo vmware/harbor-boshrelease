@@ -26,8 +26,6 @@ CRON_PATH=/etc/cron.d/$JOB_NAME
 CRON_JOB_INTERVAL=2
 CHECK_SCRIPT_PATH=${HARBOR_JOB_DIR}/bin/status_check
 
-HARBOR_DATA=/data
-HARBOR_DB_BACKUP_DIR=$HARBOR_DATA/db_backup
 COMMAND_NAME=$1
 
 #Make sure folders are ready
@@ -98,14 +96,6 @@ checkDockerdStatus() {
   pgrep -f dockerd >/dev/null 2>&1
 }
 
-#Upgrade Harbor if higher version of Harbor Bosh Release to be deployed
-upgradeHarbor() {
-  log "Backing up Harbor database"
-  $DOCKER_CMD run -i --rm -e DB_USR=root -e DB_PWD=$HARBOR_DB_PWD -v /data/database:/var/lib/mysql -v $HARBOR_DB_BACKUP_DIR:/harbor-migration/backup vmware/harbor-db-migrator:$HARBOR_VERSION backup
-  log "Migrating Harbor database"
-  $DOCKER_CMD run -i --rm -e SKIP_CONFIRM=y -e DB_USR=root -e DB_PWD=$HARBOR_DB_PWD -v /data/database:/var/lib/mysql vmware/harbor-db-migrator:$HARBOR_VERSION upgrade head
-}
-
 #Add cron job to check Harbor service availability.
 #If harbor service is not running well, remove the harbor pid file, then monit will restart it.
 cronJobUp() {
@@ -133,12 +123,6 @@ case $COMMAND_NAME in
     log "Starting Harbor $HARBOR_FULL_VERSION at ${HARBOR_PROTOCOL}://${HARBOR_HOSTNAME}"
 
     waitForDockerd
-
-    if $ENABLE_MIGRATION; then
-      #The 1st Harbor Bosh Release for PKS does not need to upgrade from old version.
-      log "Upgrading Harbor if not upgraded yet ..."
-      upgradeHarbor
-    fi
 
     #Dead harbor containers will prevent Harbor service to start.
     log "Remove dead docker containers if exist"

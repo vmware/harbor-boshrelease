@@ -13,6 +13,8 @@ HARBOR_PACKAGE_DIR=${PACKAGE_DIR}/harbor-app
 HARBOR_PERSISTED_DATA=/var/vcap/store/$JOB_NAME
 HARBOR_IMAGES_TAR_PATH=${HARBOR_PACKAGE_DIR}/harbor*.tar
 HARBOR_DATA=/data
+HARBOR_DB_BACKUP_DIR=$HARBOR_DATA/db_backup
+HARBOR_VERSION_FILE=$HARBOR_DATA/harbor_version
 CFG_FILE=${HARBOR_JOB_DIR}/config/harbor.cfg
 CRON_PATH=/etc/cron.d/$JOB_NAME
 CERTS_D=/etc/docker/certs.d
@@ -32,6 +34,12 @@ done
 #Link Harbor Data dir to Bosh Persistent Disk
 #See https://bosh.io/docs/persistent-disks.html
 ln -sfT $HARBOR_PERSISTED_DATA $HARBOR_DATA
+
+if [ ! -f $HARBOR_VERSION_FILE ]; then
+  touch $HARBOR_VERSION_FILE
+fi
+INSTALLED_HARBOR_VERSION=`cat $HARBOR_VERSION_FILE`
+INSTALLED_HARBOR_VERSION="${INSTALLED_HARBOR_VERSION:-1.4.0}"
 
 <%- if p("populate_etc_hosts") %>
 #Populate /etc/hosts
@@ -77,24 +85,59 @@ fi
 
 ${HARBOR_PACKAGE_DIR}/prepare ${PREPARE_OPTS}
 
-log 'Copy GCS keyfile'
-cp ${HARBOR_JOB_DIR}/config/gcs_keyfile ${HARBOR_PACKAGE_DIR}/common/config/registry/
+if [ ! -z "$(cat ${HARBOR_JOB_DIR}/config/gcs_keyfile)" ]; then
+  log 'Generate GCS keyfile'
+  cp ${HARBOR_JOB_DIR}/config/gcs_keyfile ${HARBOR_PACKAGE_DIR}/common/config/registry/
+fi
+
+checkHarborVersion() {
+  compareVersion $HARBOR_FULL_VERSION $INSTALLED_HARBOR_VERSION
+}
 
 #Load Harbor images
 loadImages() {
-  #Start dockerd
-  /var/vcap/jobs/docker/bin/ctl start
+  result=$(checkHarborVersion)
+  if [ $result -le 0 ]; then
+    # No need to load the same images twice
+    return
+  fi
   waitForDockerd
   #TODO(szou): Add image cleaning here if do migration
   #Load images
   log "Loading docker images ..."
   $DOCKER_CMD load -i $HARBOR_IMAGES_TAR_PATH 2>&1
-  /var/vcap/jobs/docker/bin/ctl stop
-  # wait for 3 seconds to avoid possible race condition
-  sleep 3
 }
 
+#Upgrade Harbor if higher version of Harbor to be installed
+upgradeHarbor() {
+  result=$(checkHarborVersion)
+  case $result in
+    -1)
+      log "Can not upgrade Harbor from $INSTALLED_HARBOR_VERSION to $HARBOR_FULL_VERSION. Aborted."
+      exit 1
+      ;;
+    1)
+      log "Upgrading Harbor $INSTALLED_HARBOR_VERSION to $HARBOR_FULL_VERSION ..."
+      ;;
+    0)
+      # Already installed. No need to upgrade.
+      return
+      ;;
+  esac
+
+  log "Backing up Harbor database"
+  $DOCKER_CMD run -i --rm -e DB_USR=root -e DB_PWD=$HARBOR_DB_PWD -v /data/database:/var/lib/mysql -v $HARBOR_DB_BACKUP_DIR:/harbor-migration/backup vmware/harbor-db-migrator:$HARBOR_VERSION backup
+  log "Migrating Harbor database"
+  $DOCKER_CMD run -i --rm -e SKIP_CONFIRM=y -e DB_USR=root -e DB_PWD=$HARBOR_DB_PWD -v /data/database:/var/lib/mysql vmware/harbor-db-migrator:$HARBOR_VERSION upgrade head
+}
+
+#Start docker daemon
+/var/vcap/jobs/docker/bin/ctl start
+
 loadImages
+<%- if p("enable_upgrade") -%>
+upgradeHarbor
+<%- end -%>
 
 #Wait for bosh dns service. uaa.sh depends on it to resolve PKS/PAS UAA FQDN.
 /var/vcap/jobs/bosh-dns/bin/wait
@@ -104,6 +147,9 @@ if [ $AUTH_MODE = 'uaa_auth' ] && [[ ! -z "${UAA_ADMIN// }" ]]; then
   source $HARBOR_JOB_DIR/bin/uaa.sh
   register_harbor_uaa_client
 fi
+
+#Save installed harbor version to file
+echo $HARBOR_FULL_VERSION > $HARBOR_VERSION_FILE
 
 log "Successfully done!"
 exit 0
