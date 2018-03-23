@@ -145,7 +145,7 @@ properties:
   ldap.group_filter:
     description: "Search filter for groups in LDAP/AD, make sure the syntax of the filter is correct."
     default: "objectclass=group"
-  ldap.group_uid:
+  ldap.group_gid:
     description: "The attribute used in a search to match a group, it could be cn, name or other attributes."
     default: "cn"
   ldap.group_scope:
