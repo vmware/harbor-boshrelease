@@ -125,20 +125,32 @@ properties:
     description: "The password of the ldap.searchdn"
     default: ~
   ldap.filter:
-    description: "Search filter for LDAP/AD, make sure the syntax of the filter is correct"
+    description: "Search filter for users in LDAP/AD, make sure the syntax of the filter is correct."
     default: ~
   ldap.basedn:
     description: "The base DN from which to look up a user in LDAP/AD"
     default: "ou=people,dc=mydomain,dc=com"
   ldap.uid:
-    description: "The attribute used in a search to match a user, it could be uid, cn, email, sAMAccountName or other attributes"
+    description: "The attribute used in a search to match a user, it could be uid, cn, email, sAMAccountName or other attributes."
     default: "uid"
   ldap.scope:
-    description: "The scope to search for users, 1-LDAP_SCOPE_BASE, 2-LDAP_SCOPE_ONELEVEL, 3-LDAP_SCOPE_SUBTREE"
-    default: "3"
+    description: "The scope to search for users: 0-LDAP_SCOPE_BASE, 1-LDAP_SCOPE_ONELEVEL, 2-LDAP_SCOPE_SUBTREE"
+    default: "2"
   ldap.timeout:
     description: "Timeout (in seconds)  when connecting to an LDAP Server"
     default: 5
+  ldap.group_basedn:
+    description: "The base DN from which to look up a group in LDAP/AD"
+    default: "ou=group,dc=mydomain,dc=com"
+  ldap.group_filter:
+    description: "Search filter for groups in LDAP/AD, make sure the syntax of the filter is correct."
+    default: "objectclass=group"
+  ldap.group_uid:
+    description: "The attribute used in a search to match a group, it could be cn, name or other attributes."
+    default: "cn"
+  ldap.group_scope:
+    description: "The scope to search for users: 1-LDAP_SCOPE_BASE, 2-LDAP_SCOPE_ONELEVEL, 3-LDAP_SCOPE_SUBTREE"
+    default: "2"
   ssl.cert:
     description: "The certificate for server"
   ssl.key:
