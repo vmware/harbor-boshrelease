@@ -39,7 +39,6 @@ if [ ! -f $HARBOR_VERSION_FILE ]; then
   touch $HARBOR_VERSION_FILE
 fi
 INSTALLED_HARBOR_VERSION=`cat $HARBOR_VERSION_FILE`
-INSTALLED_HARBOR_VERSION="${INSTALLED_HARBOR_VERSION:-1.4.0}"
 
 <%- if p("populate_etc_hosts") %>
 #Populate /etc/hosts
@@ -91,14 +90,24 @@ if [ ! -z "$(cat ${HARBOR_JOB_DIR}/config/gcs_keyfile)" ]; then
 fi
 
 checkHarborVersion() {
-  compareVersion $HARBOR_FULL_VERSION $INSTALLED_HARBOR_VERSION
+  if [ -z "$INSTALLED_HARBOR_VERSION" ]; then
+     if $DOCKER_CMD images | grep vmware/harbor-log | grep -q v1.4.0 ; then
+       # Harbor Tile 1.4.x was installedwhich does not write the HARBOR_VERSION_FILE.
+       echo 1
+     else
+       # Harbor was not installed on this machine before.
+       echo 2
+     fi
+  else
+    compareVersion $HARBOR_FULL_VERSION $INSTALLED_HARBOR_VERSION
+  fi
 }
 
 #Load Harbor images
 loadImages() {
   result=$(checkHarborVersion)
   if [ $result -le 0 ]; then
-    # No need to load the same images twice
+    # No need to load the same images twice or images of lower version.
     return
   fi
   waitForDockerd
@@ -118,6 +127,10 @@ upgradeHarbor() {
       ;;
     1)
       log "Upgrading Harbor $INSTALLED_HARBOR_VERSION to $HARBOR_FULL_VERSION ..."
+      ;;
+    2)
+      # Harbor is not installed before. No need to upgrade.
+      return
       ;;
     0)
       # Already installed. No need to upgrade.
