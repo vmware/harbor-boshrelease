@@ -48,8 +48,17 @@ source $PACKAGE_DIR/harbor-common/common.sh
 source $HARBOR_JOB_DIR/bin/properties.sh
 
 <%- if_p("registry_storage_provider.nfs.server_uri") do |uri| -%>
-#Mount NFS Server
 mount_point='<%= p("registry_storage_provider.nfs.mount_point") %>'
+# Change default storage for registry container to the mount_point.
+# /data is linked to /var/vcap/store/harbor which mounts /dev/sdc1. Need to mount NFS to a directory outside /data.
+# Otherwise when bosh recreates Harbor VM, 'umount /var/vcap/store' on existing VM wll fail.
+sed -i "s|/data/registry:/storage|$mount_point:/storage|" ${HARBOR_PACKAGE_DIR}/docker-compose.yml
+# Ensure the replacement succeeded
+if ! grep -q "$mount_point:/storage" ${HARBOR_PACKAGE_DIR}/docker-compose.yml ; then
+  log "Failed to config NFS storage mapping for registry container."
+  exit 1
+fi
+# Mount NFS Server
 nfs_uri='<%= uri %>'
 mkdir -p $mount_point
 if ! mount | grep -q $nfs_uri ; then

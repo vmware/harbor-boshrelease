@@ -207,4 +207,4 @@ properties:
     description: "The URI of NFS Server, e.g. nfs_server_ip:/path/to/exported_directory ."
   registry_storage_provider.nfs.mount_point:
     description: "The local mount point for remote NFS Server."
-    default: "/data/registry"
+    default: "/harbor-registry"
