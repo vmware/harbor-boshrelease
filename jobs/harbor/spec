@@ -147,8 +147,10 @@ properties:
     description: "The CA of the server"
   with_clair:
     description: "An option to determine whether install the optional component Clair or not."
+    default: true
   with_notary:
     description: "An option to determine whether install the optional component Notary or not."
+    default: true
   log_rotate_count:
     description: "The max count of log files before rotated"
     default: 50
