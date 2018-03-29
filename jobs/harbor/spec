@@ -145,6 +145,15 @@ properties:
     description: "The certificate key for server"
   ssl.ca:
     description: "The CA of the server"
+  http_proxy:
+    description: "The http_proxy url for Clair"
+    default: ""
+  https_proxy:
+    description: "The https_proxy url for Clair"
+    default: ""
+  no_proxy:
+    description: "The no_proxy config for Clair"
+    default: "127.0.0.1,localhost,ui"
   with_clair:
     description: "An option to determine whether install the optional component Clair or not."
     default: true
