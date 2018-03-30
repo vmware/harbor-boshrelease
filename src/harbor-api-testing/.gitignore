@@ -1,0 +1,13 @@
+**/*npm-debug.log.*
+**/*yarn-error.log.*
+.idea/
+.DS_Store
+**/npm*.log
+
+**/*ngsummary.json
+**/*ngfactory.ts
+**/aot
+**/dist
+**/.bin
+**/*.crt
+**/*.key
