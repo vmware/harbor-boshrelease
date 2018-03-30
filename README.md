@@ -1,12 +1,14 @@
-# Harbor BOSH release
+# Harbor BOSH Release
 
 Project Harbor is an enterprise-class registry server that stores and distributes Docker images. Harbor extends the open source Docker Distribution by adding the functionalities usually required by an enterprise, such as security, identity and management. As an enterprise private registry, Harbor offers better performance and security. Having a registry closer to the build and run environment improves the image transfer efficiency. Harbor supports the setup of multiple registries and has images replicated between them. In addition, Harbor offers advanced security features, such as user management, access control and activity auditing.
 
-This repository uses the [Harbor](https://github.com/vmware/harbor) offline installation package to create the [BOSH](https://bosh.io) release which can be used to quickly deploy a standalone Harbor. The main idea of this Harbor BOSH release is running the Harbor components as containers on top of Docker and docker-compose. Please be noted here that **it's not a HA architecture of the Harbor deployed with this Harbor BOSH release.**
+This repository uses the [Harbor](https://github.com/vmware/harbor) offline installation package to create the [BOSH](https://bosh.io) release for Harbor, which can be used to quickly deploy a standalone Harbor. The main idea of this Harbor BOSH release is running the Harbor components as containers on top of Docker and docker-compose. Please be noted here that **it's not a HA architecture deployed with this Harbor BOSH release.**
+
+This BOSH release for Harbor is open sourced under Apache License Version 2.0.
 
 ## Repository Contents
 
-This repository is structured for use with BOSH; an open source tool for release engineering, deployment and lifecycle management of large scale distributed services. 
+This repository consists of the following file directories.
 
 ### packages
 Packaging instructions used by BOSH to build each of the dependencies. The following 4 packages are contained in this repository:
@@ -95,15 +97,15 @@ bosh -e <alias name> env
 
 ```
 
-### Create the release
+### Create the BOSH release
 Before deploy, we need to create and upload the bosh release. You need to git clone this repository before going on.
 ```
 #Clone repostiry
-git clone git@gitlab.eng.vmware.com:harbor/habo.git harbor-bosh-release
+git clone git@github.com:vmware/harbor-boshrelease.git
 git submodule update --init --recursive
 
 #Download blobs
-cd harbor-bosh-release/scripts
+cd harbor-boshrelease/scripts
 bash add_blobs.sh
 
 #Create a dev release
@@ -156,12 +158,19 @@ bosh -e <env> -d <deployment name> delete-deployment --force
 
 ```
 
-## Next work
-* **Verify version upgrade process via BOSH [P0]**
-* **Keep on refactoring the whole process [P0]**
-* Add smoke tests job [P1]
-* Make deployment on aws and gcp (Create cloud_config file for aws and gcp)[P1]
-* Extract manifest to templates and cloud_config files and provide manifest file generating script tool [P2]
-* Create Pivotal tile based on this BOSH release [P3]
+## Maintainers
 
-The job is tracked by issue [#3184: BOSH release for Harbor](https://github.com/vmware/harbor/issues/3184).
+- Jesse Hu huh@vmware.com
+- Steven Zou szou@vmware.com
+- Daniel Jiang jiangd@vmware.com
+
+## Contributing
+
+The harbor-boshrelease project team welcomes contributions from the community. If you wish to contribute code and you have not
+signed our contributor license agreement (CLA), our bot will update the issue when you open a Pull Request. For any
+questions about the CLA process, please refer to our [FAQ](https://cla.vmware.com/faq). For more detailed information,
+refer to [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+Refer to [LICENSE](LICENSE).
