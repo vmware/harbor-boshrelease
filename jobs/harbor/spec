@@ -174,10 +174,10 @@ properties:
     default: true
   log_rotate_count:
     description: "The max count of log files before rotated"
-    default: 50
+    default: 10
   log_rotate_size:
     description: "The max size of single log file"
-    default: "200M"
+    default: "100M"
   enable_upgrade:
     description: "Enable upgrading Harbor"
     default: true
