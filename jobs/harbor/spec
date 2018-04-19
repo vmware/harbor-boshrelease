@@ -58,7 +58,7 @@ properties:
     description: "The password for the root user of mysql db"
   max_job_workers:
     description: "Maximum number of job workers in job service"
-    default: 3
+    default: 50
   customize_crt:
     description: "Determine whether or not to generate certificate for the registry's token. If the value is on, the prepare script creates new root cert and private key for generating token to access the registry. If the value is off the default key/cert will be used. This flag also controls the creation of the notary signer's cert."
     default: "on"
@@ -78,9 +78,6 @@ properties:
   token_expiration:
     description: "The expiration time (in minute) of token created by token service, default is 30 minutes"
     default: 30
-  verify_remote_cert:
-    description: "Determine whether the job service should verify the ssl cert when it connects to a remote registry."
-    default: "on"
   project_creation_restriction:
     description: "The flag to control what users have permission to create projects. The default value [everyone] allows everyone to creates a project. Set to [adminonly] so that only admin user can create project."
     default: "everyone"
