@@ -160,9 +160,9 @@ bosh -e <env> -d <deployment name> delete-deployment --force
 
 ## Maintainers
 
-- Jesse Hu huh@vmware.com
-- Steven Zou szou@vmware.com
-- Daniel Jiang jiangd@vmware.com
+- Jesse Hu [huh at vmware.com]
+- Steven Zou [szou at vmware.com]
+- Daniel Jiang [jiangd at vmware.com]
 
 ## Contributing
 
