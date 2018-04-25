@@ -180,7 +180,7 @@ properties:
     default: true
   populate_etc_hosts:
     description: "Whether to add IP to hostname mapping for Harbor instance in /etc/hosts."
-    default: true
+    default: false
   uaa.url:
     description: "UAA Server URL"
     default: ""
