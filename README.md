@@ -101,11 +101,11 @@ bosh -e <alias name> env
 Before deploy, we need to create and upload the bosh release. You need to git clone this repository before going on.
 ```
 #Clone repostiry
-git clone git@github.com:vmware/harbor-cff-bosh-release.git
+git clone git@github.com:vmware/harbor-boshrelease.git
 git submodule update --init --recursive
 
 #Download blobs
-cd harbor-cff-bosh-release/scripts
+cd harbor-boshrelease/scripts
 bash add_blobs.sh
 
 #Create a dev release
