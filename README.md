@@ -102,7 +102,6 @@ Before deploy, we need to create and upload the bosh release. You need to git cl
 ```
 #Clone repostiry
 git clone git@github.com:vmware/harbor-boshrelease.git
-git submodule update --init --recursive
 
 #Download blobs
 cd harbor-boshrelease/scripts
@@ -126,7 +125,7 @@ Before triggering deployment, confirm the release is there.
 bosh -e <env> releases
 
 ```
-Now, make the deployment.
+Now make the deployment.
 **NOTES: deployment_vsphere.yml is not a manifest file template yet, you need to change some of the contents such as network, director uuid, release and certifications etc. according to your environment.**
 
 ```
