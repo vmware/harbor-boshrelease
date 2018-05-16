@@ -27,7 +27,7 @@ instance_groups:
         key: ((harbor_ssl.private_key))
         ca: ((default_ca.ca))
   - name: docker
-    release: harbor
+    release: harbor-container-registry
   vm_type: standard
   stemcell: default
   persistent_disk_type: 20G
