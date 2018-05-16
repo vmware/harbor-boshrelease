@@ -38,9 +38,9 @@ URLs and access credentials to the bosh blobstore for storing final releases. Cu
 ### src
 Provide the utility script source code for the **common** package.
 
-### templates
-Provide deployment manifest templates and related manifest generation scripts. Currently, only manifest file for vCenter/vSphere.
-* **deployment_vsphere.yml:** Deploy harbor with BOSH to vCenter/vSphere.
+### manifests
+Provide deployment manifest templates and related manifest generation scripts. Currently, only provides manifest file for vSphere vCenter.
+* **deployment-vsphere.yml:** Deploy Harbor to vSphere vCenter.
 
 ### .final_builds
 References into the public blobstore for final jobs & packages (each referenced by one or more **releases**)
@@ -57,13 +57,13 @@ yml files containing the references to blobs for each package in a given release
 Here we just provide the command for vCenter/vSphere, for other IaaS platform, please refer to [BOSH doc](https://bosh.io/docs/init.html).
 ```
 # Create directory to keep state
-$ mkdir bosh-1 && cd bosh-1
+mkdir bosh-1 && cd bosh-1
 
 # Clone Director templates
-$ git clone https://github.com/cloudfoundry/bosh-deployment
+git clone https://github.com/cloudfoundry/bosh-deployment
 
 # Fill below variables (replace example values) and deploy the Director
-$ bosh create-env bosh-deployment/bosh.yml \
+bosh create-env bosh-deployment/bosh.yml \
     --state=state.json \
     --vars-store=creds.yml \
     -o bosh-deployment/vsphere/cpi.yml \
@@ -90,11 +90,11 @@ $ bosh create-env bosh-deployment/bosh.yml \
 bosh alias-env <alias name> -e <director IP> --ca-cert <(bosh int ./creds.yml --path /director_ssl/ca)
 
 # Set env
-$ export BOSH_CLIENT=admin
-$ export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
-
-bosh -e <alias name> env
-
+bosh int ./creds.yml --path /director_ssl/ca > root_ca_certificate
+export BOSH_CA_CERT=root_ca_certificate
+export BOSH_CLIENT=admin
+export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
+export BOSH_ENVIRONMENT=<director IP>
 ```
 
 ### Create the BOSH release
@@ -111,50 +111,49 @@ bash add_blobs.sh
 bosh create-release --force
 
 #Or create a final release
-#bosh -e <env> create-release --final [--name <release_name> --version <version>]
+bosh create-release --final [--name <release_name> --version <version>]
 
 #Upload your release
 #Current workdir is the release dir
-bosh -e <env> upload-release
-
+bosh upload-release
 ```
 
 ### Make a deployment
 Before triggering deployment, confirm the release is there.
 ```
-bosh -e <env> releases
-
+bosh releases
 ```
-Now make the deployment.
-**NOTES: deployment_vsphere.yml is not a manifest file template yet, you need to change some of the contents such as network, director uuid, release and certifications etc. according to your environment.**
+You can find the bosh cloud config file, bosh runtime config file and deployment manifest samples in directory manifests.
+**NOTES:**
+* Change cloud-config-vsphere.yml per your environment.
+* Change configuration in the deployment manifest sample file deployment-vsphere.yml (e.g. azs name, networks name) per your environment.
+* Change the version of harbor-container-registry release in runtime-config-harbor.yml.
 
+Upload cloud-config and runtime-config, then kick off the deployment:
 ```
-#Make sure current workdir is the harbor bosh release dir
-bosh -n update-cloud-config templates/cloud_config.yml
-bosh -e <env> -d harbor-deployment deploy templates/deployment_vsphere.yml --vars-store /path/to/creds.yml -v hostname=<harbor_vm_fqdn_or_ip>
-
+bosh -n update-cloud-config   manifests/cloud-config-vsphere.yml
+bosh -n update-runtime-config manifests/runtime-config-bosh-dns.yml
+bosh -n update-runtime-config manifests/runtime-config-harbor.yml
+bosh -n -d harbor-deployment deploy templates/deployment-vsphere.yml -v hostname=harbor.local [--vars-store /path/to/creds.yml]
+bosh run-errand smoke-test -d harbor-deployment
 ```
 After the deployment is completed, you can check the status of the deployment:
-
 ```
 #See current deployments
-bosh -e <env> deployments
+bosh deployments
 
 #Check the status of vms
-bosh -e <env> vms
+bosh vms
 
 #Check the status of instances
-bosh -e <env> instances
-
+bosh instances
 ```
 
 ### Delete deployment
-If you want to delete the specified deployment, execute
-
+If you want to delete the specified deployment, execute:
 ```
 ## --force ignore the errors when deleting
-bosh -e <env> -d <deployment name> delete-deployment --force
-
+bosh -d harbor-deployment delete-deployment --force
 ```
 
 ## Maintainers

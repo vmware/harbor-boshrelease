@@ -1,5 +1,5 @@
 ---
-name: harbor-deployment-4th-try
+name: harbor-deployment
 
 releases:
 - name: harbor-container-registry
@@ -11,8 +11,8 @@ stemcells:
   version: latest
 
 instance_groups:
-- name: harbor
-  azs: [az1]
+- name: harbor-app
+  azs: [az-1]
   instances: 1
   jobs:
   - name: harbor
@@ -22,44 +22,34 @@ instance_groups:
       db_password: ((harbor_db_password))
       admin_password: ((harbor_admin_password))
       clair_db_password: ((clair_db_password))
+      with_clair: true
+      with_notary: true
       ssl:
         cert: ((harbor_ssl.certificate))
         key: ((harbor_ssl.private_key))
-        ca: ((default_ca.ca))
-      with_clair: true
-      with_notary: true
-    provides:
-      harbor: {as: harbor_app_link}
+        ca: ((default_ca.certificate))
   - name: docker
     release: harbor-container-registry
-  vm_type: standard
-  stemcell: default
-  persistent_disk_type: 20G
-  networks:
-  - name: default
-    static_ips:
-    - 10.112.122.1
-
-- name: testing
-  azs: [az1]
-  lifecycle: errand
-  instances: 1
-  jobs:
+  # this is an errand job
   - name: smoke-test
     release: harbor-container-registry
     properties: {}
     consumes:
-      harbor_reference: {from: harbor_app_link}
-  vm_type: standard
+      harbor_reference: {from: harbor}
   stemcell: default
+  vm_resources:
+    cpu: 2
+    ram: 2048
+    ephemeral_disk_size: 10240
+  persistent_disk: 20480
   networks:
-  - name: default
+  - name: deployment-network
 
 update:
   canaries: 2
   max_in_flight: 1
-  canary_watch_time: 30000-600000
-  update_watch_time: 30000-600000
+  canary_watch_time: 30000-300000
+  update_watch_time: 30000-300000
 
 variables:
 - name: harbor_admin_password
@@ -68,6 +58,11 @@ variables:
   type: password
 - name: harbor_db_password
   type: password
+- name: default_ca
+  type: certificate
+  options:
+    is_ca: true
+    common_name: harbor-ca
 - name: harbor_ssl
   type: certificate
   options:
