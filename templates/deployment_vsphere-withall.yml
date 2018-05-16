@@ -29,7 +29,7 @@ instance_groups:
       with_clair: true
       with_notary: true
   - name: docker
-    release: harbor
+    release: harbor-container-registry
   vm_type: standard
   stemcell: default
   persistent_disk_type: 20G
