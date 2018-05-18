@@ -98,7 +98,7 @@ export BOSH_ENVIRONMENT=<director IP>
 ```
 
 ### Create the BOSH release
-Before deploy, we need to create and upload the bosh release. You need to git clone this repository before going on.
+Before deploy, we need to create the harbor bosh release. You need to git clone this repository before going on.
 ```
 #Clone repostiry
 git clone git@github.com:vmware/harbor-boshrelease.git
@@ -111,18 +111,30 @@ bash add_blobs.sh
 bosh create-release --force
 
 #Or create a final release
-bosh create-release --final [--name <release_name> --version <version>]
-
-#Upload your release
-#Current workdir is the release dir
-bosh upload-release
+bosh create-release --final [--version <version>]
 ```
 
 ### Make a deployment
-Before triggering deployment, confirm the release is there.
+
+#### Deploy pre-build final release
+
+You can deploy the published pre-build final release without creating a local dev release:
+```
+bosh -n -d harbor-deployment deploy manifests/harbor.yml -v hostname=harbor.local
+```
+
+#### Deploy dev release
+
+Upload the created dev release:
+```
+bosh upload-release
+```
+
+Confirm the release is uploaded.
 ```
 bosh releases
 ```
+
 You can find the bosh cloud config file, bosh runtime config file and deployment manifest samples in directory manifests.
 **NOTES:**
 * Change cloud-config-vsphere.yml per your environment.
@@ -132,8 +144,8 @@ You can find the bosh cloud config file, bosh runtime config file and deployment
 Upload cloud-config and runtime-config, then kick off the deployment:
 ```
 bosh -n update-cloud-config   manifests/cloud-config-vsphere.yml
-bosh -n update-runtime-config manifests/runtime-config-bosh-dns.yml
-bosh -n update-runtime-config manifests/runtime-config-harbor.yml
+bosh -n update-runtime-config manifests/runtime-config-bosh-dns.yml --name bosh-dns
+bosh -n update-runtime-config manifests/runtime-config-harbor.yml   --name harbor
 bosh -n -d harbor-deployment deploy templates/deployment-vsphere.yml -v hostname=harbor.local [--vars-store /path/to/creds.yml]
 bosh run-errand smoke-test -d harbor-deployment
 ```

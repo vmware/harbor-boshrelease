@@ -1,0 +1,89 @@
+---
+name: harbor-deployment
+
+releases:
+- name: harbor-container-registry
+  version: 1.5.0
+  sha1: ded9ed8a5e2efadc3aed26444710d8446483bd59
+  url: https://storage.googleapis.com/harbor-bosh-releases/harbor-container-registry-1.5.0.tgz
+
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: latest
+
+addons:
+- name: harbor-bosh-dns
+  jobs:
+  - name: harbor-dns-aliases
+    release: harbor-container-registry
+    properties:
+      aliases:
+        ((hostname)):
+        - "*.harbor-app.deployment-network.harbor-deployment.bosh"
+        uaa.server.local:
+        - "*.uaa-app.deployment-network.uaa-deployment.bosh"
+- name: enable-bosh-dns
+  jobs:
+  - name: enable-bosh-dns
+    release: harbor-container-registry
+
+instance_groups:
+- name: harbor-app
+  azs: [az-1]
+  instances: 1
+  jobs:
+  - name: harbor
+    release: harbor-container-registry
+    properties:
+      hostname: ((hostname))
+      db_password: ((harbor_db_password))
+      admin_password: ((harbor_admin_password))
+      clair_db_password: ((clair_db_password))
+      with_clair: true
+      with_notary: true
+      ssl:
+        cert: ((harbor_ssl.certificate))
+        key: ((harbor_ssl.private_key))
+        ca: ((default_ca.certificate))
+  - name: docker
+    release: harbor-container-registry
+  # this is an errand job
+  - name: smoke-test
+    release: harbor-container-registry
+    properties: {}
+    consumes:
+      harbor_reference: {from: harbor}
+  stemcell: default
+  vm_resources:
+    cpu: 2
+    ram: 2048
+    ephemeral_disk_size: 10240
+  persistent_disk: 20480
+  networks:
+  - name: deployment-network
+
+update:
+  canaries: 2
+  max_in_flight: 1
+  canary_watch_time: 30000-300000
+  update_watch_time: 30000-300000
+
+variables:
+- name: harbor_admin_password
+  type: password
+- name: clair_db_password
+  type: password
+- name: harbor_db_password
+  type: password
+- name: default_ca
+  type: certificate
+  options:
+    is_ca: true
+    common_name: harbor-ca
+- name: harbor_ssl
+  type: certificate
+  options:
+    ca: default_ca
+    common_name: ((hostname))
+    alternative_names: [((hostname))]
