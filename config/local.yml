@@ -1,6 +1,6 @@
 ---
 blobstore:
-  provider: gcs
+  provider: local
   options:
-    bucket_name: harbor-bosh-releases
+    blobstore_path: /tmp/harbor-blob-store
 final_name: harbor-container-registry

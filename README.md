@@ -97,41 +97,39 @@ export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
 export BOSH_ENVIRONMENT=<director IP>
 ```
 
-### Create the BOSH release
-Before deploy, we need to create the harbor bosh release. You need to git clone this repository before going on.
+## Download source code
 ```
-#Clone repostiry
+# Clone repostiry
 git clone git@github.com:vmware/harbor-boshrelease.git
-
-#Download blobs
-cd harbor-boshrelease/scripts
-bash add_blobs.sh
-
-#Create a dev release
-bosh create-release --force
-
-#Or create a final release
-bosh create-release --final [--version <version>]
+cd harbor-boshrelease
 ```
 
-### Make a deployment
-
-#### Deploy pre-build final release
-
+## Make a deployment with pre-build final release
 You can deploy the published pre-build final release without creating a local dev release:
 ```
 bosh -n -d harbor-deployment deploy manifests/harbor.yml -v hostname=harbor.local
 ```
 
-#### Deploy dev release
-
-Upload the created dev release:
+## Make a deployment with dev release
+Before deploy, you need to create the Harbor BOSH release.
+## Create the Harbor BOSH release
 ```
+# Sync remote pre-build blobs
+bosh sync-blobs
+# Or download blobs locally with new version of blob packages
+cd scripts
+bash add_blobs.sh
+
+# Create a dev release
+bosh create-release --force
+
+# Or create a final release
+bosh create-release --final [--version <version>]
+
+# Upload the created dev release:
 bosh upload-release
-```
 
-Confirm the release is uploaded.
-```
+# Confirm the release is uploaded.
 bosh releases
 ```
 
@@ -151,13 +149,13 @@ bosh run-errand smoke-test -d harbor-deployment
 ```
 After the deployment is completed, you can check the status of the deployment:
 ```
-#See current deployments
+# See current deployments
 bosh deployments
 
-#Check the status of vms
+# Check the status of vms
 bosh vms
 
-#Check the status of instances
+# Check the status of instances
 bosh instances
 ```
 
