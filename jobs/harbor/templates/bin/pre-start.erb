@@ -166,5 +166,9 @@ fi
 #Save installed harbor version to file
 echo $HARBOR_FULL_VERSION > $HARBOR_VERSION_FILE
 
+################# copy nginx.conf file
+cp ${HARBOR_JOB_DIR}/config/nginx.conf ${HARBOR_PACKAGE_DIR}/common/config/nginx/nginx.conf
+#################
+
 log "Successfully done!"
 exit 0
