@@ -14,6 +14,7 @@ templates:
   config/uaa.json.erb: config/uaa.json
   bin/uaa.sh.erb: bin/uaa.sh
   config/gcs_keyfile: config/gcs_keyfile
+  config/nginx.conf/erb: config/nginx.conf
 
 packages:
 - common
