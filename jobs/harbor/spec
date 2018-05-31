@@ -217,3 +217,6 @@ properties:
   registry_storage_provider.nfs.mount_point:
     description: "The local mount point for remote NFS Server."
     default: "/harbor-registry"
+  enable_externalssl:
+    description: "Set true if external ssl offload lb is connected"
+    default: false
