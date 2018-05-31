@@ -168,7 +168,8 @@ echo $HARBOR_FULL_VERSION > $HARBOR_VERSION_FILE
 
 <%- if p("enable_externalssl") -%>
 ################# copy nginx.conf file
-cp ${HARBOR_JOB_DIR}/config/nginx.conf ${HARBOR_PACKAGE_DIR}/common/config/nginx/nginx.conf
+/bin/cp ${HARBOR_JOB_DIR}/config/nginx.conf ${HARBOR_PACKAGE_DIR}/common/config/nginx/nginx.conf
+/bin/sed -i 's/^http:/http:\n  relativeurls: true/' ./data/packages/harbor-app/*/common/config/registry/config.yml
 #################
 <%- end -%>
 
