@@ -19,6 +19,4 @@
 **/blobs
 **/private.yml
 ~/
-**/.final_builds
-**/index.yml
 **/*.tgz

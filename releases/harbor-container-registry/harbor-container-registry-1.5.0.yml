@@ -1,83 +1,83 @@
 name: harbor-container-registry
 version: 1.5.0
-commit_hash: 089c7c5
+commit_hash: 8bdc83d
 uncommitted_changes: false
 jobs:
 - name: docker
   version: cf939becf6700f3545d6b47849740ca3b80cf707
   fingerprint: cf939becf6700f3545d6b47849740ca3b80cf707
-  sha1: e2c16b7892500366a669239660d7afed931e4f3f
+  sha1: ac48173ca5fb28e8324b64e6d06a9a72b5948381
 - name: enable-bosh-dns
   version: 733816c24ab25eb80dd82cec4ff740f90e8f5495
   fingerprint: 733816c24ab25eb80dd82cec4ff740f90e8f5495
-  sha1: 1bf94cf6d465e68ef89420157e000fff45a0a3ad
+  sha1: a8c46ebb39e904a22fb3d125b2bbce19440b8fce
 - name: harbor
   version: 6b0483fd21d85b07fdb902103b754fc4e365732e
   fingerprint: 6b0483fd21d85b07fdb902103b754fc4e365732e
-  sha1: 563cd4f118922c8f35dd837420c7961ffc402c30
+  sha1: 987224d4c880221a6b4e7da38028efa8a6f70f99
 - name: harbor-dns-aliases
   version: 26ed37cad657bcbf90c6282e09ca4be571904e35
   fingerprint: 26ed37cad657bcbf90c6282e09ca4be571904e35
-  sha1: 74a5daa6056c4fad6f2ca45889c423f2a64cf075
+  sha1: 44f4be89e6164f1d6934fe9e64e115bfcb4c440d
 - name: smoke-test
   version: 34742a9da2e091ce1ef3f21b24aaf823f1db4a34
   fingerprint: 34742a9da2e091ce1ef3f21b24aaf823f1db4a34
-  sha1: 472b5795810a4c8efda29331267483193640195e
+  sha1: 739c4e3c271f147f3837db7c98c372c301571a03
 - name: uaa-deregistration
   version: 5675f95228637b8a736b8e2e958965a131fd1a37
   fingerprint: 5675f95228637b8a736b8e2e958965a131fd1a37
-  sha1: ee87cbf1314cc4f27eb0bb82f0de08b247c6d691
+  sha1: 6349af932909cfaac0f6b3262f243d10b8d51c0e
 packages:
 - name: busybox
   version: f030786058fc749fbb5018a696349d594a6758cb
   fingerprint: f030786058fc749fbb5018a696349d594a6758cb
-  sha1: 29c02a056d37e5481473adb530b3c57c9418210a
+  sha1: fdbbcbdc898f75d810b4b0181785191673b1d83c
   dependencies: []
 - name: common
   version: c93c218ca205cb078a69db6ae0bb5f7db17b9f6a
   fingerprint: c93c218ca205cb078a69db6ae0bb5f7db17b9f6a
-  sha1: 6045c7ca641d844b5cc8a6b189ab5fd5e83792a6
+  sha1: 8c3015e7b11cae737b7565e2671f8a22e008c7bb
   dependencies: []
 - name: docker
   version: 3b92df968c9c0e5417fc6fb7aa1a808363449492
   fingerprint: 3b92df968c9c0e5417fc6fb7aa1a808363449492
-  sha1: 4628dae7eaa912cf7c3a3a7af693249bb3fb307a
+  sha1: 00afbd80da7d01288958c5213eac1e589aa123a9
   dependencies:
   - common
 - name: docker-compose
   version: cb0ea0d494d6563695e722ed6fc4db18c9d5a093
   fingerprint: cb0ea0d494d6563695e722ed6fc4db18c9d5a093
-  sha1: 918c4751f670bd33ca720a235fb6e9a9e18e0fc9
+  sha1: 5086aab4f0d2e3aab01f853cdde8ceca6fca58d3
   dependencies: []
 - name: golang
   version: 826b4a2119ab1e4f7b39db35f8872f464ce7ffaf
   fingerprint: 826b4a2119ab1e4f7b39db35f8872f464ce7ffaf
-  sha1: d4cd758d0563be7425f3e5e9a3b983b8487a7d51
+  sha1: 47dd577550bc09428f7c2b096e29a981134de2cd
   dependencies: []
 - name: harbor-app
   version: 4e2fb4a1d57c589be5972a042cba4c4e923f4870
   fingerprint: 4e2fb4a1d57c589be5972a042cba4c4e923f4870
-  sha1: 592a54daa7ca1f4f516c72a898ef8c0ef5e0bccd
+  sha1: e8bb71287c3020a9f523423ade0b6faa7dc3cb31
   dependencies:
   - harbor-common
 - name: harbor-common
   version: 3244645bb95222314408dcc1caebdfc0a5acab71
   fingerprint: 3244645bb95222314408dcc1caebdfc0a5acab71
-  sha1: 8cb22dd200b4bf56774dac3be1ad2a0856eccf46
+  sha1: 155d4cdc61cae01af90dc17abe99f491cae53c35
   dependencies:
   - common
 - name: smoke-test
-  version: cc1b3c1abda86fc80a2516071a31dfd7b0e33b66
-  fingerprint: cc1b3c1abda86fc80a2516071a31dfd7b0e33b66
-  sha1: 1e4e8c929f84fdb4776ebfeae54d175d85e4eec9
+  version: 61822f3670a5c04be23f073b422d90887f0991ba
+  fingerprint: 61822f3670a5c04be23f073b422d90887f0991ba
+  sha1: 3cd1b57c47bb4b98c46d4f3cc61030831418cbda
   dependencies:
   - golang
 - name: uaa
   version: 9ecfefa5020377e42f0574a7dfe92a8eb15cbcf0
   fingerprint: 9ecfefa5020377e42f0574a7dfe92a8eb15cbcf0
-  sha1: b16eeecf7f6251ab727c730c11006b15aba154e6
+  sha1: 4ccf30ca442298f8f90b6d14490fdea1bdf55e7f
   dependencies: []
 license:
-  version: e6c4ccc65c76e75e2338d1edabdcf264d37ee663
-  fingerprint: e6c4ccc65c76e75e2338d1edabdcf264d37ee663
-  sha1: f25a7c93899d655655eb0725eda88fc599c2fda3
+  version: 457e65413fc9a4e075b2e124a3bfb0e94676e5c4
+  fingerprint: 457e65413fc9a4e075b2e124a3bfb0e94676e5c4
+  sha1: db1f17a5f9c5215629e50b9bb6dce197162c8fc6
