@@ -216,3 +216,6 @@ properties:
   registry_storage_provider.nfs.mount_point:
     description: "The local mount point for remote NFS Server."
     default: "/harbor-registry"
+  registry_storage_provider.redirect:
+    description: "This allows to redirect to the docker storage location"
+    default: false
