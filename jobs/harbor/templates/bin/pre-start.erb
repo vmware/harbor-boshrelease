@@ -51,9 +51,11 @@ echo "$ip $fqdn" >> /etc/hosts
 <%-   end %>
 <%- end %>
 
+<%- if p("registry_storage_provider.redirect") %>
 if ! grep -q 'redirect: {disable: true}' ; then
   sed -i -e '/storage:$/a \ \ redirect: {disable: true}' /var/vcap/jobs/harbor/packages/harbor-app/common/templates/registry/config.yml
 fi
+<%- end %>
 
 if [ "$HARBOR_PROTOCOL" = "https" ]; then
   #Copy cert to the right place
