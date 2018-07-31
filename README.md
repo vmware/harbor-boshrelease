@@ -48,7 +48,7 @@ References into the public blobstore for final jobs & packages (each referenced 
 ### releases
 yml files containing the references to blobs for each package in a given release; these are solved within **.final_builds**.
 
-## Deploy Harbor with BOSH
+## Deploy Harbor via BOSH
 
 ### Install BOSH CLI V2
 [Download](https://bosh.io/docs/cli-v2.html#install) the binary for your platform and place it on your **PATH**.
@@ -97,22 +97,22 @@ export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
 export BOSH_ENVIRONMENT=<director IP>
 ```
 
-## Download source code
+### Download source code
 ```
 # Clone repostiry
 git clone git@github.com:vmware/harbor-boshrelease.git
 cd harbor-boshrelease
 ```
 
-## Make a deployment with pre-build final release
+### Make a deployment with pre-build final release
 You can deploy the published pre-build final release without creating a local dev release:
 ```
 bosh -n -d harbor-deployment deploy manifests/harbor.yml -v hostname=harbor.local
 ```
 
-## Make a deployment with dev release
+### Make a deployment with dev release
 Before deploy, you need to create the Harbor BOSH release.
-## Create the Harbor BOSH release
+### Create the Harbor BOSH release
 ```
 # Sync remote pre-build blobs
 bosh sync-blobs
@@ -133,17 +133,22 @@ bosh upload-release
 bosh releases
 ```
 
+### Upload cloud-config and runtime-config
+
 You can find the bosh cloud config file, bosh runtime config file and deployment manifest samples in directory manifests.
 **NOTES:**
 * Change cloud-config-vsphere.yml per your environment.
 * Change configuration in the deployment manifest sample file deployment-vsphere.yml (e.g. azs name, networks name) per your environment.
 * Change the version of harbor-container-registry release in runtime-config-harbor.yml.
 
-Upload cloud-config and runtime-config, then kick off the deployment:
+Upload cloud-config and runtime-config:
 ```
 bosh -n update-cloud-config   manifests/cloud-config-vsphere.yml
 bosh -n update-runtime-config manifests/runtime-config-bosh-dns.yml --name bosh-dns
 bosh -n update-runtime-config manifests/runtime-config-harbor.yml   --name harbor
+```
+### Kick off the deployment
+```
 bosh -n -d harbor-deployment deploy templates/deployment-vsphere.yml -v hostname=harbor.local [--vars-store /path/to/creds.yml]
 bosh run-errand smoke-test -d harbor-deployment
 ```
@@ -159,7 +164,7 @@ bosh vms
 bosh instances
 ```
 
-### Delete deployment
+### Delete the deployment
 If you want to delete the specified deployment, execute:
 ```
 ## --force ignore the errors when deleting
@@ -170,6 +175,7 @@ bosh -d harbor-deployment delete-deployment --force
 
 - Jesse Hu [huh at vmware.com]
 - Steven Zou [szou at vmware.com]
+- Daojun Zhang [daojunz at vmware.com]
 - Daniel Jiang [jiangd at vmware.com]
 
 ## Contributing
