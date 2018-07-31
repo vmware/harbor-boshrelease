@@ -1,0 +1,83 @@
+name: harbor-container-registry
+version: 1.5.0
+commit_hash: 8bdc83d
+uncommitted_changes: false
+jobs:
+- name: docker
+  version: cf939becf6700f3545d6b47849740ca3b80cf707
+  fingerprint: cf939becf6700f3545d6b47849740ca3b80cf707
+  sha1: ac48173ca5fb28e8324b64e6d06a9a72b5948381
+- name: enable-bosh-dns
+  version: 733816c24ab25eb80dd82cec4ff740f90e8f5495
+  fingerprint: 733816c24ab25eb80dd82cec4ff740f90e8f5495
+  sha1: a8c46ebb39e904a22fb3d125b2bbce19440b8fce
+- name: harbor
+  version: 6b0483fd21d85b07fdb902103b754fc4e365732e
+  fingerprint: 6b0483fd21d85b07fdb902103b754fc4e365732e
+  sha1: 987224d4c880221a6b4e7da38028efa8a6f70f99
+- name: harbor-dns-aliases
+  version: 26ed37cad657bcbf90c6282e09ca4be571904e35
+  fingerprint: 26ed37cad657bcbf90c6282e09ca4be571904e35
+  sha1: 44f4be89e6164f1d6934fe9e64e115bfcb4c440d
+- name: smoke-test
+  version: 34742a9da2e091ce1ef3f21b24aaf823f1db4a34
+  fingerprint: 34742a9da2e091ce1ef3f21b24aaf823f1db4a34
+  sha1: 739c4e3c271f147f3837db7c98c372c301571a03
+- name: uaa-deregistration
+  version: 5675f95228637b8a736b8e2e958965a131fd1a37
+  fingerprint: 5675f95228637b8a736b8e2e958965a131fd1a37
+  sha1: 6349af932909cfaac0f6b3262f243d10b8d51c0e
+packages:
+- name: busybox
+  version: f030786058fc749fbb5018a696349d594a6758cb
+  fingerprint: f030786058fc749fbb5018a696349d594a6758cb
+  sha1: fdbbcbdc898f75d810b4b0181785191673b1d83c
+  dependencies: []
+- name: common
+  version: c93c218ca205cb078a69db6ae0bb5f7db17b9f6a
+  fingerprint: c93c218ca205cb078a69db6ae0bb5f7db17b9f6a
+  sha1: 8c3015e7b11cae737b7565e2671f8a22e008c7bb
+  dependencies: []
+- name: docker
+  version: 3b92df968c9c0e5417fc6fb7aa1a808363449492
+  fingerprint: 3b92df968c9c0e5417fc6fb7aa1a808363449492
+  sha1: 00afbd80da7d01288958c5213eac1e589aa123a9
+  dependencies:
+  - common
+- name: docker-compose
+  version: cb0ea0d494d6563695e722ed6fc4db18c9d5a093
+  fingerprint: cb0ea0d494d6563695e722ed6fc4db18c9d5a093
+  sha1: 5086aab4f0d2e3aab01f853cdde8ceca6fca58d3
+  dependencies: []
+- name: golang
+  version: 826b4a2119ab1e4f7b39db35f8872f464ce7ffaf
+  fingerprint: 826b4a2119ab1e4f7b39db35f8872f464ce7ffaf
+  sha1: 47dd577550bc09428f7c2b096e29a981134de2cd
+  dependencies: []
+- name: harbor-app
+  version: 4e2fb4a1d57c589be5972a042cba4c4e923f4870
+  fingerprint: 4e2fb4a1d57c589be5972a042cba4c4e923f4870
+  sha1: e8bb71287c3020a9f523423ade0b6faa7dc3cb31
+  dependencies:
+  - harbor-common
+- name: harbor-common
+  version: 3244645bb95222314408dcc1caebdfc0a5acab71
+  fingerprint: 3244645bb95222314408dcc1caebdfc0a5acab71
+  sha1: 155d4cdc61cae01af90dc17abe99f491cae53c35
+  dependencies:
+  - common
+- name: smoke-test
+  version: 61822f3670a5c04be23f073b422d90887f0991ba
+  fingerprint: 61822f3670a5c04be23f073b422d90887f0991ba
+  sha1: 3cd1b57c47bb4b98c46d4f3cc61030831418cbda
+  dependencies:
+  - golang
+- name: uaa
+  version: 9ecfefa5020377e42f0574a7dfe92a8eb15cbcf0
+  fingerprint: 9ecfefa5020377e42f0574a7dfe92a8eb15cbcf0
+  sha1: 4ccf30ca442298f8f90b6d14490fdea1bdf55e7f
+  dependencies: []
+license:
+  version: 457e65413fc9a4e075b2e124a3bfb0e94676e5c4
+  fingerprint: 457e65413fc9a4e075b2e124a3bfb0e94676e5c4
+  sha1: db1f17a5f9c5215629e50b9bb6dce197162c8fc6

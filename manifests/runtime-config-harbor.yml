@@ -1,0 +1,24 @@
+releases:
+- name: harbor-container-registry
+  version: 1.5.0
+addons:
+- name: harbor-bosh-dns
+  jobs:
+  - name: harbor-dns-aliases
+    release: harbor-container-registry
+    properties:
+      aliases:
+        # 'harbor.local' must be the Harbor FQDN specified by the user.
+        # 'harbor-deployment' is the deployment name specified in 'bosh deploy -d ...'.
+        # 'deployment-network' is the deployment network name defined in Bosh Director.
+        harbor.local:
+        - "*.harbor-app.deployment-network.harbor-deployment.bosh"
+        uaa.server.local:
+        - "*.uaa-app.deployment-network.uaa-deployment.bosh"
+- name: enable-bosh-dns
+  jobs:
+  - name: enable-bosh-dns
+    release: harbor-container-registry
+  include:
+    deployments:
+    - harbor-deployment

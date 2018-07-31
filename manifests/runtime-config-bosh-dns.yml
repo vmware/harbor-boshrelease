@@ -1,0 +1,41 @@
+addons:
+- include:
+    stemcell:
+    - os: ubuntu-trusty
+  jobs:
+  - name: bosh-dns
+    release: bosh-dns
+  name: bosh-dns
+  properties:
+    cache:
+      enabled: true
+    health:
+      client:
+        tls: ((/bosh_dns_health_client_tls))
+      enabled: true
+      server:
+        tls: ((/bosh_dns_health_server_tls))
+    override_nameserver: false
+releases:
+- name: bosh-dns
+  version: 0.1.3
+variables:
+- name: /bosh_dns_health_tls_ca
+  options:
+    common_name: bosh-dns-health-tls-ca
+    is_ca: true
+  type: certificate
+- name: /bosh_dns_health_server_tls
+  options:
+    ca: /bosh_dns_health_tls_ca
+    common_name: health.bosh-dns
+    extended_key_usage:
+    - server_auth
+  type: certificate
+- name: /bosh_dns_health_client_tls
+  options:
+    ca: /bosh_dns_health_tls_ca
+    common_name: health.bosh-dns
+    extended_key_usage:
+    - client_auth
+  type: certificate

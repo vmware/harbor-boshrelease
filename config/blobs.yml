@@ -1,12 +1,16 @@
 docker/docker-17.06.2-ce.tgz:
   size: 29704322
+  object_id: 260f1d93-68d0-445a-5cab-e7844726481f
   sha: 2a4206fea5d3d3f4373e13569538522417e2c9d3
 docker/docker-compose-Linux-x86_64-1.16.1:
   size: 8855632
+  object_id: 3c08113d-6061-4a7e-5d6e-4a246c164bc0
   sha: e2c7c848e1fa388a2e5b8945fdb2660bf8d8adb1
 go/go1.9.2.linux-amd64.tar.gz:
   size: 104247844
+  object_id: 70a60a98-f99e-4d69-4ee1-4d594a551690
   sha: 94c889e039e3d2e94ed95e8f8cb747c5bc1c2b58
 harbor/harbor-offline-installer-latest.tgz:
-  size: 826080178
-  sha: aef2dd451e0a323e7c377bfcaf9562e5087cf07f
+  size: 863747205
+  object_id: 1683c87f-f847-4f5e-4edb-2726776c40c5
+  sha: a0bf55debb5aece0afcb639deec3bb7811a774b7
