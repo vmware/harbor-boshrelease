@@ -91,7 +91,7 @@ fi
 
 checkHarborVersion() {
   if [ -z "$INSTALLED_HARBOR_VERSION" ]; then
-     if $DOCKER_CMD images | grep vmware/harbor-log | grep -q v1.4.0 ; then
+     if $DOCKER_CMD images | grep vmware/harbor-log | grep -q v1.4 ; then
        # Harbor Tile 1.4.x was installedwhich does not write the HARBOR_VERSION_FILE.
        echo 1
      else
@@ -138,7 +138,7 @@ upgradeHarbor() {
       ;;
   esac
 
-  HARBOR_MIGRATOR_TAG=$($DOCKER_CMD images | grep harbor-migrator | grep $HARBOR_FULL_VERSION | awk '{print $2}')
+  HARBOR_MIGRATOR_TAG=$($DOCKER_CMD images | grep harbor-migrator | grep $HARBOR_MIGRATOR_VERSION | awk '{print $2}')
   log "Use harbor-migrator:$HARBOR_MIGRATOR_TAG for migration"
   log "Backing up Harbor database"
   $DOCKER_CMD run -i --rm -e DB_USR=root -e DB_PWD=$HARBOR_DB_PWD -e SKIP_CONFIRM=y -v /data/database:/var/lib/mysql -v $HARBOR_DB_BACKUP_DIR:/harbor-migration/backup vmware/harbor-migrator:$HARBOR_MIGRATOR_TAG --db backup
