@@ -4,4 +4,4 @@ name: docker
 dependencies: [common]
 
 files:
-- docker/docker-17.06.2-ce.tgz #https://download.docker.com/linux/static/stable/x86_64/docker-17.06.2-ce.tgz
+- docker/docker-18.06.0-ce.tgz #https://download.docker.com/linux/static/stable/x86_64/docker-18.06.0-ce.tgz
