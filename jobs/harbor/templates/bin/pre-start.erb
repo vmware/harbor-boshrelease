@@ -94,6 +94,7 @@ if ! grep -q 'redirect: {disable: true}' ; then
 fi
 <%- end %>
 
+
 if [ "$HARBOR_PROTOCOL" = "https" ]; then
   #Copy cert to the right place
   mkdir -p $HARBOR_DATA/cert
