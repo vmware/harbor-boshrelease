@@ -82,6 +82,7 @@ fi
 if [ -n "$WITH_CLAIR" ]; then
   PREPARE_OPTS="${PREPARE_OPTS} --with-clair"
 fi
+PREPARE_OPTS="${PREPARE_OPTS} --with-chartmuseum"
 
 ${HARBOR_PACKAGE_DIR}/prepare ${PREPARE_OPTS}
 
