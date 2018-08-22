@@ -59,6 +59,7 @@ if [ "$HARBOR_PROTOCOL" = "https" ]; then
   cp ${HARBOR_JOB_DIR}/config/server.crt $HARBOR_DATA/cert/
   cp ${HARBOR_JOB_DIR}/config/server.key $HARBOR_DATA/cert/
   cp ${HARBOR_JOB_DIR}/config/uaa_ca.crt $HARBOR_DATA/cert/
+  cp ${HARBOR_JOB_DIR}/config/trusted_certificates.crt $HARBOR_DATA/cert/
   cp ${HARBOR_JOB_DIR}/config/ca.crt $HARBOR_DATA/ca_download
 
   #For status checking script usage
@@ -141,13 +142,13 @@ upgradeHarbor() {
   HARBOR_MIGRATOR_TAG=$($DOCKER_CMD images | grep harbor-migrator | grep $HARBOR_MIGRATOR_VERSION | awk '{print $2}')
   log "Use harbor-migrator:$HARBOR_MIGRATOR_TAG for migration"
   log "Backing up Harbor database"
-  $MIGRATE_DOCKER_CMD -e DB_PWD=$HARBOR_DB_PWD -v /data/database:/var/lib/mysql -v $HARBOR_DB_BACKUP_DIR:/harbor-migration/backup vmware/harbor-migrator:$HARBOR_MIGRATOR_TAG --db backup
+  $MIGRATE_DOCKER_CMD -e DB_PWD=$HARBOR_DB_PWD -v /data/database:/var/lib/mysql -v $HARBOR_DB_BACKUP_DIR:/harbor-migration/backup goharbor/harbor-migrator:$HARBOR_MIGRATOR_TAG --db backup
   log "Migrating Harbor database"
-  $MIGRATE_DOCKER_CMD -e DB_PWD=$HARBOR_DB_PWD -v /data/database:/var/lib/mysql vmware/harbor-migrator:$HARBOR_MIGRATOR_TAG --db up
+  $MIGRATE_DOCKER_CMD -e DB_PWD=$HARBOR_DB_PWD -v /data/database:/var/lib/mysql goharbor/harbor-migrator:$HARBOR_MIGRATOR_TAG --db up
   log "Migrating clair DB"
-  $MIGRATE_DOCKER_CMD -e PGDATA=/var/lib/postgresql/data -v /data/clair-db/:/clair-db -v /data/database:/var/lib/postgresql/data vmware/harbor-migrator:$HARBOR_MIGRATOR_TAG --db up
+  $MIGRATE_DOCKER_CMD -e PGDATA=/var/lib/postgresql/data -v /data/clair-db/:/clair-db -v /data/database:/var/lib/postgresql/data goharbor/harbor-migrator:$HARBOR_MIGRATOR_TAG --db up
   log "Migrating notary DB"
-  $MIGRATE_DOCKER_CMD -e PGDATA=/var/lib/postgresql/data -v /data/notary-db/:/var/lib/mysql -v /data/database:/var/lib/postgresql/data vmware/harbor-migrator:$HARBOR_MIGRATOR_TAG --db up
+  $MIGRATE_DOCKER_CMD -e PGDATA=/var/lib/postgresql/data -v /data/notary-db/:/var/lib/mysql -v /data/database:/var/lib/postgresql/data goharbor/harbor-migrator:$HARBOR_MIGRATOR_TAG --db up
 }
 
 #Start docker daemon

@@ -11,6 +11,7 @@ templates:
   config/server.key: config/server.key
   config/ca.crt: config/ca.crt
   config/uaa_ca.crt: config/uaa_ca.crt
+  config/trusted_certificates.crt: config/trusted_certificates.crt
   config/uaa.json.erb: config/uaa.json
   bin/uaa.sh.erb: bin/uaa.sh
   config/gcs_keyfile: config/gcs_keyfile
@@ -216,3 +217,5 @@ properties:
   registry_storage_provider.nfs.mount_point:
     description: "The local mount point for remote NFS Server."
     default: "/harbor-registry"
+  trusted_certificates:
+    description: "The opsmanager trusted certificates."

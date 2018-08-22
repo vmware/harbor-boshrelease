@@ -42,13 +42,13 @@ parseOpts() {
 parseOpts $@
 
 #Check if containers existing
-harbor_containers=$(docker -H "unix://$DAEMON_SOCK" ps | awk '{print $2}' | grep vmware)
+harbor_containers=$(docker -H "unix://$DAEMON_SOCK" ps | awk '{print $2}' | grep goharbor)
 if [ -z "$harbor_containers" ]; then
   myExit 1
 fi
 
 #Check the status of Harbor containers
-if docker -H "unix://$DAEMON_SOCK" ps --filter "status=restarting" | grep 'vmware'; then
+if docker -H "unix://$DAEMON_SOCK" ps --filter "status=restarting" | grep 'goharbor'; then
   myExit 2
 fi
 
