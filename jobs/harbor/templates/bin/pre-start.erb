@@ -51,6 +51,9 @@ echo "$ip $fqdn" >> /etc/hosts
 <%-   end %>
 <%- end %>
 
+#Customize container network settings, fixme:
+cp ${HARBOR_JOB_DIR}/config/daemon.json /etc/docker/daemon2.json
+
 if [ "$HARBOR_PROTOCOL" = "https" ]; then
   #Copy cert to the right place
   mkdir -p $HARBOR_DATA/cert
@@ -59,8 +62,8 @@ if [ "$HARBOR_PROTOCOL" = "https" ]; then
   cp ${HARBOR_JOB_DIR}/config/server.crt $HARBOR_DATA/cert/
   cp ${HARBOR_JOB_DIR}/config/server.key $HARBOR_DATA/cert/
   cp ${HARBOR_JOB_DIR}/config/uaa_ca.crt $HARBOR_DATA/cert/
-  cp ${HARBOR_JOB_DIR}/config/trusted_certificates.crt $HARBOR_DATA/cert/
   cp ${HARBOR_JOB_DIR}/config/ca.crt $HARBOR_DATA/ca_download
+  cp ${HARBOR_JOB_DIR}/config/trusted_certificates.crt $HARBOR_DATA/cert/
 
   #For status checking script usage
   CERT_PATH=$CERTS_D/${HARBOR_HOSTNAME}
