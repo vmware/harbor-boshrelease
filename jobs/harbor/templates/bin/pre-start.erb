@@ -38,6 +38,11 @@ ln -sfT $HARBOR_PERSISTED_DATA $HARBOR_DATA
 if [ ! -f $HARBOR_VERSION_FILE ]; then
   touch $HARBOR_VERSION_FILE
 fi
+
+if [ -f $HARBOR_DATA/database ]; then
+  sed -i -r "s/reload_config\=false/reload_config\=true/" $CFG_FILE
+fi
+
 INSTALLED_HARBOR_VERSION=`cat $HARBOR_VERSION_FILE`
 
 <%- if p("populate_etc_hosts") %>
