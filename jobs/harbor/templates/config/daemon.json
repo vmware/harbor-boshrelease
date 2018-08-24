@@ -1,0 +1,9 @@
+<%- if p("customize_container_network") == "customized" %>
+{"default-address-pools":
+    [
+        {"base":"<%= p('default_address_pool_base1') %>","size":"<%= p('default_address_pool_size1') %>"},
+        {"base":"<%= p('default_address_pool_base2') %>","size":"<%= p('default_address_pool_size2') %>"},
+        {"base":"<%= p('default_address_pool_base3') %>","size":"<%= p('default_address_pool_size3') %>"}
+    ]
+}  
+<%- end%>
