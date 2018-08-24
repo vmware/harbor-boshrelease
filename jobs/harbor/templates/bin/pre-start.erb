@@ -52,8 +52,10 @@ echo "$ip $fqdn" >> /etc/hosts
 <%- end %>
 
 #Customize container network settings, fixme:
+<%- if p("customize_container_network") == "customized" %>
 mkdir -p /etc/docker/
 cp ${HARBOR_JOB_DIR}/config/daemon.json /etc/docker/daemon2.json
+<%- end %>
 
 if [ "$HARBOR_PROTOCOL" = "https" ]; then
   #Copy cert to the right place

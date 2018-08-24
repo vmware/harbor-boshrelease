@@ -220,6 +220,9 @@ properties:
     default: "/harbor-registry"
   trusted_certificates:
     description: "The opsmanager trusted certificates."
+  customize_container_network:
+    description: "Specify the container network type"
+    default: default
   default_address_pool_base1:
     description: "The container address pool 1 base"
   default_address_pool_size1:
