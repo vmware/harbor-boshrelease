@@ -1,3 +1,5 @@
+<%= p('customize_container_network') %>
+
 <%- if p("customize_container_network") == "customized" %>
 {"default-address-pools":
     [
