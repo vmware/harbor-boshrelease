@@ -104,8 +104,8 @@ fi
 
 checkHarborVersion() {
   if [ -z "$INSTALLED_HARBOR_VERSION" ]; then
-     if $DOCKER_CMD images | grep vmware/harbor-log | grep -q v1.5 ; then
-       # Harbor Tile 1.5.x was installedwhich does not write the HARBOR_VERSION_FILE.
+     if $DOCKER_CMD images | grep vmware/harbor-log ; then
+       # Harbor was installed which does not write the HARBOR_VERSION_FILE.
        echo 1
      else
        # Harbor was not installed on this machine before.
