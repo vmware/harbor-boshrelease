@@ -1,8 +1,8 @@
 <%- if p("customize_container_network") == "customized" %>
 {"default-address-pools":
     [
-        {"base":"<%= p('default_address_pool_base1') %>","size":<%= p('default_address_pool_size1') %>}<%- if p('default_address_pool_base2') &&  p('default_address_pool_size2') %>
-        <%= ",{\"base\":\"" + p('default_address_pool_base2') + "\",\"size\":" + p('default_address_pool_size2').to_s + "}" %><%- end %><%- if p('default_address_pool_base3') && p('default_address_pool_size3')  %>
+        {"base":"<%= p('default_address_pool_base1') %>","size":<%= p('default_address_pool_size1') %>}<%- if p('default_address_pool_base2').to_s.empty? &&  p('default_address_pool_size2').to_s.empty? %>
+        <%= ",{\"base\":\"" + p('default_address_pool_base2') + "\",\"size\":" + p('default_address_pool_size2').to_s + "}" %><%- end %><%- if p('default_address_pool_base3').to_s.empty? && p('default_address_pool_size3').to_s.empty?  %>
         <%= ",{\"base\":\"" + p('default_address_pool_base3') + "\",\"size\":" + p('default_address_pool_size3').to_s + "}" %><%- end %>
     ]
 }  
