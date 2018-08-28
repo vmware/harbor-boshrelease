@@ -8,5 +8,5 @@ go/go1.9.2.linux-amd64.tar.gz:
   size: 104247844
   sha: 94c889e039e3d2e94ed95e8f8cb747c5bc1c2b58
 harbor/harbor-offline-installer-latest.tgz:
-  size: 683451948
-  sha: 8c4fc7bbd38d255998156541f89e70eb3b4e3214
+  size: 694602685
+  sha: a1a621bf4fd3c4064e93b1c2a007532122073c61
