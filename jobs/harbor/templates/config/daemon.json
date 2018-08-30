@@ -2,10 +2,10 @@
 {"default-address-pools":
     [
         {"base":"<%= p('default_address_pool_base1') %>","size":<%= p('default_address_pool_size1') %>}
-        <%- if _p("default_address_pool_base2", "default_address_pool_size2") do | base2, size2 |  %>
+        <%- if_p("default_address_pool_base2", "default_address_pool_size2") do | base2, size2 |  %>
         <%= ",{\"base\":\"" + base2 + "\",\"size\":" + size2.to_s + "}" %>
         <%- end %>
-        <%- if _p("default_address_pool_base3", "default_address_pool_size3") do | base3, size3 |  %>
+        <%- if_p("default_address_pool_base3", "default_address_pool_size3") do | base3, size3 |  %>
         <%= ",{\"base\":\"" + base3 + "\",\"size\":" + size3.to_s + "}" %>
         <%- end %>
     ]
