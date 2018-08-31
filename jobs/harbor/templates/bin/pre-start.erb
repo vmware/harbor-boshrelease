@@ -56,10 +56,10 @@ echo "$ip $fqdn" >> /etc/hosts
 <%-   end %>
 <%- end %>
 
-#Customize container network settings, fixme:
+#Customize container network settings
 <%- if p("customize_container_network") == "customized" %>
 mkdir -p /etc/docker/
-cp ${HARBOR_JOB_DIR}/config/daemon.json /etc/docker/daemon2.json -f
+cp ${HARBOR_JOB_DIR}/config/daemon.json /etc/docker/daemon.json -f
 <%- end %>
 
 if [ "$HARBOR_PROTOCOL" = "https" ]; then
