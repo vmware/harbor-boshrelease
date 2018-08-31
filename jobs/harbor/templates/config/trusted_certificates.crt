@@ -1,1 +1,3 @@
-<%=p('trusted_certificates') %>
+<%- if_p("trusted_certificates") do | certificates |  -%>
+<%= certificates %>
+<%- end -%>
