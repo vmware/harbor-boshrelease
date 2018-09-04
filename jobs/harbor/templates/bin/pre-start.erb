@@ -100,10 +100,10 @@ ${HARBOR_PACKAGE_DIR}/prepare ${PREPARE_OPTS}
 
 if [ ! -z "$(cat ${HARBOR_JOB_DIR}/config/gcs_keyfile)" ]; then
   log 'Generate GCS keyfile'
+  chmod 644 ${HARBOR_JOB_DIR}/config/gcs_keyfile
+  mkdir -p /etc/registry/
   cp ${HARBOR_JOB_DIR}/config/gcs_keyfile ${HARBOR_PACKAGE_DIR}/common/config/registry/
-  cp ${HARBOR_JOB_DIR}/config/gcs_keyfile ${HARBOR_PACKAGE_DIR}/common/config/chartserver/gcs.key
-  chmod 644 ${HARBOR_PACKAGE_DIR}/common/config/registry/
-  chmod 644 ${HARBOR_PACKAGE_DIR}/common/config/chartserver/gcs.key
+  cp ${HARBOR_JOB_DIR}/config/gcs_keyfile /etc/registry/
 fi
 
 checkHarborVersion() {
