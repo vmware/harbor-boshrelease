@@ -82,6 +82,16 @@ if [ "$HARBOR_PROTOCOL" = "https" ]; then
   cp $HARBOR_DATA/ca_download/ca.crt ${CERT_PATH}
 fi
 
+if [ ! -z "$(cat ${HARBOR_JOB_DIR}/config/gcs_keyfile)" ]; then
+  log 'Generate GCS keyfile'
+  chmod 644 ${HARBOR_JOB_DIR}/config/gcs_keyfile
+  mkdir -p /etc/registry/
+  chmod 755 /etc/registry
+  cp ${HARBOR_JOB_DIR}/config/gcs_keyfile ${HARBOR_PACKAGE_DIR}/common/config/registry/
+  cp ${HARBOR_JOB_DIR}/config/gcs_keyfile /etc/registry/
+fi
+
+
 #Prepare Harbor env
 PREPARE_OPTS="--conf ${CFG_FILE}"
 
@@ -96,16 +106,8 @@ if [ -n "$WITH_CLAIR" ]; then
 fi
 PREPARE_OPTS="${PREPARE_OPTS} --with-chartmuseum"
 
-${HARBOR_PACKAGE_DIR}/prepare ${PREPARE_OPTS}
 
-if [ ! -z "$(cat ${HARBOR_JOB_DIR}/config/gcs_keyfile)" ]; then
-  log 'Generate GCS keyfile'
-  chmod 644 ${HARBOR_JOB_DIR}/config/gcs_keyfile
-  mkdir -p /etc/registry/
-  chmod 755 /etc/registry
-  cp ${HARBOR_JOB_DIR}/config/gcs_keyfile ${HARBOR_PACKAGE_DIR}/common/config/registry/
-  cp ${HARBOR_JOB_DIR}/config/gcs_keyfile /etc/registry/
-fi
+${HARBOR_PACKAGE_DIR}/prepare ${PREPARE_OPTS}
 
 checkHarborVersion() {
   if [ -z "$INSTALLED_HARBOR_VERSION" ]; then
