@@ -23,6 +23,7 @@ packages:
 - docker-compose
 - harbor-app
 - uaa
+- python
 
 provides:
 - name: harbor

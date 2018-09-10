@@ -1,5 +1,5 @@
 ---
-name: python27
+name: python
 
 files:
   - python/Python-2.7.15.tgz
