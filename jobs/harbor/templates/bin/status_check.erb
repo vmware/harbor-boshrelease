@@ -15,7 +15,7 @@ PIDFILE=${HARBOR_RUN_DIR}/harbor.pid
 DAEMON_SOCK=${RUN_DIR}/docker/dockerd.sock
 PYTHON_DIR=${PACKAGE_DIR}/python/python2.7/bin
 
-export PATH=$PATH:${DOCKER_PACKAGE_DIR}/bin;${PYTHON_DIR}
+export PATH=$PATH:${DOCKER_PACKAGE_DIR}/bin:${PYTHON_DIR}
 
 #Exit function with pid file deletion
 myExit() {
