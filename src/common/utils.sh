@@ -10,6 +10,7 @@ DOCKER_PACKAGE_DIR=${PACKAGE_DIR}/docker
 DOCKER_DAEMON_SOCK=${DOCKER_RUN_DIR}/dockerd.sock
 DOCKER_HOST="unix://$DOCKER_DAEMON_SOCK"
 DOCKER_CMD="${DOCKER_PACKAGE_DIR}/bin/docker -H $DOCKER_HOST"
+PYTHON_CMD="${PACKAGE_DIR}/python/python2.7/bin/python"
 
 log() {
   echo [`date`] $*
@@ -46,7 +47,7 @@ readJson(){
   done
 
   #Read value
-  python -c "import sys, json; doc = json.load(sys.stdin); print $accessor"
+  ${PYTHON_CMD} -c "import sys, json; doc = json.load(sys.stdin); print $accessor"
 }
 
 #Compare two version strings. Return value is -1, 0, or 1.
@@ -67,5 +68,5 @@ elif v1 > v2:
 else:
   print 0
 "
-  python -c "$cmd" $v1 $v2
+  ${PYTHON_CMD} -c "$cmd" $v1 $v2
 }
