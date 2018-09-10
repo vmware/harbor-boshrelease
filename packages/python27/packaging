@@ -7,4 +7,6 @@ pushd ${BOSH_COMPILE_TARGET}/python2.7-*
   ./configure --prefix=${BOSH_INSTALL_TARGET}/python2.7
   make
   make install
+  cp ${BOSH_INSTALL_TARGET}/python2.7/* ${BOSH_INSTALL_TARGET}/bin
+  chmod +x ${BOSH_INSTALL_TARGET}/bin/*
 popd
