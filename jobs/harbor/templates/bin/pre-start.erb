@@ -18,6 +18,7 @@ HARBOR_VERSION_FILE=$HARBOR_DATA/harbor_version
 CFG_FILE=${HARBOR_JOB_DIR}/config/harbor.cfg
 CRON_PATH=/etc/cron.d/$JOB_NAME
 CERTS_D=/etc/docker/certs.d
+PYTHON_CMD=${PACKAGE_DIR}/python/bin/python
 
 source $PACKAGE_DIR/harbor-common/common.sh
 source $HARBOR_JOB_DIR/bin/properties.sh
@@ -104,7 +105,7 @@ if [ -n "$WITH_CLAIR" ]; then
 fi
 PREPARE_OPTS="${PREPARE_OPTS} --with-chartmuseum"
 
-${HARBOR_PACKAGE_DIR}/prepare ${PREPARE_OPTS}
+${PYTHON_CMD} ${HARBOR_PACKAGE_DIR}/prepare ${PREPARE_OPTS}
 
 if [ ! -z "$(cat ${HARBOR_JOB_DIR}/config/gcs_keyfile)" ]; then
   log 'Copy GCS keyfile to registry'
