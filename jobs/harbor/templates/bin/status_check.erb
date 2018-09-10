@@ -13,8 +13,9 @@ RUN_DIR=/var/vcap/sys/run
 HARBOR_RUN_DIR=$RUN_DIR/$JOB_NAME
 PIDFILE=${HARBOR_RUN_DIR}/harbor.pid
 DAEMON_SOCK=${RUN_DIR}/docker/dockerd.sock
+PYTHON_DIR=${PACKAGE_DIR}/python/python2.7/bin
 
-export PATH=$PATH:${DOCKER_PACKAGE_DIR}/bin
+export PATH=$PATH:${DOCKER_PACKAGE_DIR}/bin;${PYTHON_DIR}
 
 #Exit function with pid file deletion
 myExit() {
