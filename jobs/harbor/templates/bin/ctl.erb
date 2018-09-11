@@ -66,11 +66,11 @@ fi
 nfs_uri='<%= uri %>'
 mkdir -p $mount_point
 if ! mount | grep -q $nfs_uri ; then
-  dpkg -i ${NFS_PKG_DIR}/nfs-common/keyutils_1.5.9-8ubuntu1_amd64.deb
-  dpkg -i ${NFS_PKG_DIR}/nfs-common/libnfsidmap2_0.25-5_amd64.deb
-  dpkg -i ${NFS_PKG_DIR}/nfs-common/rpcbind_0.2.3-0.2_amd64.deb
-  dpkg -i ${NFS_PKG_DIR}/nfs-common/libevent-2.0-5_2.0.21-stable-2ubuntu0.16.04.1_amd64.deb
-  dpkg -i ${NFS_PKG_DIR}/nfs-common/nfs-common_1.2.8-9ubuntu12_amd64.deb
+  dpkg -i ${NFS_PKG_DIR}/keyutils_1.5.9-8ubuntu1_amd64.deb
+  dpkg -i ${NFS_PKG_DIR}/libnfsidmap2_0.25-5_amd64.deb
+  dpkg -i ${NFS_PKG_DIR}/rpcbind_0.2.3-0.2_amd64.deb
+  dpkg -i ${NFS_PKG_DIR}/libevent-2.0-5_2.0.21-stable-2ubuntu0.16.04.1_amd64.deb
+  dpkg -i ${NFS_PKG_DIR}/nfs-common_1.2.8-9ubuntu12_amd64.deb
   mount $nfs_uri $mount_point
 fi
 <%- end -%>
