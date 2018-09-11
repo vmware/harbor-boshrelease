@@ -12,6 +12,8 @@ if [ "$1" != "--skip-download" ]; then
   wget -O harbor-offline-installer-latest.tgz https://storage.googleapis.com/harbor-releases/release-1.6.0/harbor-offline-installer-v1.6.0-build.340.tgz
   wget https://dl.google.com/go/go1.9.7.linux-amd64.tar.gz
   wget https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tgz
+  wget http://mirrors.kernel.org/ubuntu/pool/main/n/nfs-utils/nfs-common_1.2.8-9ubuntu12_amd64.deb
+
 fi
 cd -
 cd ..
@@ -20,4 +22,6 @@ bosh add-blob $files_dir/docker-compose-Linux-x86_64 docker/docker-compose-Linux
 bosh add-blob $files_dir/harbor-offline-installer-latest.tgz harbor/harbor-offline-installer-latest.tgz
 bosh add-blob $files_dir/go1.9.7.linux-amd64.tar.gz go/go1.9.7.linux-amd64.tar.gz
 bosh add-blob $files_dir/Python-2.7.15.tgz python/Python-2.7.15.tgz
+bosh add-blob $files_dir/nfs-common_1.2.8-9ubuntu12_amd64.deb nfs-common/nfs-common_1.2.8-9ubuntu12_amd64.deb
+
 

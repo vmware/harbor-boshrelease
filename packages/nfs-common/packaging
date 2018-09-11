@@ -1,0 +1,5 @@
+set -e
+
+# wget http://mirrors.kernel.org/ubuntu/pool/main/n/nfs-utils/nfs-common_1.2.8-9ubuntu12_amd64.deb
+
+dpkg -i nfs-common_1.2.8-9ubuntu12_amd64.deb

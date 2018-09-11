@@ -1,0 +1,5 @@
+---
+name: nfs-common
+
+files:
+  - nfs-common/nfs-common_1.2.8-9ubuntu12_amd64.deb

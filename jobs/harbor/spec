@@ -24,6 +24,7 @@ packages:
 - harbor-app
 - uaa
 - python
+- nfs-common
 
 provides:
 - name: harbor
