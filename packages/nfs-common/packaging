@@ -1,5 +1,3 @@
-set -e
-
 # wget http://mirrors.kernel.org/ubuntu/pool/main/n/nfs-utils/nfs-common_1.2.8-9ubuntu12_amd64.deb
 
 dpkg -i ${BOSH_COMPILE_TARGET}/nfs-common/keyutils_1.5.9-8ubuntu1_amd64.deb
