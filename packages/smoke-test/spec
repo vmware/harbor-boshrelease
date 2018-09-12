@@ -2,7 +2,7 @@
 name: smoke-test
 
 dependencies:
-  - golang
+  - [ ]
 
 files:
   - harbor-api-testing/** #git submodule add git@gitlab.eng.vmware.com:harbor/harbor-api-testing.git
