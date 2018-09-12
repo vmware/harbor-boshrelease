@@ -1,9 +1,6 @@
 ---
 name: smoke-test
 
-dependencies:
-  - [ ]
-
 files:
   - harbor-api-testing/** #git submodule add git@gitlab.eng.vmware.com:harbor/harbor-api-testing.git
   - smoke-test/smoke-test

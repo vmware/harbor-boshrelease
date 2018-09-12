@@ -1,5 +1,0 @@
----
-name: golang
-
-files:
-  - go/go1.9.7.linux-amd64.tar.gz 
