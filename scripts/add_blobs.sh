@@ -20,6 +20,7 @@ if [ "$1" != "--skip-download" ]; then
 fi
 cd -
 cd ..
+bosh add-blob $files_dir/smoke-test  smoke-test/smoke-test
 bosh add-blob $files_dir/docker-18.06.0-ce.tgz docker/docker-18.06.0-ce.tgz
 bosh add-blob $files_dir/docker-compose-Linux-x86_64 docker/docker-compose-Linux-x86_64
 bosh add-blob $files_dir/harbor-offline-installer-latest.tgz harbor/harbor-offline-installer-latest.tgz
