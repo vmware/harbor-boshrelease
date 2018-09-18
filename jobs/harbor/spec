@@ -166,7 +166,7 @@ properties:
     default: ""
   no_proxy:
     description: "The no_proxy config for Clair"
-    default: "127.0.0.1,localhost,ui"
+    default: "127.0.0.1,localhost,ui,registry"
   with_clair:
     description: "An option to determine whether install the optional component Clair or not."
     default: true
