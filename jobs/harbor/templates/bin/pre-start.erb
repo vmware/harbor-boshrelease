@@ -160,7 +160,7 @@ upgradeHarbor() {
       return
       ;;
   esac
-  if [ "$HARBOR_VERSION" == "1.6" ]; then
+  if [ $(compareVersion $INSTALLED_HARBOR_VERSION "1.6.0") != "-1" ]; then
     # Should implement this part if there is any DB schema change after 1.6
     echo "Skip DB upgrade after harbor 1.6.0"
   else 
