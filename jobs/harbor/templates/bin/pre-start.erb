@@ -160,7 +160,7 @@ upgradeHarbor() {
       return
       ;;
   esac
-  searchResult=$( $DOCKER_CMD images | grep "vmware/harbor-log" | true )
+  searchResult=$( $DOCKER_CMD images | grep "vmware/harbor-log" || true )
   if [ -n "$searchResult" ] || [ $(compareVersion $INSTALLED_HARBOR_VERSION "1.6.0") = "-1" ]; then
 
     MIGRATE_DOCKER_CMD="$DOCKER_CMD run -i --rm -e DB_USR=root -e SKIP_CONFIRM=y "
