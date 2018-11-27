@@ -18,6 +18,7 @@ HARBOR_VERSION_FILE=$HARBOR_DATA/harbor_version
 CFG_FILE=${HARBOR_JOB_DIR}/config/harbor.cfg
 CRON_PATH=/etc/cron.d/$JOB_NAME
 CERTS_D=/etc/docker/certs.d
+PYTHON_CMD=${PACKAGE_DIR}/python/python2.7/bin/python
 
 source $PACKAGE_DIR/harbor-common/common.sh
 source $HARBOR_JOB_DIR/bin/properties.sh
@@ -38,6 +39,11 @@ ln -sfT $HARBOR_PERSISTED_DATA $HARBOR_DATA
 if [ ! -f $HARBOR_VERSION_FILE ]; then
   touch $HARBOR_VERSION_FILE
 fi
+
+if [ -d $HARBOR_DATA/database ]; then
+  sed -i -r "s/reload_config\=false/reload_config\=true/" $CFG_FILE
+fi
+
 INSTALLED_HARBOR_VERSION=`cat $HARBOR_VERSION_FILE`
 
 <%- if p("populate_etc_hosts") %>
@@ -49,6 +55,12 @@ sed -i -e "/$ip/d" /etc/hosts
 sed -i -e "/$fqdn/d" /etc/hosts
 echo "$ip $fqdn" >> /etc/hosts
 <%-   end %>
+<%- end %>
+
+#Customize container network settings
+<%- if p("customize_container_network") == "customized" %>
+mkdir -p /etc/docker/
+cp ${HARBOR_JOB_DIR}/config/daemon.json /etc/docker/daemon.json -f
 <%- end %>
 
 
@@ -82,6 +94,8 @@ if [ "$HARBOR_PROTOCOL" = "https" ]; then
   cp ${HARBOR_JOB_DIR}/config/server.key $HARBOR_DATA/cert/
   cp ${HARBOR_JOB_DIR}/config/uaa_ca.crt $HARBOR_DATA/cert/
   cp ${HARBOR_JOB_DIR}/config/ca.crt $HARBOR_DATA/ca_download
+  chmod 644  $HARBOR_DATA/ca_download/ca.crt
+  cp ${HARBOR_JOB_DIR}/config/trusted_certificates.crt $HARBOR_DATA/cert/
 
   #For status checking script usage
   CERT_PATH=$CERTS_D/${HARBOR_HOSTNAME}
@@ -89,6 +103,14 @@ if [ "$HARBOR_PROTOCOL" = "https" ]; then
   chown vcap:vcap ${CERT_PATH}
   chmod 755 ${CERT_PATH}
   cp $HARBOR_DATA/ca_download/ca.crt ${CERT_PATH}
+fi
+
+if [ ! -z "$(cat ${HARBOR_JOB_DIR}/config/gcs_keyfile)" ]; then
+  log 'Copy GCS keyfile to /etc/registry'
+  chmod 644 ${HARBOR_JOB_DIR}/config/gcs_keyfile
+  mkdir -p /etc/registry/
+  chmod 755 /etc/registry
+  cp ${HARBOR_JOB_DIR}/config/gcs_keyfile /etc/registry/
 fi
 
 #Prepare Harbor env
@@ -103,18 +125,19 @@ fi
 if [ -n "$WITH_CLAIR" ]; then
   PREPARE_OPTS="${PREPARE_OPTS} --with-clair"
 fi
+PREPARE_OPTS="${PREPARE_OPTS} --with-chartmuseum"
 
-${HARBOR_PACKAGE_DIR}/prepare ${PREPARE_OPTS}
+${PYTHON_CMD} ${HARBOR_PACKAGE_DIR}/prepare ${PREPARE_OPTS}
 
 if [ ! -z "$(cat ${HARBOR_JOB_DIR}/config/gcs_keyfile)" ]; then
-  log 'Generate GCS keyfile'
+  log 'Copy GCS keyfile to registry'
   cp ${HARBOR_JOB_DIR}/config/gcs_keyfile ${HARBOR_PACKAGE_DIR}/common/config/registry/
 fi
 
 checkHarborVersion() {
   if [ -z "$INSTALLED_HARBOR_VERSION" ]; then
-     if $DOCKER_CMD images | grep vmware/harbor-log | grep -q v1.5 ; then
-       # Harbor Tile 1.5.x was installedwhich does not write the HARBOR_VERSION_FILE.
+     if $DOCKER_CMD images | grep vmware/harbor-log ; then
+       # Harbor was installed which does not write the HARBOR_VERSION_FILE.
        echo 1
      else
        # Harbor was not installed on this machine before.
@@ -159,17 +182,25 @@ upgradeHarbor() {
       return
       ;;
   esac
-  MIGRATE_DOCKER_CMD="$DOCKER_CMD run -i --rm -e DB_USR=root -e SKIP_CONFIRM=y "
-  HARBOR_MIGRATOR_TAG=$($DOCKER_CMD images | grep harbor-migrator | grep $HARBOR_MIGRATOR_VERSION | awk '{print $2}')
-  log "Use harbor-migrator:$HARBOR_MIGRATOR_TAG for migration"
-  log "Backing up Harbor database"
-  $MIGRATE_DOCKER_CMD -e DB_PWD=$HARBOR_DB_PWD -v /data/database:/var/lib/mysql -v $HARBOR_DB_BACKUP_DIR:/harbor-migration/backup vmware/harbor-migrator:$HARBOR_MIGRATOR_TAG --db backup
-  log "Migrating Harbor database"
-  $MIGRATE_DOCKER_CMD -e DB_PWD=$HARBOR_DB_PWD -v /data/database:/var/lib/mysql vmware/harbor-migrator:$HARBOR_MIGRATOR_TAG --db up
-  log "Migrating clair DB"
-  $MIGRATE_DOCKER_CMD -e PGDATA=/var/lib/postgresql/data -v /data/clair-db/:/clair-db -v /data/database:/var/lib/postgresql/data vmware/harbor-migrator:$HARBOR_MIGRATOR_TAG --db up
-  log "Migrating notary DB"
-  $MIGRATE_DOCKER_CMD -e PGDATA=/var/lib/postgresql/data -v /data/notary-db/:/var/lib/mysql -v /data/database:/var/lib/postgresql/data vmware/harbor-migrator:$HARBOR_MIGRATOR_TAG --db up
+  searchResult=$( $DOCKER_CMD images | grep "vmware/harbor-log" || true )
+  if [ -n "$searchResult" ] || [ $(compareVersion $INSTALLED_HARBOR_VERSION "1.6.0") = "-1" ]; then
+
+    MIGRATE_DOCKER_CMD="$DOCKER_CMD run -i --rm -e DB_USR=root -e SKIP_CONFIRM=y "
+    HARBOR_MIGRATOR_TAG=$($DOCKER_CMD images | grep harbor-migrator | grep $HARBOR_MIGRATOR_VERSION | awk '{print $2}')
+    log "Use harbor-migrator:$HARBOR_MIGRATOR_TAG for migration"
+    log "Backing up Harbor database"
+    $MIGRATE_DOCKER_CMD -e DB_PWD=$HARBOR_DB_PWD -v /data/database:/var/lib/mysql -v $HARBOR_DB_BACKUP_DIR:/harbor-migration/backup goharbor/harbor-migrator:$HARBOR_MIGRATOR_TAG --db backup
+
+    log "Migrating Harbor database"
+    $MIGRATE_DOCKER_CMD -e DB_PWD=$HARBOR_DB_PWD -e PGDATA=/var/lib/postgresql/data -v /data/database:/var/lib/mysql goharbor/harbor-migrator:$HARBOR_MIGRATOR_TAG --db up
+    log "Migrating clair DB"
+    $MIGRATE_DOCKER_CMD -e PGDATA=/var/lib/postgresql/data  -v /data/clair-db/:/clair-db -v /data/database:/var/lib/postgresql/data goharbor/harbor-migrator:$HARBOR_MIGRATOR_TAG --db up
+    log "Migrating notary DB"
+    $MIGRATE_DOCKER_CMD -e PGDATA=/var/lib/postgresql/data -v /data/notary-db/:/var/lib/mysql -v /data/database:/var/lib/postgresql/data goharbor/harbor-migrator:$HARBOR_MIGRATOR_TAG --db up
+  else
+    # Should implement this part if there is any DB schema change after 1.6
+    echo "Skip DB upgrade after harbor 1.6.0"
+  fi
 }
 
 #Start docker daemon

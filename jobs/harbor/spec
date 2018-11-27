@@ -11,9 +11,11 @@ templates:
   config/server.key: config/server.key
   config/ca.crt: config/ca.crt
   config/uaa_ca.crt: config/uaa_ca.crt
+  config/trusted_certificates.crt: config/trusted_certificates.crt
   config/uaa.json.erb: config/uaa.json
   bin/uaa.sh.erb: bin/uaa.sh
   config/gcs_keyfile: config/gcs_keyfile
+  config/daemon.json: config/daemon.json
 
 packages:
 - common
@@ -21,6 +23,8 @@ packages:
 - docker-compose
 - harbor-app
 - uaa
+- python
+- nfs-common
 
 provides:
 - name: harbor
@@ -162,7 +166,7 @@ properties:
     default: ""
   no_proxy:
     description: "The no_proxy config for Clair"
-    default: "127.0.0.1,localhost,ui"
+    default: "127.0.0.1,localhost,ui,registry"
   with_clair:
     description: "An option to determine whether install the optional component Clair or not."
     default: true
@@ -216,6 +220,26 @@ properties:
   registry_storage_provider.nfs.mount_point:
     description: "The local mount point for remote NFS Server."
     default: "/harbor-registry"
+  trusted_certificates:
+    description: "The opsmanager trusted certificates."
+  customize_container_network:
+    description: "Specify the container network type"
+    default: default
+  default_address_pool_base1:
+    description: "The container address pool 1 base"
+  default_address_pool_size1:
+    description: "The container address pool 1 size"
+  default_address_pool_base2:
+    description: "The container address pool 2 base"
+  default_address_pool_size2:
+    description: "The container address pool 2 size"
+  default_address_pool_base3:
+    description: "The container address pool 3 base"
+  default_address_pool_size3:
+    description: "The container address pool 3 size"
+  clair_updater_interval:
+    description: "The interval to run clair updater"
+    default: 12
   registry_storage_provider.redirect:
     description: "This allows to redirect to the docker storage location"
     default: false

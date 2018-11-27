@@ -1,0 +1,9 @@
+---
+name: nfs-common
+
+files:
+  - nfs-common/nfs-common_1.2.8-9ubuntu12_amd64.deb
+  - nfs-common/libevent-2.0-5_2.0.21-stable-2ubuntu0.16.04.1_amd64.deb
+  - nfs-common/rpcbind_0.2.3-0.2_amd64.deb
+  - nfs-common/keyutils_1.5.9-8ubuntu1_amd64.deb
+  - nfs-common/libnfsidmap2_0.25-5_amd64.deb

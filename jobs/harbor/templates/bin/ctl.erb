@@ -10,6 +10,7 @@ JOB_NAME=harbor
 HARBOR_RUN_DIR=$RUN_DIR/$JOB_NAME
 HARBOR_LOG_DIR=$LOG_DIR/$JOB_NAME
 HARBOR_JOB_DIR=$JOB_DIR/$JOB_NAME
+NFS_PKG_DIR=/var/vcap/packages/nfs-common
 PIDFILE=${HARBOR_RUN_DIR}/harbor.pid
 TEMP_PIDFILE=${HARBOR_RUN_DIR}/harbor.tmp.pid
 HARBOR_PACKAGE_DIR=${PACKAGE_DIR}/harbor-app
@@ -17,6 +18,7 @@ COMPOSE_PACKAGE_DIR=${PACKAGE_DIR}/docker-compose
 HARBOR_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.yml
 HARBOR_CLAIR_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.clair.yml
 HARBOR_NOTARY_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.notary.yml
+HARBOR_CHARTMUSEUM_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.chartmuseum.yml
 
 CTL_CMD=/sbin/start-stop-daemon
 COMPOSE_CMD=${COMPOSE_PACKAGE_DIR}/bin/docker-compose
@@ -47,6 +49,8 @@ exec 2>> $HARBOR_LOG_DIR/ctl.stderr.log
 source $PACKAGE_DIR/harbor-common/common.sh
 source $HARBOR_JOB_DIR/bin/properties.sh
 
+
+
 <%- if_p("registry_storage_provider.nfs.server_uri") do |uri| -%>
 mount_point='<%= p("registry_storage_provider.nfs.mount_point") %>'
 # Change default storage for registry container to the mount_point.
@@ -62,6 +66,11 @@ fi
 nfs_uri='<%= uri %>'
 mkdir -p $mount_point
 if ! mount | grep -q $nfs_uri ; then
+  dpkg -i ${NFS_PKG_DIR}/keyutils_1.5.9-8ubuntu1_amd64.deb
+  dpkg -i ${NFS_PKG_DIR}/libnfsidmap2_0.25-5_amd64.deb
+  dpkg -i ${NFS_PKG_DIR}/rpcbind_0.2.3-0.2_amd64.deb
+  dpkg -i ${NFS_PKG_DIR}/libevent-2.0-5_2.0.21-stable-2ubuntu0.16.04.1_amd64.deb
+  dpkg -i ${NFS_PKG_DIR}/nfs-common_1.2.8-9ubuntu12_amd64.deb
   mount $nfs_uri $mount_point
 fi
 <%- end -%>
@@ -135,6 +144,8 @@ fi
 if [ -n "$WITH_CLAIR" ]; then
   COMPOSE_OPTS="${COMPOSE_OPTS} -f ${HARBOR_CLAIR_YAML}"
 fi
+
+COMPOSE_OPTS="${COMPOSE_OPTS} -f ${HARBOR_CHARTMUSEUM_YAML}"
 
 case $COMMAND_NAME in
 
