@@ -1,36 +1,40 @@
 docker/docker-18.06.0-ce.tgz:
   size: 43803207
+  object_id: f8dbab24-6361-4713-4802-af7230e9c8ca
   sha: 2a06bab62d1d5cf083542048cec555cc735ff2b7
 docker/docker-compose-Linux-x86_64:
   size: 11750136
+  object_id: cbabeed4-dfd0-4f7d-48cc-ff02bcc592ef
   sha: 9303600664184658b7124d0a65f9e12a4d672708
-docker/docker-compose-Linux-x86_64-1.16.1:
-  size: 8855632
-  sha: e2c7c848e1fa388a2e5b8945fdb2660bf8d8adb1
-go/go1.9.2.linux-amd64.tar.gz:
-  size: 104247844
-  sha: 94c889e039e3d2e94ed95e8f8cb747c5bc1c2b58
 harbor/harbor-offline-installer-latest.tgz:
   size: 659512699
+  object_id: 20ac6e32-1d52-4a44-55bc-08df674fc6ff
   sha: f7e3e32c3f3b7b955aed3191548e572cec78cff3
 nfs-common/keyutils_1.5.9-8ubuntu1_amd64.deb:
   size: 47054
+  object_id: b1d78b3b-1228-49f3-6206-d1c9466d8469
   sha: ec2e96e73feb5215605c9f0254cad05d9cc5688a
 nfs-common/libevent-2.0-5_2.0.21-stable-2ubuntu0.16.04.1_amd64.deb:
   size: 114014
+  object_id: 0999928e-941d-4708-6499-81fb7f601b21
   sha: 57d69f44f3e058e48a7b79595d36076eb21f5942
 nfs-common/libnfsidmap2_0.25-5_amd64.deb:
   size: 32182
+  object_id: 508e37ef-adf7-4606-59bb-07fb8f0f26fd
   sha: f28b7370542daaf81cefb44d9057fa9b3fb43064
 nfs-common/nfs-common_1.2.8-9ubuntu12_amd64.deb:
   size: 184538
+  object_id: 1231abc9-f759-4f66-7f60-1a5611f9da8c
   sha: 2977e5a1e86615e268cc518f04c9dd2cc832b263
 nfs-common/rpcbind_0.2.3-0.2_amd64.deb:
   size: 40252
+  object_id: 363a7dc0-c3ff-4b22-5e8c-cdfc6f3492f8
   sha: 8fa58cfcb1862c6d337d10496fada5f1a6e94a03
 python/Python-2.7.15.tgz:
   size: 17496336
+  object_id: f5f695b5-6b72-42fb-6b86-2f147354941b
   sha: c9750707d127d39a6868e1e55f7cd8c7be006b89
 smoke-test/smoke-test:
   size: 6285371
+  object_id: 2aec57ea-1ce1-43a7-5ce8-0f6d9976304c
   sha: f615215c8dd9a39e81edc06edb3db864c10ba2c5
