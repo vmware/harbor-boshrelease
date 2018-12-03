@@ -3,9 +3,9 @@ name: harbor-deployment
 
 releases:
 - name: harbor-container-registry
-  version: 1.5.0
-  sha1: ded9ed8a5e2efadc3aed26444710d8446483bd59
-  url: https://storage.googleapis.com/harbor-bosh-releases/harbor-container-registry-1.5.0.tgz
+  version: 1.6.0
+  sha1: 5bb63d9b1cac2ae24e601d28c057af7dcb3abe8b
+  url: https://storage.googleapis.com/harbor-bosh-releases/harbor-container-registry-1.6.2.tgz
 
 stemcells:
 - alias: default
