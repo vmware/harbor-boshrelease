@@ -63,6 +63,28 @@ mkdir -p /etc/docker/
 cp ${HARBOR_JOB_DIR}/config/daemon.json /etc/docker/daemon.json -f
 <%- end %>
 
+
+checkStorageRedirect () {
+
+redirect=<%= p("registry_storage_provider.redirect") %>
+
+  case $redirect in
+    true)
+        sed -i -e '/redirect:/,/disable.* /d' /var/vcap/jobs/harbor/packages/harbor-app/common/templates/registry/config.yml
+        sed -i -e '/storage:$/a \ \ redirect:\n \ \ \ \disable: true' /var/vcap/jobs/harbor/packages/harbor-app/common/templates/registry/config.yml
+        return
+        ;;
+    *)
+        sed -i -e '/redirect:/,/disable.* /d' /var/vcap/jobs/harbor/packages/harbor-app/common/templates/registry/config.yml
+        return
+        ;;
+  esac
+}
+<%- if p("registry_storage_provider.redirect") != nil %>
+  checkStorageRedirect
+<%- end %>
+
+
 if [ "$HARBOR_PROTOCOL" = "https" ]; then
   #Copy cert to the right place
   mkdir -p $HARBOR_DATA/cert

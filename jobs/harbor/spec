@@ -240,3 +240,6 @@ properties:
   clair_updater_interval:
     description: "The interval to run clair updater"
     default: 12
+  registry_storage_provider.redirect:
+    description: "This allows to redirect to the docker storage location"
+    default: false
