@@ -3,7 +3,7 @@ name: harbor-deployment
 
 releases:
 - name: harbor-container-registry
-  version: 1.6.0
+  version: 1.6.2
   sha1: 5bb63d9b1cac2ae24e601d28c057af7dcb3abe8b
   url: https://storage.googleapis.com/harbor-bosh-releases/harbor-container-registry-1.6.2.tgz
 
