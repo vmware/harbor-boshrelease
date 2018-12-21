@@ -33,6 +33,7 @@ provides:
   - hostname
   - ui_url_protocol
   - admin_password
+  - admin_password_for_smoketest
   - ssl.cert
   - ssl.key
   - ssl.ca
