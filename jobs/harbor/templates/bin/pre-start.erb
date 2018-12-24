@@ -183,7 +183,7 @@ upgradeHarbor() {
       ;;
   esac
   searchResult=$( $DOCKER_CMD images | grep "vmware/harbor-log" || true )
-  if [ -n "$searchResult" ] || [ $(compareVersion $INSTALLED_HARBOR_VERSION "1.7.0") = "-1" ]; then
+  if [ -n "$searchResult" ] || [ $(compareVersion $INSTALLED_HARBOR_VERSION "1.6.0") = "-1" ]; then
 
     MIGRATE_DOCKER_CMD="$DOCKER_CMD run -i --rm -e DB_USR=root -e SKIP_CONFIRM=y "
     HARBOR_MIGRATOR_TAG=$($DOCKER_CMD images | grep harbor-migrator | grep $HARBOR_MIGRATOR_VERSION | awk '{print $2}')
@@ -198,8 +198,8 @@ upgradeHarbor() {
     log "Migrating notary DB"
     $MIGRATE_DOCKER_CMD -e PGDATA=/var/lib/postgresql/data -v /data/notary-db/:/var/lib/mysql -v /data/database:/var/lib/postgresql/data goharbor/harbor-migrator:$HARBOR_MIGRATOR_TAG --db up
   else
-    # Should implement this part if there is any DB schema change after 1.6
-    echo "Skip DB upgrade after harbor 1.6.0"
+    # After Harbor 1.6.0, database is postgresql, it migration is handled by program internally 
+    echo "Skip to use migrator to upgrade harbor after 1.6.0"
   fi
 }
 
