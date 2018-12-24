@@ -112,8 +112,8 @@ docker -H $DOCKER_HOST load -i $BUSYBOX_PATH
 export APP_HOST_IP='<%= link('harbor_reference').instances[0].address %>'
 export HTTP_PROTOCOL='<%= link('harbor_reference').p('ui_url_protocol') %>'
 export TESTING_ENV_HOSTNAME='<%= link('harbor_reference').p('hostname') %>'
-export TESTING_ENV_ADMIN_PASS='<%= link('harbor_reference').p('admin_password') %>'
-export TESTING_ENV_PASSWORD='<%= link('harbor_reference').p('admin_password') %>'
+export TESTING_ENV_ADMIN_PASS='<%= link('harbor_reference').p('admin_password_for_smoketest') %>'
+export TESTING_ENV_PASSWORD='<%= link('harbor_reference').p('admin_password_for_smoketest') %>'
 export POPULATE_ETC_HOSTS='<%= link('harbor_reference').p('populate_etc_hosts') %>'
 export CA_FILE_PATH=$SMOKE_TEST_JOB_DIR/config/ca.crt
 export CERT_FILE_PATH=$SMOKE_TEST_JOB_DIR/config/cert.crt
