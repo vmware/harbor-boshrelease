@@ -200,6 +200,10 @@ upgradeHarbor() {
     # After Harbor 1.6.0, database is postgresql, it migration is handled by program internally 
     echo "Skip to use migrator to upgrade harbor after 1.6.0"
   fi
+
+  #Cleanup all unused image and reload image again.
+  $DOCKER_CMD image prune -a -f
+  loadImages
 }
 
 #Start docker daemon
@@ -221,9 +225,6 @@ fi
 
 #Save installed harbor version to file
 echo $HARBOR_FULL_VERSION > $HARBOR_VERSION_FILE
-
-#Cleanup used images
-$DOCKER_CMD image prune -a -f
 
 log "Successfully done!"
 exit 0
