@@ -156,7 +156,6 @@ loadImages() {
     return
   fi
   waitForDockerd
-  #TODO(szou): Add image cleaning here if do migration
   #Load images
   log "Loading docker images ..."
   $DOCKER_CMD load -i $HARBOR_IMAGES_TAR_PATH 2>&1
@@ -222,6 +221,9 @@ fi
 
 #Save installed harbor version to file
 echo $HARBOR_FULL_VERSION > $HARBOR_VERSION_FILE
+
+#Cleanup used images
+$DOCKER_CMD image prune -a -f
 
 log "Successfully done!"
 exit 0
