@@ -182,8 +182,13 @@ upgradeHarbor() {
       return
       ;;
   esac
-  searchResult=$( $DOCKER_CMD images | grep "vmware/harbor-log" || true )
-  if [ -n "$searchResult" && -n "$INSTALLED_HARBOR_VERSION" ] || [ $(compareVersion $INSTALLED_HARBOR_VERSION "1.6.0") = "-1" ]; then
+
+  if [ -z "$INSTALLED_HARBOR_VERSION" ]; then
+    log "file /data/harbor_version is not found or invalid, please upgrade to harbor tile 1.5.2 or newer, then upgrade to this version"
+    exit 1
+  fi
+
+  if [ $(compareVersion $INSTALLED_HARBOR_VERSION "1.6.0") = "-1" ]; then
 
     MIGRATE_DOCKER_CMD="$DOCKER_CMD run -i --rm -e DB_USR=root -e SKIP_CONFIRM=y "
     HARBOR_MIGRATOR_TAG=$($DOCKER_CMD images | grep harbor-migrator | grep $HARBOR_MIGRATOR_VERSION | awk '{print $2}')
