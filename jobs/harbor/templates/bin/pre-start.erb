@@ -6,6 +6,7 @@ set -e # exit immediately if a simple command exits with a non-zero status
 
 source /var/vcap/packages/common/utils.sh
 
+NFS_PKG_DIR=/var/vcap/packages/nfs-common
 PACKAGE_DIR=/var/vcap/packages
 JOB_NAME=harbor
 HARBOR_JOB_DIR=/var/vcap/jobs/$JOB_NAME
@@ -166,7 +167,6 @@ loadImages() {
     return
   fi
   waitForDockerd
-  #TODO(szou): Add image cleaning here if do migration
   #Load images
   log "Loading docker images ..."
   $DOCKER_CMD load -i $HARBOR_IMAGES_TAR_PATH 2>&1
@@ -192,8 +192,13 @@ upgradeHarbor() {
       return
       ;;
   esac
-  searchResult=$( $DOCKER_CMD images | grep "vmware/harbor-log" || true )
-  if [ -n "$searchResult" ] || [ $(compareVersion $INSTALLED_HARBOR_VERSION "1.6.0") = "-1" ]; then
+
+  if [ -z "$INSTALLED_HARBOR_VERSION" ]; then
+    log "file /data/harbor_version is not found or invalid, please upgrade to harbor tile 1.5.2 or newer, then upgrade to this version"
+    exit 1
+  fi
+
+  if [ $(compareVersion $INSTALLED_HARBOR_VERSION "1.6.0") = "-1" ]; then
 
     MIGRATE_DOCKER_CMD="$DOCKER_CMD run -i --rm -e DB_USR=root -e SKIP_CONFIRM=y "
     HARBOR_MIGRATOR_TAG=$($DOCKER_CMD images | grep harbor-migrator | grep $HARBOR_MIGRATOR_VERSION | awk '{print $2}')
@@ -211,6 +216,10 @@ upgradeHarbor() {
     # After Harbor 1.6.0, database is postgresql, it migration is handled by program internally 
     echo "Skip to use migrator to upgrade harbor after 1.6.0"
   fi
+
+  #Cleanup all unused image and reload image again.
+  $DOCKER_CMD image prune -a -f
+  loadImages
 }
 
 #Start docker daemon
@@ -232,6 +241,31 @@ fi
 
 #Save installed harbor version to file
 echo $HARBOR_FULL_VERSION > $HARBOR_VERSION_FILE
+
+<%- if_p("registry_storage_provider.nfs.server_uri") do |uri| -%>
+mount_point='<%= p("registry_storage_provider.nfs.mount_point") %>'
+# Change default storage for registry container to the mount_point.
+# /data is linked to /var/vcap/store/harbor which mounts /dev/sdc1. Need to mount NFS to a directory outside /data.
+# Otherwise when bosh recreates Harbor VM, 'umount /var/vcap/store' on existing VM wll fail.
+sed -i "s|/data/registry:/storage|$mount_point:/storage|" ${HARBOR_PACKAGE_DIR}/docker-compose.yml
+# Ensure the replacement succeeded
+if ! grep -q "$mount_point:/storage" ${HARBOR_PACKAGE_DIR}/docker-compose.yml ; then
+  log "Failed to config NFS storage mapping for registry container."
+  exit 1
+fi
+# Mount NFS Server
+nfs_uri='<%= uri %>'
+mkdir -p $mount_point
+if ! mount | grep -q $nfs_uri ; then
+  dpkg -i ${NFS_PKG_DIR}/keyutils_1.5.9-8ubuntu1_amd64.deb
+  dpkg -i ${NFS_PKG_DIR}/libnfsidmap2_0.25-5_amd64.deb
+  dpkg -i ${NFS_PKG_DIR}/rpcbind_0.2.3-0.2_amd64.deb
+  dpkg -i ${NFS_PKG_DIR}/libevent-2.0-5_2.0.21-stable-2ubuntu0.16.04.1_amd64.deb
+  dpkg -i ${NFS_PKG_DIR}/nfs-common_1.2.8-9ubuntu12_amd64.deb
+  
+  mount $nfs_uri $mount_point
+fi
+<%- end -%>
 
 log "Successfully done!"
 exit 0
