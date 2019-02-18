@@ -1,0 +1,87 @@
+name: harbor-container-registry
+version: 1.6.2
+commit_hash: 428935f
+uncommitted_changes: false
+jobs:
+- name: docker
+  version: cf939becf6700f3545d6b47849740ca3b80cf707
+  fingerprint: cf939becf6700f3545d6b47849740ca3b80cf707
+  sha1: ac48173ca5fb28e8324b64e6d06a9a72b5948381
+- name: enable-bosh-dns
+  version: 733816c24ab25eb80dd82cec4ff740f90e8f5495
+  fingerprint: 733816c24ab25eb80dd82cec4ff740f90e8f5495
+  sha1: a8c46ebb39e904a22fb3d125b2bbce19440b8fce
+- name: harbor
+  version: 40fdf785b5fe2728441317ec82fe4e1f15e6eb17
+  fingerprint: 40fdf785b5fe2728441317ec82fe4e1f15e6eb17
+  sha1: 2ae476936091a3885db9ff159704dba7e8c70d71
+- name: harbor-dns-aliases
+  version: 26ed37cad657bcbf90c6282e09ca4be571904e35
+  fingerprint: 26ed37cad657bcbf90c6282e09ca4be571904e35
+  sha1: 44f4be89e6164f1d6934fe9e64e115bfcb4c440d
+- name: smoke-test
+  version: 34742a9da2e091ce1ef3f21b24aaf823f1db4a34
+  fingerprint: 34742a9da2e091ce1ef3f21b24aaf823f1db4a34
+  sha1: 739c4e3c271f147f3837db7c98c372c301571a03
+- name: uaa-deregistration
+  version: 5675f95228637b8a736b8e2e958965a131fd1a37
+  fingerprint: 5675f95228637b8a736b8e2e958965a131fd1a37
+  sha1: 6349af932909cfaac0f6b3262f243d10b8d51c0e
+packages:
+- name: busybox
+  version: f030786058fc749fbb5018a696349d594a6758cb
+  fingerprint: f030786058fc749fbb5018a696349d594a6758cb
+  sha1: fdbbcbdc898f75d810b4b0181785191673b1d83c
+  dependencies: []
+- name: common
+  version: 581569d5a5e6e251647b4f117e837376ed24c48d
+  fingerprint: 581569d5a5e6e251647b4f117e837376ed24c48d
+  sha1: c29cdfb7cfeed978a012944d099cfff7e5eff752
+  dependencies: []
+- name: docker
+  version: 76eb24f18cb2ec365065d62b04571ee24a5631be
+  fingerprint: 76eb24f18cb2ec365065d62b04571ee24a5631be
+  sha1: 494b81134b9ba7a7ef55a05c3b18130365a45642
+  dependencies:
+  - common
+- name: docker-compose
+  version: 03043c3d2fa10638aac79b5ff27ece4d7ce5d3af
+  fingerprint: 03043c3d2fa10638aac79b5ff27ece4d7ce5d3af
+  sha1: 66f359ee97346395b8a28b2bad11c30acb4f0372
+  dependencies: []
+- name: harbor-app
+  version: 09c5d575a5f3e1a8f38a006daa4feb0e6a5517ff
+  fingerprint: 09c5d575a5f3e1a8f38a006daa4feb0e6a5517ff
+  sha1: 686a6bdefc699451c2c050ad432569e9d770d087
+  dependencies:
+  - harbor-common
+- name: harbor-common
+  version: 50194fba2de5a42739e3b41de41450b426d04cb1
+  fingerprint: 50194fba2de5a42739e3b41de41450b426d04cb1
+  sha1: d9311e0bc2d278388be4dfce07c208da337d90a0
+  dependencies:
+  - common
+- name: nfs-common
+  version: aa99c9b13a5a3256a11952d918a5438b357f75a4
+  fingerprint: aa99c9b13a5a3256a11952d918a5438b357f75a4
+  sha1: 0b47409a1d41e4af1948a2f26743b3b78cceb85b
+  dependencies: []
+- name: python
+  version: 627fabada10fb1c410ee3a43c8b6962de3f9ba4c
+  fingerprint: 627fabada10fb1c410ee3a43c8b6962de3f9ba4c
+  sha1: dd494cc620c521f8723c2436b57cbdb8ac9e798a
+  dependencies: []
+- name: smoke-test
+  version: 1d3853c35955fdf6a512c2e79df17cddb8f4649b
+  fingerprint: 1d3853c35955fdf6a512c2e79df17cddb8f4649b
+  sha1: d6a1f8d4852c4b5f03f6a9c843046254dffd98fb
+  dependencies: []
+- name: uaa
+  version: 9ecfefa5020377e42f0574a7dfe92a8eb15cbcf0
+  fingerprint: 9ecfefa5020377e42f0574a7dfe92a8eb15cbcf0
+  sha1: 4ccf30ca442298f8f90b6d14490fdea1bdf55e7f
+  dependencies: []
+license:
+  version: 457e65413fc9a4e075b2e124a3bfb0e94676e5c4
+  fingerprint: 457e65413fc9a4e075b2e124a3bfb0e94676e5c4
+  sha1: db1f17a5f9c5215629e50b9bb6dce197162c8fc6
