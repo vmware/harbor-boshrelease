@@ -86,6 +86,16 @@ redirect=<%= p("registry_storage_provider.redirect") %>
 <%- end %>
 
 
+<%- if p("registry_storage_provider.redirect") %>
+sed -i -e '/storage:$/a \ \ redirect:\n \ \ \ \disable: true' /var/vcap/jobs/harbor/packages/harbor-app/common/templates/registry/config.yml
+<%- end %>
+<%- if p("registry_storage_provider.redirect") %>
+if ! grep -q 'redirect: {disable: true}' ; then
+  sed -i -e '/storage:$/a \ \ redirect: {disable: true}' /var/vcap/jobs/harbor/packages/harbor-app/common/templates/registry/config.yml
+fi
+<%- end %>
+
+
 if [ "$HARBOR_PROTOCOL" = "https" ]; then
   #Copy cert to the right place
   mkdir -p $HARBOR_DATA/cert
