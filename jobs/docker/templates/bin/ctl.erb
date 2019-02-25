@@ -12,7 +12,7 @@ DOCKER_JOB_DIR=$JOB_DIR/$JOB_NAME
 DOCKER_PACKAGE_DIR=$PACKAGE_DIR/docker
 DOCKER_DAEMON_PIDFILE=$DOCKER_RUN_DIR/dockerd.pid
 DOCKER_DAEMON_SOCK=$DOCKER_RUN_DIR/dockerd.sock
-
+DOCKER_STORAGE_DRIVER_VALUE=overlay2
 export PATH=$PATH:${DOCKER_PACKAGE_DIR}/bin
 
 CTL_CMD=/sbin/start-stop-daemon
@@ -87,6 +87,35 @@ case "$COMMAND" in
     log "Stopping docker daemon..."
     stopDockerd
     ;;
+    
+    mounts=$(cat /proc/mounts | grep "/var/vcap/store/docker/docker/${DOCKER_STORAGE_DRIVER_VALUE}/.*" | awk '{print $2}')
+    for mount in $mounts; do
+      echo "Unmounting $mount"
+      umount $mount
+    done
+
+    if [[ -d /var/vcap/store/docker/docker/${DOCKER_STORAGE_DRIVER_VALUE} ]]; then
+      set +e
+      echo "Unmounting /var/vcap/store/docker/docker/${DOCKER_STORAGE_DRIVER_VALUE}"
+      umount /var/vcap/store/docker/docker/${DOCKER_STORAGE_DRIVER_VALUE}
+      set -e
+    fi
+
+    if [[ -d /var/vcap/store/docker/docker ]]; then
+      set +e
+      echo "Unmounting /var/vcap/store/docker/docker"
+      umount /var/vcap/store/docker/docker
+      set -e
+    fi
+    ;;
+
+    if [[ -d /var/vcap/store/docker ]]; then
+      set +e
+      echo "Unmounting /var/vcap/store/docker"
+      umount /var/vcap/store/docker
+      set -e
+    fi
+    ;;    
 
   *)
     log "Usage: ctl [start|stop]"
