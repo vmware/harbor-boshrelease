@@ -86,7 +86,6 @@ case "$COMMAND" in
 
     log "Stopping docker daemon..."
     stopDockerd
-    ;;
     
     mounts=$(cat /proc/mounts | grep "/var/vcap/store/docker/docker/${DOCKER_STORAGE_DRIVER_VALUE}/.*" | awk '{print $2}')
     for mount in $mounts; do
@@ -107,7 +106,6 @@ case "$COMMAND" in
       umount /var/vcap/store/docker/docker
       set -e
     fi
-    ;;
 
     if [[ -d /var/vcap/store/docker ]]; then
       set +e
