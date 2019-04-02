@@ -132,6 +132,9 @@ properties:
   ldap.basedn:
     description: "The base DN from which to look up a user in LDAP/AD"
     default: "ou=people,dc=mydomain,dc=com"
+  ldap.group_admin_dn:
+    description: "The group DN from wich to look up an admin user in LDAP/AD"
+    default: ""
   ldap.uid:
     description: "The attribute used in a search to match a user, it could be uid, cn, email, sAMAccountName or other attributes."
     default: "uid"
