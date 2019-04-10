@@ -4,12 +4,12 @@ name: harbor-deployment
 releases:
 - name: harbor-container-registry
   version: 1.7.5
-  sha1: 22e63dc2342ce97b81d3f0be90dcf42196b137f7
-  url: https://storage.googleapis.com/harbor-releases/release-1.7.0/harbor-offline-installer-v1.7.5.tgz
+  sha1: d717577fba3ca6f2e5ae800ef8c847234725b839
+  url: https://storage.googleapis.com/harbor-bosh-releases/harbor-bosh-1.7.5.tgz
 
 stemcells:
 - alias: default
-  os: ubuntu-trusty
+  os: ubuntu-xenial
   version: latest
 
 addons:
