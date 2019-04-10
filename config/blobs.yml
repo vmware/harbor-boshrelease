@@ -2,39 +2,43 @@ docker/docker-18.06.0-ce.tgz:
   size: 43803207
   object_id: f8dbab24-6361-4713-4802-af7230e9c8ca
   sha: 2a06bab62d1d5cf083542048cec555cc735ff2b7
+docker/docker-18.09.2.tgz:
+  size: 48020699
+  object_id: 939d7dfe-af21-4e83-65ad-dd873fe89aec
+  sha: d33f91b367f6a877eb937c3c38d001494ec1d581
 docker/docker-compose-Linux-x86_64:
   size: 11750136
-  object_id: cbabeed4-dfd0-4f7d-48cc-ff02bcc592ef
+  object_id: 65da9c82-b603-47bc-792b-4ee3e943340b
   sha: 9303600664184658b7124d0a65f9e12a4d672708
 harbor/harbor-offline-installer-latest.tgz:
-  size: 659512699
-  object_id: 20ac6e32-1d52-4a44-55bc-08df674fc6ff
-  sha: f7e3e32c3f3b7b955aed3191548e572cec78cff3
+  size: 541535889
+  object_id: 0ef21354-aeab-4c1b-7d18-01b2912be986
+  sha: 0dff9114eb047dd434cfc04fe6c76ddffe96d52e
 nfs-common/keyutils_1.5.9-8ubuntu1_amd64.deb:
   size: 47054
-  object_id: b1d78b3b-1228-49f3-6206-d1c9466d8469
+  object_id: 1b728c6a-662d-4f38-780e-ba52267c38b0
   sha: ec2e96e73feb5215605c9f0254cad05d9cc5688a
 nfs-common/libevent-2.0-5_2.0.21-stable-2ubuntu0.16.04.1_amd64.deb:
   size: 114014
-  object_id: 0999928e-941d-4708-6499-81fb7f601b21
+  object_id: e23f4eab-6b01-480a-4c8a-5fa2610673db
   sha: 57d69f44f3e058e48a7b79595d36076eb21f5942
 nfs-common/libnfsidmap2_0.25-5_amd64.deb:
   size: 32182
-  object_id: 508e37ef-adf7-4606-59bb-07fb8f0f26fd
+  object_id: 82a822cd-f1b7-4893-63fe-568bcbf564a5
   sha: f28b7370542daaf81cefb44d9057fa9b3fb43064
 nfs-common/nfs-common_1.2.8-9ubuntu12_amd64.deb:
   size: 184538
-  object_id: 1231abc9-f759-4f66-7f60-1a5611f9da8c
+  object_id: f82ab934-e420-43ea-7f55-4077dd528e09
   sha: 2977e5a1e86615e268cc518f04c9dd2cc832b263
 nfs-common/rpcbind_0.2.3-0.2_amd64.deb:
   size: 40252
-  object_id: 363a7dc0-c3ff-4b22-5e8c-cdfc6f3492f8
+  object_id: b1408074-376d-4a72-70c3-b72f82a56120
   sha: 8fa58cfcb1862c6d337d10496fada5f1a6e94a03
 python/Python-2.7.15.tgz:
   size: 17496336
-  object_id: f5f695b5-6b72-42fb-6b86-2f147354941b
+  object_id: a9f1ff87-b561-4df2-4842-dfd627fd5307
   sha: c9750707d127d39a6868e1e55f7cd8c7be006b89
 smoke-test/smoke-test:
-  size: 6285371
-  object_id: 2aec57ea-1ce1-43a7-5ce8-0f6d9976304c
-  sha: f615215c8dd9a39e81edc06edb3db864c10ba2c5
+  size: 0
+  object_id: c33a11dd-de54-4904-65e7-e8f867525018
+  sha: da39a3ee5e6b4b0d3255bfef95601890afd80709
