@@ -19,10 +19,10 @@ set -ex
 
 harbor_db_image=$($DOCKER_CMD images goharbor/harbor-db --format "{{.Repository}}:{{.Tag}}")
 harbor_db_path="/data/database"
-fix_notary_sql_path="/var/vcap/packages/harbor-common/fix_notary.sql"
+fix_notary_sql_path="/var/vcap/packages/harbor-common/fix-notary.sql"
 
 launch_db() {
-    $DOCKER_CMD run -d --name fix-notary-migration -v ${harbor_db_path}:/var/lib/postgresql/data -v ${fix_notary_sql_path}:/fix_notary.sql ${harbor_db_image} "postgres"
+    $DOCKER_CMD run -d --name fix-notary-migration -v ${harbor_db_path}:/var/lib/postgresql/data -v ${fix_notary_sql_path}:/fix-notary.sql ${harbor_db_image} "postgres"
 }
 
 clean_db() {
@@ -50,7 +50,7 @@ wait_for_db_ready() {
 }
 
 fix_notary() {
-    $DOCKER_CMD exec fix-notary-migration psql -U postgres -f "/fix_notary.sql"
+    $DOCKER_CMD exec fix-notary-migration psql -U postgres -f "/fix-notary.sql"
 }
 
 launch_db
