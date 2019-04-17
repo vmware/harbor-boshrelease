@@ -213,15 +213,16 @@ upgradeHarbor() {
     log "Migrating notary DB"
     $MIGRATE_DOCKER_CMD -e PGDATA=/var/lib/postgresql/data -v /data/notary-db/:/var/lib/mysql -v /data/database:/var/lib/postgresql/data goharbor/harbor-migrator:$HARBOR_MIGRATOR_TAG --db up
 
-    log "Upgrade notary db"
-    source $PACKAGE_DIR/harbor-common/notary-migration-fix.sh
-
   else
     # After Harbor 1.6.0, database is postgresql, it migration is handled by program internally 
     echo "Skip to use migrator to upgrade harbor after 1.6.0"
   fi
 
-  #Cleanup all unused image and reload image again.
+  # Fix notary db schema error between 1.5.0 and 1.6.3
+  log "Upgrade notary db"
+  source $PACKAGE_DIR/harbor-common/notary-migration-fix.sh
+
+  # Cleanup all unused image and reload image again.
   $DOCKER_CMD image prune -a -f
   loadImages
 }
