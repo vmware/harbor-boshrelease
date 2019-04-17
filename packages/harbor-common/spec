@@ -7,3 +7,4 @@ files:
 - harbor-common/common.sh
 - harbor-common/utils.sh
 - harbor-common/notary-migration-fix.sh
+- harbor-common/fix-notary.sql
