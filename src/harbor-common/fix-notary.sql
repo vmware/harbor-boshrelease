@@ -1,3 +1,10 @@
+/* sql script to fix issues in notary tables after migrate mysql to postgress.
+  There are two migrators, one is harbor-db-migrator, another is container build-in migration tools.
+  When upgrade 1.5.0 to 1.6.0, the harbor-db-migrator migrate database table from mysql to pgsql, there is a bug between 1.6.0 to 1.6.3, it cause table owner is postgres.
+  When 1.6.0 container starts, the notary container build-in migration tools trys to migrate and fails, the dirty column is not created because tables owner is not signer/server
+  use the condition dirty column in table schema_migrations to check if it is need to update databse table, if it exit, means the migration is success, if not exist, means the migration fails.
+*/
+
 \c notarysigner;
 DO $$
 BEGIN
