@@ -125,7 +125,8 @@ if [ ! -z "$(cat ${HARBOR_JOB_DIR}/config/gcs_keyfile)" ]; then
 fi
 
 #Prepare Harbor env
-PREPARE_OPTS="--conf ${CFG_FILE}"
+#PREPARE_OPTS="--conf ${CFG_FILE}"
+PREPARE_OPTS="${HARBOR_JOB_DIR}/config/"
 
 #If install optional component Notary
 if [ -n "$WITH_NOTARY" ]; then
