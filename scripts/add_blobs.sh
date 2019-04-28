@@ -8,8 +8,7 @@ cd $files_dir
 if [ "$1" != "--skip-download" ]; then
   wget https://download.docker.com/linux/static/stable/x86_64/docker-18.09.2.tgz
   wget -O docker-compose-Linux-x86_64 https://github.com/docker/compose/releases/download/1.22.0/docker-compose-Linux-x86_64
-  #wget -O harbor-offline-installer-latest.tgz https://storage.googleapis.com/harbor-builds/harbor-offline-installer-latest.tgz
-  wget -O harbor-offline-installer-latest.tgz https://storage.googleapis.com/harbor-releases/release-1.7.0/harbor-offline-installer-v1.7.3.tgz
+  wget -O harbor-offline-installer-latest.tgz https://storage.googleapis.com/harbor-builds/harbor-offline-installer-latest.tgz
   wget https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tgz
   wget http://mirrors.kernel.org/ubuntu/pool/main/n/nfs-utils/nfs-common_1.2.8-9ubuntu12_amd64.deb
   wget http://security.ubuntu.com/ubuntu/pool/main/libe/libevent/libevent-2.0-5_2.0.21-stable-2ubuntu0.16.04.1_amd64.deb
