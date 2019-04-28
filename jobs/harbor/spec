@@ -7,6 +7,7 @@ templates:
   bin/status_check.erb: bin/status_check
   bin/properties.sh.erb: bin/properties.sh
   config/harbor.cfg: config/harbor.cfg
+  config/harbor.yml: config/harbor.yml
   config/server.crt: config/server.crt
   config/server.key: config/server.key
   config/ca.crt: config/ca.crt

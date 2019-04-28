@@ -126,7 +126,7 @@ fi
 
 #Prepare Harbor env
 #PREPARE_OPTS="--conf ${CFG_FILE}"
-PREPARE_OPTS="${HARBOR_JOB_DIR}/config/"
+cp -f ${HARBOR_JOB_DIR}/config/harbor.yml  ${HARBOR_PACKAGE_DIR}/harbor.yml
 
 #If install optional component Notary
 if [ -n "$WITH_NOTARY" ]; then
