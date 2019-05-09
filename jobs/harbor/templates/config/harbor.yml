@@ -41,32 +41,32 @@ data_volume: /data
 #   filesystem:
 #     maxthreads: 100
 
-storage_service
-# S3 storage
+storage_service:
 <%- if p("registry_storage_provider.name") == "s3" %>
+# S3 storage
   s3:
-    accesskey: <%= p("registry_storage_provider.config.accesskey") %>                                                                                                                            
-    secretkey: <%= p("registry_storage_provider.config.secretkey") %>                                                                                                        
-    region: <%= p("registry_storage_provider.config.region") %>                                                                                                                                              
+    accesskey: <%= p("registry_storage_provider.s3.accesskey") %>                                                                                                                            
+    secretkey: <%= p("registry_storage_provider.s3.secretkey") %>                                                                                                        
+    region: <%= p("registry_storage_provider.s3.region") %>                                                                                                                                              
     regionendpoint:                                                                                                                                             
-    bucket: <%= p("registry_storage_provider.config.bucket") %>                                                                                                                              
+    bucket: <%= p("registry_storage_provider.s3.bucket") %>                                                                                                                              
     encrypt: true                                                                                                                                               
     secure: true                                                                                                                                                
     v4auth: true                                                                                                                                                
     chunksize: 5242880                                                                                                                                          
-    rootdirectory: <%= p("registry_storage_provider.config.rootdirectory") %>    
+    rootdirectory: <%= p("registry_storage_provider.s3.rootdirectory") %>    
 <%- end %>
-
-# GCS storage
 <%- if p("registry_storage_provider.name") == "gcp" %>
+# GCS storage
   gcs:
-
+    bucket: <%= p("registry_storage_provider.gcs.bucket") %>                                                                                                                        
+    keyfile: <%= p("registry_storage_provider.gcs.keyfile") %>                                                                                              
+    rootdirectory: <%= p("registry_storage_provider.gcs.rootdirectory") %>                                                                                                                      
+    chunksize: <%= p("registry_storage_provider.gcs.chunksize") %>  
 <%- end %>
-
-# Azure storage
 <%- if p("registry_storage_provider.name") == "azure" %>
+# Azure storage
   azure:
-    
 <%- end %>
 
 
