@@ -41,6 +41,35 @@ data_volume: /data
 #   filesystem:
 #     maxthreads: 100
 
+storage_service
+# S3 storage
+<%- if p("registry_storage_provider.name") == "s3" %>
+  s3:
+    accesskey: <%= p("registry_storage_provider.config.accesskey") %>                                                                                                                            
+    secretkey: <%= p("registry_storage_provider.config.secretkey") %>                                                                                                        
+    region: <%= p("registry_storage_provider.config.region") %>                                                                                                                                              
+    regionendpoint:                                                                                                                                             
+    bucket: <%= p("registry_storage_provider.config.bucket") %>                                                                                                                              
+    encrypt: true                                                                                                                                               
+    secure: true                                                                                                                                                
+    v4auth: true                                                                                                                                                
+    chunksize: 5242880                                                                                                                                          
+    rootdirectory: <%= p("registry_storage_provider.config.rootdirectory") %>    
+<%- end %>
+
+# GCS storage
+<%- if p("registry_storage_provider.name") == "gcp" %>
+  gcs:
+
+<%- end %>
+
+# Azure storage
+<%- if p("registry_storage_provider.name") == "azure" %>
+  azure:
+    
+<%- end %>
+
+
 # Clair configuration
 clair: 
   # The interval of clair updaters, the unit is hour, set to 0 to disable the updaters.
