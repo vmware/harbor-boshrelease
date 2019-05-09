@@ -2,10 +2,10 @@
 name: harbor
 
 templates:
-  bin/ctl.erb: bin/ctl
-  bin/pre-start.erb: bin/pre-start
-  bin/status_check.erb: bin/status_check
-  bin/properties.sh.erb: bin/properties.sh
+  bin/ctl.erb.sh: bin/ctl
+  bin/pre-start.erb.sh: bin/pre-start
+  bin/status_check.erb.sh: bin/status_check
+  bin/properties.erb.sh: bin/properties.sh
   config/harbor.cfg: config/harbor.cfg
   config/harbor.yml: config/harbor.yml
   config/server.crt: config/server.crt
@@ -14,7 +14,7 @@ templates:
   config/uaa_ca.crt: config/uaa_ca.crt
   config/trusted_certificates.crt: config/trusted_certificates.crt
   config/uaa.json.erb: config/uaa.json
-  bin/uaa.sh.erb: bin/uaa.sh
+  bin/uaa.erb.sh: bin/uaa.sh
   config/gcs_keyfile: config/gcs_keyfile
   config/daemon.json: config/daemon.json
 
