@@ -21,6 +21,7 @@ CRON_PATH=/etc/cron.d/$JOB_NAME
 CERTS_D=/etc/docker/certs.d
 PYTHON_CMD=${PACKAGE_DIR}/python/python2.7/bin/python
 HARBOR_LOG_DIR=$LOG_DIR/$JOB_NAME
+HARBOR_BUNDLE_DIR=/var/vcap/packages/harbor-app
 
 source $PACKAGE_DIR/harbor-common/common.sh
 source $HARBOR_JOB_DIR/bin/properties.sh
@@ -74,35 +75,6 @@ function customizeContainerNetworkSettings() {
   <%- end %>
 }
 
-function enableStorageRedirect () {
-  :
-  <%- if p("registry_storage_provider.redirect") != nil %>
-  redirect=<%= p("registry_storage_provider.redirect") %>
-
-    case $redirect in
-      true)
-          sed -i -e '/redirect:/,/disable.* /d' /var/vcap/jobs/harbor/packages/harbor-app/common/templates/registry/config.yml
-          sed -i -e '/storage:$/a \ \ redirect:\n \ \ \ \disable: true' /var/vcap/jobs/harbor/packages/harbor-app/common/templates/registry/config.yml
-          return
-          ;;
-      *)
-          sed -i -e '/redirect:/,/disable.* /d' /var/vcap/jobs/harbor/packages/harbor-app/common/templates/registry/config.yml
-          return
-          ;;
-    esac
-  <%- end %>
-
-  <%- if p("registry_storage_provider.redirect") %>
-  sed -i -e '/storage:$/a \ \ redirect:\n \ \ \ \disable: true' /var/vcap/jobs/harbor/packages/harbor-app/common/templates/registry/config.yml
-  <%- end %>
-  <%- if p("registry_storage_provider.redirect") %>
-  if ! grep -q 'redirect: {disable: true}' ; then
-    sed -i -e '/storage:$/a \ \ redirect: {disable: true}' /var/vcap/jobs/harbor/packages/harbor-app/common/templates/registry/config.yml
-  fi
-  <%- end %>
-
-}
-
 function prepareCert() {
   if [ "$HARBOR_PROTOCOL" = "https" ]; then
     #Copy cert to the right place
@@ -140,11 +112,7 @@ function installHarbor() {
       ${PACKAGE_DIR}/docker-compose/bin/docker-compose -H $DOCKER_HOST  $*
   }
   prepareOps=$(getPrepareOption)
-  if [ -d $HARBOR_DATA/database ]; then
-    source ${HARBOR_PACKAGE_DIR}/prepare ${prepareOps}
-  else 
-    source ${HARBOR_PACKAGE_DIR}/install.sh ${prepareOps}
-  fi
+  source ${HARBOR_PACKAGE_DIR}/prepare ${prepareOps}
 
   unset -f docker
   unset -f docker-compose
@@ -172,6 +140,8 @@ loadImages() {
     return
   fi
   waitForDockerd
+  log "clean up docker images before load"
+  $DOCKER_CMD image prune -a -f
   #Load images
   log "Loading docker images ..."
   $DOCKER_CMD load -i $HARBOR_IMAGES_TAR_PATH 2>&1
@@ -237,6 +207,7 @@ upgradeHarbor() {
 }
 
 function setupNFS() {
+  :
   <%- if_p("registry_storage_provider.nfs.server_uri") do |uri| -%>
   mount_point='<%= p("registry_storage_provider.nfs.mount_point") %>'
   # Change default storage for registry container to the mount_point.
@@ -302,11 +273,11 @@ prepareFolderAndFile
 populateHostname 
 customizeContainerNetworkSettings
 startDockerDaemon
-enableStorageRedirect
+
 prepareCert
+loadImages
 installHarbor
 setupGCSKeyFile
-loadImages
 upgradeHarbor
 setupNFS
 waitForBoshDNS
