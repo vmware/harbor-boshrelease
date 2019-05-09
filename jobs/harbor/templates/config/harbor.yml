@@ -90,3 +90,9 @@ _version: 1.7.0
 #   registry_db_index: 1
 #   jobservice_db_index: 2
 #   chartmuseum_db_index: 3
+
+# UAA cert
+<%- if p("auth_mode") == "uaa_auth" %>
+uaa:
+  ca_file: /var/vcap/jobs/harbor/config/uaa_ca.crt
+<%- end %>

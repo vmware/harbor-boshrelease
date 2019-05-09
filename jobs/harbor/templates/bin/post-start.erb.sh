@@ -32,4 +32,11 @@ changeUserConfigSetting() {
 waitForDBReady
 changeUserConfigSetting auth_mode <%= p("auth_mode") %>
 
+<%- if p("auth_mode") == "uaa_auth" %>
+changeUserConfigSetting uaa_endpoint <%= p("uaa.url") %>
+changeUserConfigSetting uaa_client_id <%= p("uaa.client_id") %>
+changeUserConfigSetting uaa_client_secret <%= p("uaa.client_secret") %>
+changeUserConfigSetting uaa_verify_cert <%= p("uaa.verify_cert") %>
+<%- end %>
+
 exit 0
