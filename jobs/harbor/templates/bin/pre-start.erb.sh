@@ -112,6 +112,8 @@ function installHarbor() {
       ${PACKAGE_DIR}/docker-compose/bin/docker-compose -H $DOCKER_HOST  $*
   }
   prepareOps=$(getPrepareOption)
+  # TODO: remove after fix it in standalone
+  sed -i -e 's/-it//g' ${HARBOR_PACKAGE_DIR}/prepare
   source ${HARBOR_PACKAGE_DIR}/prepare ${prepareOps}
 
   unset -f docker
