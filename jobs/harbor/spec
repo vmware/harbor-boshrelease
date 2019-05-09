@@ -4,6 +4,7 @@ name: harbor
 templates:
   bin/ctl.erb.sh: bin/ctl
   bin/pre-start.erb.sh: bin/pre-start
+  bin/post-start.erb.sh: bin/post-start
   bin/status_check.erb.sh: bin/status_check
   bin/properties.erb.sh: bin/properties.sh
   config/harbor.cfg: config/harbor.cfg
