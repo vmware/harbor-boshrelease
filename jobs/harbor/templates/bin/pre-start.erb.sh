@@ -26,7 +26,7 @@ HARBOR_BUNDLE_DIR=/var/vcap/packages/harbor-app
 source $PACKAGE_DIR/harbor-common/common.sh
 source $HARBOR_JOB_DIR/bin/properties.sh
 
-
+# Add FQDN to /etc/hosts, for monit_status script to access Harbor
 function populateHostname() {
   :
   <%- if p("populate_etc_hosts") %>
@@ -41,6 +41,7 @@ function populateHostname() {
   <%- end %>
 }
 
+# Create all directories need to run harbor
 function prepareFolderAndFile() {
   # Make sure folders are ready
   for dir in $HARBOR_PERSISTED_DATA ; do
@@ -66,6 +67,7 @@ function prepareFolderAndFile() {
   sudo mount /tmp -o remount,exec
 }
 
+# Process container network settings, such as ip address pool
 function customizeContainerNetworkSettings() {
   :
   #Customize container network settings
@@ -97,6 +99,7 @@ function prepareCert() {
   fi
 }
 
+# Copy GCS file file to registry config dir
 setupGCSKeyFile() {
   if [ ! -z "$(cat ${HARBOR_JOB_DIR}/config/gcs_keyfile)" ]; then
     log 'Copy GCS keyfile to registry'
@@ -104,6 +107,17 @@ setupGCSKeyFile() {
   fi
 }
 
+function getPrepareOption() {
+  if [ -n "$WITH_NOTARY" ]; then
+    echo " --with-notary"
+  fi
+  if [ -n "$WITH_CLAIR" ]; then
+    echo " --with-clair"
+  fi
+  echo " --with-chartmuseum"
+}
+
+# Run prepare 
 function installHarbor() {
   docker() {
       ${DOCKER_PACKAGE_DIR}/bin/docker -H $DOCKER_HOST $*
@@ -120,6 +134,7 @@ function installHarbor() {
   unset -f docker-compose
 }
 
+# Check existing Harbor Version
 checkHarborVersion() {
   if [ -z "$INSTALLED_HARBOR_VERSION" ]; then
      if $DOCKER_CMD images | grep vmware/harbor-log ; then
@@ -149,7 +164,7 @@ loadImages() {
   $DOCKER_CMD load -i $HARBOR_IMAGES_TAR_PATH 2>&1
 }
 
-#Upgrade Harbor if higher version of Harbor to be installed
+#Upgrade Harbor if higher version of Harbor to be installed, only consider version>1.6.0
 upgradeHarbor() {
   INSTALLED_HARBOR_VERSION=`cat $HARBOR_VERSION_FILE`
   <%- if p("enable_upgrade") -%>
@@ -208,6 +223,7 @@ upgradeHarbor() {
   <%- end -%>
 }
 
+# Setup NFS directory and update docker-compose.yml
 function setupNFS() {
   :
   <%- if_p("registry_storage_provider.nfs.server_uri") do |uri| -%>
@@ -236,6 +252,7 @@ function setupNFS() {
   <%- end -%>
 }
 
+# Register UAA client
 function registerUAA() {
     #If auth mode is 'uaa_auth' and admin client existing, try to register UAA client for Harbor registry
     if [ $AUTH_MODE = 'uaa_auth' ] && [[ ! -z "${UAA_ADMIN// }" ]]; then
@@ -247,16 +264,6 @@ function registerUAA() {
 function startDockerDaemon() {
     #Start docker daemon
     /var/vcap/jobs/docker/bin/ctl start
-}
-
-function getPrepareOption() {
-  if [ -n "$WITH_NOTARY" ]; then
-    echo " --with-notary"
-  fi
-  if [ -n "$WITH_CLAIR" ]; then
-    echo " --with-clair"
-  fi
-  echo " --with-chartmuseum"
 }
 
 function waitForBoshDNS() {
@@ -275,13 +282,15 @@ prepareFolderAndFile
 populateHostname 
 customizeContainerNetworkSettings
 startDockerDaemon
-
 prepareCert
 loadImages
 installHarbor
 setupGCSKeyFile
 upgradeHarbor
 setupNFS
+registerUAA
 waitForBoshDNS
+updateVersionFile
+
 log "Successfully done!"
 exit 0
