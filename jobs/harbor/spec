@@ -216,49 +216,49 @@ properties:
     description: "The comma separated 'key: value' pairs for configuring Docker Registry storage provider."
     default: ""
   registry_storage_provider.s3.accesskey:
-   description: "s3 storage access key"
+   description: "s3 storage access key."
    default: ""   
   registry_storage_provider.s3.secretkey:
-   description: "s3 storage access key"
+   description: "s3 storage secret key."
    default: ""   
   registry_storage_provider.s3.bucket:
-   description: "s3 storage access key"
+   description: "s3 storage bucket."
    default: ""   
   registry_storage_provider.s3.rootdirectory:
-   description: "s3 storage access key"
+   description: "s3 storage root directory."
    default: ""      
   registry_storage_provider.s3.region:
-   description: "s3 storage access key"
+   description: "s3 storage region."
    default: "" 
   registry_storage_provider.s3.regionendpoint:
-   description: "s3 storage access key"
+   description: "s3 storage region endpoint."
    default: ""                        
   registry_storage_provider.s3.v4auth:
-   description: "s3 storage access key"
+   description: "s3 storage v4auth."
    default: ""           
   registry_storage_provider.s3.secure:
-   description: "s3 storage access key"
+   description: "s3 storage secure."
    default: "" 
   registry_storage_provider.s3.chunksize:
-   description: "s3 storage access key"
+   description: "s3 storage chunk size."
    default: ""   
   registry_storage_provider.s3.trusted_certificates:
-   description: "s3 storage access key"
+   description: "s3 storage trusted certificate."
    default: ""                           
   registry_storage_provider.gcs.keyfile_content:
     description: "The text content of the GCS key file."
     default: ""
   registry_storage_provider.gcs.bucket:
-    description: "The text content of the GCS key file."
+    description: "The GCS bucket."
     default: ""
   registry_storage_provider.gcs.rootdirectory:
-    description: "The text content of the GCS key file."
+    description: "The GCS root directory."
     default: ""      
   registry_storage_provider.gcs.chunksize:
-    description: "The text content of the GCS key file."
+    description: "The GCS chunck size "
     default: "" 
   registry_storage_provider.gcs.keyfile:
-    description: "The text content of the GCS key file."
+    description: "The GCS key file path."
     default: ""                           
   registry_storage_provider.nfs.server_uri:
     description: "The URI of NFS Server, e.g. nfs_server_ip:/path/to/exported_directory ."
