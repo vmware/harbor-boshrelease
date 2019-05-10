@@ -260,6 +260,18 @@ properties:
   registry_storage_provider.gcs.keyfile:
     description: "The GCS key file path."
     default: ""                           
+  registry_storage_provider.azure.accountname:
+    description: "Azure storage account name."
+    default: ""
+  registry_storage_provider.azure.accountkey:
+    description: "Azure storage account key."
+    default: ""
+  registry_storage_provider.azure.container:
+    description: "Azure storage container."
+    default: ""
+  registry_storage_provider.azure.realm:
+    description: "Azure storage realm."
+    default: ""
   registry_storage_provider.nfs.server_uri:
     description: "The URI of NFS Server, e.g. nfs_server_ip:/path/to/exported_directory ."
   registry_storage_provider.nfs.mount_point:
