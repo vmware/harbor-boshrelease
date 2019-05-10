@@ -42,19 +42,23 @@ data_volume: /data
 #     maxthreads: 100
 
 storage_service:
+<%- if p("registry_storage_provider.redirect") == "true" %>
+  redirect:
+    disabled: true
+<%- end %>
 <%- if p("registry_storage_provider.name") == "s3" %>
 # S3 storage
   s3:
     accesskey: <%= p("registry_storage_provider.s3.accesskey") %>                                                                                                                            
     secretkey: <%= p("registry_storage_provider.s3.secretkey") %>                                                                                                        
     region: <%= p("registry_storage_provider.s3.region") %>                                                                                                                                              
-    regionendpoint:                                                                                                                                             
+    regionendpoint: <%= p("registry_storage_provider.s3.regionendpoint") %>                                                                                                                                    
     bucket: <%= p("registry_storage_provider.s3.bucket") %>                                                                                                                              
-    encrypt: true                                                                                                                                               
-    secure: true                                                                                                                                                
-    v4auth: true                                                                                                                                                
-    chunksize: 5242880                                                                                                                                          
-    rootdirectory: <%= p("registry_storage_provider.s3.rootdirectory") %>    
+    secure: <%= p("registry_storage_provider.s3.secure") %>                                                                                                                                                 
+    v4auth: <%= p("registry_storage_provider.s3.v4auth") %>                                                                                                                                                       
+    chunksize: <%= p("registry_storage_provider.s3.chunksize") %>                                                                                                                                           
+    rootdirectory: <%= p("registry_storage_provider.s3.rootdirectory") %>  
+    trusted_certificates: /harbor_cust_cert/custom-ca-bundle.crt 
 <%- end %>
 <%- if p("registry_storage_provider.name") == "gcp" %>
 # GCS storage
@@ -67,6 +71,10 @@ storage_service:
 <%- if p("registry_storage_provider.name") == "azure" %>
 # Azure storage
   azure:
+    accountname: <%= p("registry_storage_provider.azure.accountname") %> 
+    accountkey: <%= p("registry_storage_provider.azure.accountkey") %> 
+    container: <%= p("registry_storage_provider.azure.container") %> 
+    realm: <%= p("registry_storage_provider.azure.realm") %> 
 <%- end %>
 
 
@@ -99,26 +107,7 @@ log:
   location: /var/log/harbor
 
 #This attribute is for migrator to detect the version of the .cfg file, DO NOT MODIFY!
-_version: 1.7.0
-
-# Uncomment external_database if using external database. And the password will replace the the password setting in database.
-# And currently ontly support postgres.
-# external_database:
-#   host: postgresql
-#   port: 5432
-#   username: postgres
-#   password: root123
-#   ssl_mode: disable
-
-# Umcomments external_redis if using external Redis server
-# external_redis:
-#   host: redis
-#   port: 6379
-#   password:
-#   # db_index 0 is for core, it's unchangeable
-#   registry_db_index: 1
-#   jobservice_db_index: 2
-#   chartmuseum_db_index: 3
+_version: 1.8.0
 
 # UAA cert
 <%- if p("auth_mode") == "uaa_auth" %>
