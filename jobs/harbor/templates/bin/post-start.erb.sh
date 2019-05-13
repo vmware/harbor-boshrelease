@@ -26,7 +26,7 @@ waitForDBReady() {
 changeUserConfigSetting() {
     key=$1
     value=$2
-    $DOCKER_CMD exec harbor-db psql -U postgres -d registry -c "insert into properties (k, v) values ('$key', '$value') on conflict (k) do update set v = '$key';"
+    $DOCKER_CMD exec harbor-db psql -U postgres -d registry -c "insert into properties (k, v) values ('$key', '$value') on conflict (k) do update set v = '$value';"
 }
 
 waitForDBReady
