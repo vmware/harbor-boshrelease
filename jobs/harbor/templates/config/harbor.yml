@@ -4,6 +4,12 @@
 #DO NOT use localhost or 127.0.0.1, because Harbor needs to be accessed by external clients.
 hostname:  <%= p("hostname", spec.ip) %>
 
+# http related config
+http:
+  # port for http, default is 80. If https enabled, this port will redirect to https port
+  port: 80
+
+<%- if p("ui_url_protocol") == "https" %>
 # https related comfig
 https:
   # https port for harbor, default is 443
@@ -11,6 +17,7 @@ https:
   #The path of cert and key files for nginx
   certificate: /data/cert/server.crt
   private_key: /data/cert/server.key
+<%- end %>
 
 # Uncomment extearnal_url if you want to enable external proxy
 # And when it enabled the hostname will no longger used
@@ -77,12 +84,10 @@ storage_service:
     realm: <%= p("registry_storage_provider.azure.realm") %> 
 <%- end %>
 
-
 # Clair configuration
 clair: 
   # The interval of clair updaters, the unit is hour, set to 0 to disable the updaters.
   updaters_interval: <%= p("clair_updater_interval") %>
-
   # Config http proxy for Clair, e.g. http://my.proxy.com:3128
   # Clair doesn't need to connect to harbor internal components via http proxy.
   http_proxy: <%= p("http_proxy") %>
@@ -91,18 +96,18 @@ clair:
 
 jobservice:
   # Maximum number of job workers in job service  
-  max_job_workers: 10
+  max_job_workers: <%= p("max_job_workers") %>
 
 # Log configurations
 log:
   # options are debug, info, warn, error
   level: info
   # Log files are rotated log_rotate_count times before being removed. If count is 0, old versions are removed rather than rotated.
-  rotate_count: 50
+  rotate_count: <%= p("log_rotate_count") %>
   # Log files are rotated only if they grow bigger than log_rotate_size bytes. If size is followed by k, the size is assumed to be in kilobytes. 
   # If the M is used, the size is in megabytes, and if G is used, the size is in gigabytes. So size 100, size 100k, size 100M and size 100G 
   # are all valid.
-  rotate_size: 200M
+  rotate_size: <%= p("log_rotate_size") %>
   # The directory on your host that store log
   location: /var/log/harbor
 

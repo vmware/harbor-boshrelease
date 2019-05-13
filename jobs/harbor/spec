@@ -62,18 +62,14 @@ properties:
     description: "The protocol for accessing the UI and token/notification service, by default it is https"
     default: "https"
   db_password:
-    description: "The password for the root user of mysql db"
+    description: "The password for the root user of postgres db"
   max_job_workers:
     description: "Maximum number of job workers in job service"
     default: 50
   customize_crt:
     description: "Determine whether or not to generate certificate for the registry's token. If the value is on, the prepare script creates new root cert and private key for generating token to access the registry. If the value is off the default key/cert will be used. This flag also controls the creation of the notary signer's cert."
     default: "on"
-  admiral_url:
-    description: "Admiral's url, comment this attribute, or set its value to NA when Harbor is standalone"
-    default: "NA"
-  clair_db_password:
-    description: "The password of the Clair's postgres database, only effective when Harbor is deployed with Clair"
+
   admin_password:
     description: "The initial password of Harbor admin, only works for the first time when Harbor starts"
   auth_mode:
@@ -97,67 +93,6 @@ properties:
   db.user:
     description: "The user name of mysql database"
     default: "root"
-  email.identity:
-    description: "Identity left blank to act as username"
-  email.server:
-    description: "Email server address"
-  email.port:
-    description: "Email server port"
-    default: 25
-  email.username:
-    description: "Username of email server"
-  email.password:
-    description: "Password of email server"
-  email.from:
-    description: "Email address of the sender"
-  email.ssl:
-    description: "If SSL is enabled"
-    default: false
-  email.insecure:
-    description: "Whether to verify the certificate of email server"
-    default: false
-  ldap.url:
-    description: "The url for an ldap endpoint"
-    default: "ldaps://ldap.mydomain.com"
-  ldap.verify_cert:
-    description: "Verify SSL certificate of LDAP server"
-    default: true
-  ldap.searchdn:
-    description: "A user's DN who has the permission to search the LDAP/AD server. If your LDAP/AD server does not support anonymous search, you should configure this DN and ldap.searchpwd."
-    default: ~
-  ldap.searchpwd:
-    description: "The password of the ldap.searchdn"
-    default: ~
-  ldap.filter:
-    description: "Search filter for users in LDAP/AD, make sure the syntax of the filter is correct."
-    default: ~
-  ldap.basedn:
-    description: "The base DN from which to look up a user in LDAP/AD"
-    default: "ou=people,dc=mydomain,dc=com"
-  ldap.group_admin_dn:
-    description: "The group DN from wich to look up an admin user in LDAP/AD"
-    default: ""
-  ldap.uid:
-    description: "The attribute used in a search to match a user, it could be uid, cn, email, sAMAccountName or other attributes."
-    default: "uid"
-  ldap.scope:
-    description: "The scope to search for users: 0-LDAP_SCOPE_BASE, 1-LDAP_SCOPE_ONELEVEL, 2-LDAP_SCOPE_SUBTREE"
-    default: "2"
-  ldap.timeout:
-    description: "Timeout (in seconds)  when connecting to an LDAP Server"
-    default: 5
-  ldap.group_basedn:
-    description: "The base DN from which to look up a group in LDAP/AD"
-    default: "ou=group,dc=mydomain,dc=com"
-  ldap.group_filter:
-    description: "Search filter for groups in LDAP/AD, make sure the syntax of the filter is correct."
-    default: "objectclass=group"
-  ldap.group_gid:
-    description: "The attribute used in a search to match a group, it could be cn, name or other attributes."
-    default: "cn"
-  ldap.group_scope:
-    description: "The scope to search for users: 1-LDAP_SCOPE_BASE, 2-LDAP_SCOPE_ONELEVEL, 3-LDAP_SCOPE_SUBTREE"
-    default: "2"
   ssl.cert:
     description: "The certificate for server"
   ssl.key:
