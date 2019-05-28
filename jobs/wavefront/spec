@@ -1,0 +1,19 @@
+---
+name: wavefront
+
+templates:
+  bin/ctl.sh.erb: bin/ctl.sh
+  config/docker-compose.yml.erb: config/docker-compose.yml
+  config/telegraf.config.erb: config/telegraf.config
+
+packages:
+  - common
+  - docker-compose
+
+properties:
+  wavefront_url:
+    description: "the url that telegraf send data to"
+    default: https://longboard.wavefront.com/api
+  wavefront_token:
+    description: "The token used to access url"
+    default: 39d49f54-9507-4594-8db1-b15c1156e642

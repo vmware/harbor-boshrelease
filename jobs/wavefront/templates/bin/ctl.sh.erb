@@ -1,0 +1,86 @@
+#!/bin/bash
+
+set -e # exit immediately if a simple command exits with a non-zero status
+set -u # report the usage of uninitialized variables
+set -o pipefail
+
+source /var/vcap/packages/common/utils.sh
+
+JOB_NAME=wavefront
+WAVEFRONT_RUN_DIR=$RUN_DIR/$JOB_NAME
+WAVEFRONT_LOG_DIR=$LOG_DIR/$JOB_NAME
+WAVEFRONT_JOB_DIR=$JOB_DIR/$JOB_NAME
+PIDFILE=${WAVEFRONT_RUN_DIR}/wavefront.pid
+TEMP_PIDFILE=${WAVEFRONT_RUN_DIR}/wavefront.tmp.pid
+WAVEFRONT_PACKAGE_DIR=${PACKAGE_DIR}/wavefront-app
+COMPOSE_PACKAGE_DIR=${PACKAGE_DIR}/docker-compose
+WAVEFRONT_YAML=${WAVEFRONT_PACKAGE_DIR}/docker-compose.yml
+
+CTL_CMD=/sbin/start-stop-daemon
+COMPOSE_CMD=${COMPOSE_PACKAGE_DIR}/bin/docker-compose
+DAEMON_SOCK=${RUN_DIR}/docker/dockerd.sock
+DAEMON_PID=${RUN_DIR}/docker/dockerd.pid
+CRON_PATH=/etc/cron.d/$JOB_NAME
+CRON_JOB_INTERVAL=2
+CHECK_SCRIPT_PATH=${WAVEFRONT_JOB_DIR}/bin/status_check
+
+COMMAND_NAME=$1
+
+#Make sure folders are ready
+for dir in $WAVEFRONT_RUN_DIR $WAVEFRONT_LOG_DIR ; do
+  mkdir -p ${dir}
+  chown vcap:vcap ${dir}
+  chmod 755 ${dir}
+done
+
+#Start the wavefront process
+#Require options parameter for $COMPOSE_CMD
+startWavefront() {
+  $CTL_CMD --pidfile $TEMP_PIDFILE \
+  --make-pidfile \
+  --background \
+  --start --oknodo \
+  --startas /bin/bash \
+  -- -c "$COMPOSE_CMD $1 1>> $WAVEFRONT_LOG_DIR/ctl.stdout.log 2>&1"
+  #Wait for a while to let docker-compose initialize
+  sleep 5
+}
+
+#Stop the Wavefront process
+stopWavefront() {
+  $COMPOSE_CMD $1 2>&1 &
+  pid=$!
+  # monit will use pid in $PIDFILE to check if Wavefront job is stopped,
+  # then stop dockerd job if running 'monit stop all'.
+  echo $pid > $PIDFILE
+  wait $pid
+  rm -f $PIDFILE $TEMP_PIDFILE
+}
+
+waitForWavefront() {
+  sleep_time=5
+  timeout=180
+  count=0
+  log "Waiting for Wavefront Service to be ready ..."
+  while ! $CHECK_SCRIPT_PATH >> $WAVEFRONT_LOG_DIR/cron.log 2>&1
+  do
+    log "Wavefront service is not ready. Waiting for $sleep_time seconds then check again."
+    sleep $sleep_time
+    count=$((count + sleep_time));
+    if [ $count -ge $timeout ]; then
+      log "Error: Wavefront Service failed to start in $timeout seconds."
+      exit 1
+    fi
+  done
+  log "Wavefront Service is ready"
+}
+
+#Check docker daemon status
+checkDockerdStatus() {
+  [[ -e $DAEMON_SOCK ]] && \
+  [[ -e $DAEMON_PID ]] && \
+  pgrep -f dockerd >/dev/null 2>&1
+}
+
+
+

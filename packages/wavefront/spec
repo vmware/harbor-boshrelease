@@ -1,0 +1,7 @@
+---
+name: wavefront
+
+dependencies: []
+
+files:
+- wavefront/harbor-wavefront-bundle-1.8.0.tar #wget https://storage.googleapis.com/harbor-wavefront/bundle-latest to get the link of latest package

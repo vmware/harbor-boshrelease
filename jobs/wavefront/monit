@@ -1,0 +1,5 @@
+check process wavefront
+  with pidfile /var/vcap/sys/run/wavefront/pid
+  start program "/var/vcap/jobs/wavefront/bin/ctl start"
+  stop program "/var/vcap/jobs/wavefront/bin/ctl stop"
+  group vcap

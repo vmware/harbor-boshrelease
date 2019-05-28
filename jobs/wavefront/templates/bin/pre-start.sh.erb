@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e # exit immediately if a simple command exits with a non-zero status
+set -u # report the usage of uninitialized variables
+set -o pipefail
+
+source /var/vcap/packages/common/utils.sh
+
+WAVEFRONT_PACKAGE_DIR = ${PACKAGE_DIR}/wavefront
+WAVEFRONT_IMAGES_TAR_PATH = $WAVEFRONT_PACKAGE_DIR/harbor-wavefront-bundle-latest.tar
+#Load Wavefront images
+loadImages() {
+  result=$(checkWavefrontVersion)
+  if [ $result -le 0 ]; then
+    # No need to load the same images twice or images of lower version.
+    return
+  fi
+  waitForDockerd
+  log "clean up wavefront images before load"
+  $DOCKER_CMD image prune -a -f
+  #Load images
+  log "Loading wavefront images ..."
+  $DOCKER_CMD load -i $WAVEFRONT_IMAGES_TAR_PATH 2>&1
+}
