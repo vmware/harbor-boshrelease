@@ -2,13 +2,11 @@
 name: wavefront
 
 templates:
-  bin/ctl.sh.erb: bin/ctl.sh
-  config/docker-compose.yml.erb: config/docker-compose.yml
-  config/telegraf.config.erb: config/telegraf.config
+
 
 packages:
-  - common
-  - docker-compose
+- common
+- docker-compose
 
 properties:
   wavefront_url:

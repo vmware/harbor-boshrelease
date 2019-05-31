@@ -82,5 +82,46 @@ checkDockerdStatus() {
   pgrep -f dockerd >/dev/null 2>&1
 }
 
+#Build compose options
+COMPOSE_OPTS="-H $DOCKER_HOST -f ${WAVEFRONT_YAML}"
 
+case $COMMAND_NAME in
 
+  start)
+    log "Starting wavefront ..."
+
+    # waitForDockerd
+
+    #Dead Wavefront containers will prevent Wavefront service to start.
+    log "Remove dead docker containers if exist"
+    $DOCKER_CMD ps -aq -f 'status=dead'
+
+    log "Launching 'docker-compose up' ..."
+    COMPOSE_OPTS="${COMPOSE_OPTS} up"
+    startWavefront "$COMPOSE_OPTS"
+
+    #Wait for Wavefront Service
+    waitForWavefront
+    #Now let monit detect the real wavefront pid. Keep the TEMP_PIDFILE to be detected by startWavefront().
+    cp $TEMP_PIDFILE $PIDFILE
+
+    ;;
+
+  stop)
+    log "Stopping Wavefront ..."
+
+    #TODO: Add instance clean work here if migration is enabled
+
+    log "Launching 'docker-compose down' ..."
+    COMPOSE_OPTS="${COMPOSE_OPTS} down"
+    stopWavefront "$COMPOSE_OPTS"
+    ;;
+
+  *)
+    log -n "Usage: ctl {start|stop}"
+    ;;
+
+esac
+
+log "ctl $COMMAND_NAME is successfully done!"
+exit 0
