@@ -10,7 +10,7 @@ if ! tar -xzvf $file --strip 1 -C ${BOSH_INSTALL_TARGET} ; then
 fi
 
 # copy bundle to boash install target
-cp ${BOSH_COMPILE_TARGET}/wavefront/harbor-wavefront-bundle-1.8.0.tar ${BOSH_INSTALL_TARGET}
+# cp ${BOSH_COMPILE_TARGET}/wavefront/harbor-wavefront-bundle-1.8.0.tar ${BOSH_INSTALL_TARGET}
 
 #Unzip the harbor images tgz file to a tar file,
 #then docker loading images in 'ctl start' could be faster.

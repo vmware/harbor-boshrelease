@@ -4,4 +4,4 @@ name: wavefront
 dependencies: []
 
 files:
-- wavefront/harbor-wavefront-bundle-1.8.0.tar #wget https://storage.googleapis.com/harbor-ci-pipeline-store/build-artifacts/harbor-wavefront-bundle-1.8.0.tar.tgz to get the link of latest package
+- wavefront/harbor-wavefront-bundle-1.8.0.tar.tgz #wget https://storage.googleapis.com/harbor-ci-pipeline-store/build-artifacts/harbor-wavefront-bundle-1.8.0.tar.tgz to get the link of latest package

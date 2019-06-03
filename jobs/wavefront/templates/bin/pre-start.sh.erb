@@ -7,7 +7,7 @@ set -o pipefail
 source /var/vcap/packages/common/utils.sh
 
 WAVEFRONT_PACKAGE_DIR = ${PACKAGE_DIR}/wavefront
-WAVEFRONT_IMAGES_TAR_PATH = $WAVEFRONT_PACKAGE_DIR/harbor-wavefront-bundle-latest.tar
+WAVEFRONT_IMAGES_TAR_PATH = $WAVEFRONT_PACKAGE_DIR/harbor-wavefront-bundle-1.8.0.tar.tgz
 #Load Wavefront images
 loadImages() {
   result=$(checkWavefrontVersion)
@@ -22,3 +22,10 @@ loadImages() {
   log "Loading wavefront images ..."
   $DOCKER_CMD load -i $WAVEFRONT_IMAGES_TAR_PATH 2>&1
 }
+
+
+log "load wavefront images"
+
+loadImages
+log "Successfully done!"
+exit 0
