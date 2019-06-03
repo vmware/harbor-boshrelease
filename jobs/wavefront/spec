@@ -2,7 +2,7 @@
 name: wavefront
 
 templates:
-  bin/ctl.sh.erb: bin/ctl.sh
+  bin/ctl.sh.erb: bin/ctl
   config/docker-compose.yml.erb: config/docker-compose.yml
   config/telegraf.config.erb: config/telegraf.config
 
