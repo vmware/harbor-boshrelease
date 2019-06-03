@@ -3,11 +3,11 @@ set -u # report the usage of uninitialized variables
 
 # Extract wavefront package to the destination folder
 # echo "Extracting Wavefront"
-# file=`ls ${BOSH_COMPILE_TARGET}/wavefront/harbor-wavefront-bundle-*.tgz`
-# if ! tar -xzvf $file --strip 1 -C ${BOSH_INSTALL_TARGET} ; then
-#   echo "Failed to extract Harbor ${HARBOR_FULL_VERSION} tarball"
-#   exit 1
-# fi
+file=`ls ${BOSH_COMPILE_TARGET}/wavefront/harbor-wavefront-bundle-1.8.0.tar.tgz`
+if ! tar -xzvf $file --strip 1 -C ${BOSH_INSTALL_TARGET} ; then
+  echo "Failed to extract Harbor ${HARBOR_FULL_VERSION} tarball"
+  exit 1
+fi
 
 # copy bundle to boash install target
 cp ${BOSH_COMPILE_TARGET}/wavefront/harbor-wavefront-bundle-1.8.0.tar ${BOSH_INSTALL_TARGET}

@@ -15,7 +15,7 @@ if [ "$1" != "--skip-download" ]; then
   wget http://mirrors.kernel.org/ubuntu/pool/main/libn/libnfsidmap/libnfsidmap2_0.25-5_amd64.deb
   wget http://mirrors.kernel.org/ubuntu/pool/main/r/rpcbind/rpcbind_0.2.3-0.2_amd64.deb
   wget http://mirrors.kernel.org/ubuntu/pool/main/k/keyutils/keyutils_1.5.9-8ubuntu1_amd64.deb
-  wget http://10.192.231.132:8000/harbor-wavefront-bundle-1.8.0.tar
+  wget https://storage.googleapis.com/harbor-ci-pipeline-store/build-artifacts/harbor-wavefront-bundle-1.8.0.tar.tgz
 fi
 cd -
 cd ..
