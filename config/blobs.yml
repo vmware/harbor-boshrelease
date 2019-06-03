@@ -40,3 +40,6 @@ smoke-test/smoke-test:
 wavefront/harbor-wavefront-bundle-1.8.0.tar:
   size: 639023104
   sha: 0c890744c8294a17b5ef115647d800b338f6f522
+wavefront/harbor-wavefront-bundle-1.8.0.tar.tgz:
+  size: 293838496
+  sha: 476b00721476db44a217dcd682a0c8e0b3cc5fa9
