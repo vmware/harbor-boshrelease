@@ -4,4 +4,4 @@ check process harbor with pidfile /var/vcap/sys/run/harbor/harbor.pid
   stop program "/var/vcap/jobs/harbor/bin/ctl stop" with timeout 180 seconds
   depends on dockerd
   depends on harbor-enable-bosh-dns
-  depends on wavefront
+
