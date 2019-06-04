@@ -11,6 +11,7 @@ templates:
 packages:
 - common
 - docker-compose
+- wavefront
 
 properties:
   wavefront_url:

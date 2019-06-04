@@ -1,4 +1,4 @@
-check process wavefront with pidfile /var/vcap/sys/run/wavefront/pid
+check process wavefront with pidfile /var/vcap/sys/run/wavefront/wavefront.pid
   group vcap
   start program "/var/vcap/jobs/wavefront/bin/ctl start" with timeout 180 seconds
   stop program "/var/vcap/jobs/wavefront/bin/ctl stop" with timeout 180 seconds
