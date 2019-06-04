@@ -37,3 +37,6 @@ python/Python-2.7.15.tgz:
 smoke-test/smoke-test:
   size: 6285371
   sha: f615215c8dd9a39e81edc06edb3db864c10ba2c5
+wavefront/harbor-wavefront-bundle-1.8.0.tgz:
+  size: 293838496
+  sha: 476b00721476db44a217dcd682a0c8e0b3cc5fa9
