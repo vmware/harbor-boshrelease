@@ -6,8 +6,8 @@ set -u # report the usage of uninitialized variables
 source /var/vcap/packages/common/utils.sh
 
 JOB_NAME=wavefront
+WAVEFRONT_JOB_DIR=/var/vcap/jobs/$JOB_NAME
 DAEMON_SOCK=${RUN_DIR}/docker/dockerd.sock
-
 
 #Exit function with pid file deletion
 myExit() {
@@ -35,8 +35,8 @@ parseOpts() {
 parseOpts $@
 
 #Check if containers existing
-wavefront_container=$(WAVEFRONT_JOB_DIR ps | awk '{print $2}' | grep wavefront)
-telegraf_container=$(WAVEFRONT_JOB_DIR ps | awk '{print $2}' | grep telegraf)
+wavefront_container=$($DOCKER_CMD ps | awk '{print $2}' | grep wavefront)
+telegraf_container=$($DOCKER_CMD ps | awk '{print $2}' | grep telegraf)
 
 if [ -z "$wavefront_container" ]; then
   myExit 1
@@ -47,10 +47,10 @@ if [ -z "$telegraf_container" ]; then
 fi
 
 #Check the status of wavefront containers
-if WAVEFRONT_JOB_DIR ps --filter "status=restarting" | grep 'wavefront'; then
+if $DOCKER_CMD ps --filter "status=restarting" | grep 'wavefront'; then
   myExit 2
 fi
-if WAVEFRONT_JOB_DIR ps --filter "status=restarting" | grep 'telegraf'; then
+if $DOCKER_CMD ps --filter "status=restarting" | grep 'telegraf'; then
   myExit 2
 fi
 
