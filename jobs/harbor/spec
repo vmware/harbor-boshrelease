@@ -26,7 +26,6 @@ packages:
 - uaa
 - python
 - nfs-common
-- wavefront
 
 provides:
 - name: harbor
