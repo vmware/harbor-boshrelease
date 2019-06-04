@@ -3,6 +3,8 @@ name: wavefront
 
 templates:
   bin/ctl.sh.erb: bin/ctl
+  bin/pre-start.sh.erb: bin/pre-start
+  bin/status_check.sh.erb: bin/status_check
   config/docker-compose.yml.erb: config/docker-compose.yml
   config/telegraf.config.erb: config/telegraf.config
 
@@ -13,7 +15,10 @@ packages:
 properties:
   wavefront_url:
     description: "the url that telegraf send data to"
-    default: https://longboard.wavefront.com/api
+    default: "https://longboard.wavefront.com/api"
   wavefront_token:
     description: "The token used to access url"
-    default: 39d49f54-9507-4594-8db1-b15c1156e642
+    default: "39d49f54-9507-4594-8db1-b15c1156e642"
+  hostname:
+    description: "hostname used by telegraf, if empty use os.Hostname()"
+    default: ""

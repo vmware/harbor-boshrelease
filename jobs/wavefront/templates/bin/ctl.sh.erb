@@ -14,7 +14,7 @@ PIDFILE=${WAVEFRONT_RUN_DIR}/wavefront.pid
 TEMP_PIDFILE=${WAVEFRONT_RUN_DIR}/wavefront.tmp.pid
 WAVEFRONT_PACKAGE_DIR=${PACKAGE_DIR}/wavefront
 COMPOSE_PACKAGE_DIR=${PACKAGE_DIR}/docker-compose
-WAVEFRONT_YAML=${WAVEFRONT_PACKAGE_DIR}/docker-compose.yml
+WAVEFRONT_YAML=${WAVEFRONT_JOB_DIR}/config/docker-compose.yml
 
 CTL_CMD=/sbin/start-stop-daemon
 COMPOSE_CMD=${COMPOSE_PACKAGE_DIR}/bin/docker-compose
@@ -89,8 +89,7 @@ case $COMMAND_NAME in
 
   start)
     log "Starting wavefront ..."
-
-    # waitForDockerd
+    waitForDockerd
 
     #Dead Wavefront containers will prevent Wavefront service to start.
     log "Remove dead docker containers if exist"

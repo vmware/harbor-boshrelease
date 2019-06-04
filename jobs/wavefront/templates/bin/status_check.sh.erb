@@ -35,8 +35,8 @@ parseOpts() {
 parseOpts $@
 
 #Check if containers existing
-wavefront_container=$(docker -H "unix://$DAEMON_SOCK" ps | awk '{print $2}' | grep wavefront)
-telegraf_container=$(docker -H "unix://$DAEMON_SOCK" ps | awk '{print $2}' | grep telegraf)
+wavefront_container=$(WAVEFRONT_JOB_DIR ps | awk '{print $2}' | grep wavefront)
+telegraf_container=$(WAVEFRONT_JOB_DIR ps | awk '{print $2}' | grep telegraf)
 
 if [ -z "$wavefront_container" ]; then
   myExit 1
@@ -47,10 +47,10 @@ if [ -z "$telegraf_container" ]; then
 fi
 
 #Check the status of wavefront containers
-if docker -H "unix://$DAEMON_SOCK" ps --filter "status=restarting" | grep 'wavefront'; then
+if WAVEFRONT_JOB_DIR ps --filter "status=restarting" | grep 'wavefront'; then
   myExit 2
 fi
-if docker -H "unix://$DAEMON_SOCK" ps --filter "status=restarting" | grep 'telegraf'; then
+if WAVEFRONT_JOB_DIR ps --filter "status=restarting" | grep 'telegraf'; then
   myExit 2
 fi
 

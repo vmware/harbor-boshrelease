@@ -6,23 +6,22 @@ set -o pipefail
 
 source /var/vcap/packages/common/utils.sh
 
-WAVEFRONT_PACKAGE_DIR = ${PACKAGE_DIR}/wavefront
-WAVEFRONT_IMAGES_TAR_PATH = $WAVEFRONT_PACKAGE_DIR/harbor-wavefront-bundle-1.8.0.tar.tgz
+WAVEFRONT_PACKAGE_DIR=${PACKAGE_DIR}/wavefront
+WAVEFRONT_IMAGES_TAR_PATH=$WAVEFRONT_PACKAGE_DIR/harbor-wavefront-bundle-1.8.0.tar
 #Load Wavefront images
 loadImages() {
-  result=$(checkWavefrontVersion)
-  if [ $result -le 0 ]; then
-    # No need to load the same images twice or images of lower version.
-    return
-  fi
   waitForDockerd
+
+  # clean previous images
   log "clean up wavefront images before load"
-  $DOCKER_CMD image prune -a -f
+  $DOCKER_CMD image rm wavefronthq/proxy -f
+  $DOCKER_CMD image rm telegraf -f
+  $DOCKER_CMD image prune -f
+
   #Load images
   log "Loading wavefront images ..."
   $DOCKER_CMD load -i $WAVEFRONT_IMAGES_TAR_PATH 2>&1
 }
-
 
 log "load wavefront images"
 
