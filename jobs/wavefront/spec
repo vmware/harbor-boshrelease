@@ -25,4 +25,4 @@ properties:
     default: ""
   vm_monitor:
     description: "Set this to wavefront_monitor to enable wavefront"
-    default: "wavefront_monitor"
+    default: ""
