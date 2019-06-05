@@ -20,6 +20,9 @@ properties:
   wavefront_token:
     description: "The token used to access url"
     default: "39d49f54-9507-4594-8db1-b15c1156e642"
-  hostname:
+  wavefront_hostname:
     description: "hostname used by telegraf, if empty use os.Hostname()"
     default: ""
+  vm_monitor:
+    description: "Set this to wavefront_monitor to enable wavefront"
+    default: "wavefront_monitor"
