@@ -52,7 +52,7 @@ quiet = false
 logfile = ""
 
 ## Override default hostname, if empty use os.Hostname()
-hostname = <%= p("wavefront_hostname") %>
+hostname = "<%= p("wavefront_hostname") %>"
 ## If set to true, do no set the "host" tag in the telegraf agent.
 omit_hostname = false
 
