@@ -1,5 +1,5 @@
-<% if_p('wavefront_enabled') do |enabled| %>
-  <% if enabled %>
+<% if_p('vm_monitor') do |monitor| %>
+  <% if monitor == 'wavefront_monitor' %>
 check process wavefront with pidfile /var/vcap/sys/run/wavefront/wavefront.pid
   group vcap
   start program "/var/vcap/jobs/wavefront/bin/ctl start" with timeout 180 seconds
