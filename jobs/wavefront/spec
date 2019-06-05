@@ -7,6 +7,7 @@ templates:
   bin/status_check.sh.erb: bin/status_check
   config/docker-compose.yml.erb: config/docker-compose.yml
   config/telegraf.config.erb: config/telegraf.config
+  monit.erb: monit
 
 packages:
 - common
