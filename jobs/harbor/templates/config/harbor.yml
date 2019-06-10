@@ -117,5 +117,5 @@ _version: 1.8.0
 # UAA cert
 <%- if p("auth_mode") == "uaa_auth" %>
 uaa:
-  ca_file: /var/vcap/jobs/harbor/config/uaa_ca.crt
+  ca_file: /data/cert/uaa_ca.crt
 <%- end %>
