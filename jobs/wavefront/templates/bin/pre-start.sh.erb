@@ -14,9 +14,10 @@ loadImages() {
 
   # clean previous images
   log "clean up wavefront images before load"
+  set +e
   $DOCKER_CMD image rm wavefronthq/proxy -f
   $DOCKER_CMD image rm telegraf -f
-  $DOCKER_CMD image prune -f
+  set -e
 
   #Load images
   log "Loading wavefront images ..."
