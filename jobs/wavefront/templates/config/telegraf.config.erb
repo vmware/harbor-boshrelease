@@ -64,7 +64,7 @@ omit_hostname = false
 [[inputs.disk]]
 ## By default stats will be gathered for all mount points.
 ## Set mount_points will restrict the stats to only the specified mount points.
-mount_points = ["/hostfs/var/vcap/store"]
+mount_points = ["/hostfs", "/hostfs/var/vcap/data", "/hostfs/var/vcap/store"]
 
 ## Ignore mount points by filesystem type.
 ignore_fs = ["tmpfs", "devtmpfs", "overlay"]
