@@ -55,18 +55,19 @@ logfile = ""
 hostname = "<%= p("wavefront_hostname") %>"
 ## If set to true, do no set the "host" tag in the telegraf agent.
 omit_hostname = false
-## collect CPU information
+
+[[inputs.net]]
+[[inputs.swap]]
+[[inputs.processes]]
 [[inputs.cpu]]
-## collect memory usage
 [[inputs.mem]]
-## collect disk usage
 [[inputs.disk]]
 ## By default stats will be gathered for all mount points.
 ## Set mount_points will restrict the stats to only the specified mount points.
-# mount_points = ["/"]
+mount_points = ["/hostfs/var/vcap/store"]
 
 ## Ignore mount points by filesystem type.
-ignore_fs = ["tmpfs", "devtmpfs"]
+ignore_fs = ["tmpfs", "devtmpfs", "overlay"]
 
 ## Configuration for Wavefront server to send metrics to
 [[outputs.wavefront]]
