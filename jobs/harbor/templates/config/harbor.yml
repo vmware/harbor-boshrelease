@@ -69,7 +69,7 @@ storage_service:
     rootdirectory: <%= p("registry_storage_provider.s3.rootdirectory") %>  
     trusted_certificates: /harbor_cust_cert/custom-ca-bundle.crt 
 <%- end %>
-<%- if p("registry_storage_provider.name") == "gcp" %>
+<%- if p("registry_storage_provider.name") == "gcs" %>
 # GCS storage
   gcs:
     bucket: <%= p("registry_storage_provider.gcs.bucket") %>                                                                                                                        
