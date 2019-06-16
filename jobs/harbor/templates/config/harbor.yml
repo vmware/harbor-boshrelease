@@ -73,7 +73,7 @@ storage_service:
 # GCS storage
   gcs:
     bucket: <%= p("registry_storage_provider.gcs.bucket") %>                                                                                                                        
-    keyfile: <%= p("registry_storage_provider.gcs.keyfile") %>                                                                                              
+    keyfile: /var/vcap/jobs/harbor/packages/harbor-app/common/config/registry/gcs_keyfile                                                                                              
     rootdirectory: <%= p("registry_storage_provider.gcs.rootdirectory") %>                                                                                                                      
     chunksize: <%= p("registry_storage_provider.gcs.chunksize") %>  
 <%- end %>

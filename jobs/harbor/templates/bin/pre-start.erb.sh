@@ -105,6 +105,7 @@ setupGCSKeyFile() {
   if [ ! -z "$(cat ${HARBOR_JOB_DIR}/config/gcs_keyfile)" ]; then
     log 'Copy GCS keyfile to registry'
     cp ${HARBOR_JOB_DIR}/config/gcs_keyfile ${HARBOR_PACKAGE_DIR}/common/config/registry/
+    chmod 644 ${HARBOR_PACKAGE_DIR}/common/config/registry/*
   fi
 }
 
