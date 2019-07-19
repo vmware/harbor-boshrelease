@@ -3,14 +3,14 @@ name: harbor-deployment
 
 releases:
 - name: harbor-container-registry
-  version: 1.5.0
-  sha1: ded9ed8a5e2efadc3aed26444710d8446483bd59
-  url: https://storage.googleapis.com/harbor-bosh-releases/harbor-container-registry-1.5.0.tgz
+  version: 1.7.5-build.9
+  sha1: 54b1c4377fac4f0cd3902fb89e53050fe1a34789
+  url: https://storage.googleapis.com/harbor-bosh-releases/harbor-bosh-1.7.5.tgz
 
 stemcells:
 - alias: default
-  os: ubuntu-trusty
-  version: latest
+  os: ubuntu-xenial
+  version: '250.25'
 
 addons:
 - name: harbor-bosh-dns

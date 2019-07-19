@@ -1,42 +1,40 @@
-docker/docker-18.06.0-ce.tgz:
-  size: 43803207
-  sha: 2a06bab62d1d5cf083542048cec555cc735ff2b7
 docker/docker-18.09.2.tgz:
   size: 48020699
+  object_id: fbde6637-52bd-458e-4420-f334625e8068
   sha: d33f91b367f6a877eb937c3c38d001494ec1d581
 docker/docker-compose-Linux-x86_64:
   size: 11750136
+  object_id: 0dff1198-fc88-426a-5864-afc65ad58dd5
   sha: 9303600664184658b7124d0a65f9e12a4d672708
-docker/docker-compose-Linux-x86_64-1.16.1:
-  size: 8855632
-  sha: e2c7c848e1fa388a2e5b8945fdb2660bf8d8adb1
-go/go1.9.2.linux-amd64.tar.gz:
-  size: 104247844
-  sha: 94c889e039e3d2e94ed95e8f8cb747c5bc1c2b58
 harbor/harbor-offline-installer-latest.tgz:
-  size: 552852530
-  sha: 3c1e901a8a3e7f86bfccfce30c2de131a183e7b5
+  size: 580059210
+  object_id: c9e93430-5420-4225-5e86-9b715ef60dff
+  sha: 22e63dc2342ce97b81d3f0be90dcf42196b137f7
 nfs-common/keyutils_1.5.9-8ubuntu1_amd64.deb:
   size: 47054
+  object_id: 40fb71fb-bcb5-487c-5063-8519e3a215f1
   sha: ec2e96e73feb5215605c9f0254cad05d9cc5688a
 nfs-common/libevent-2.0-5_2.0.21-stable-2ubuntu0.16.04.1_amd64.deb:
   size: 114014
+  object_id: 0c66a1f9-45b7-41ba-52dc-16bfdf2f2074
   sha: 57d69f44f3e058e48a7b79595d36076eb21f5942
 nfs-common/libnfsidmap2_0.25-5_amd64.deb:
   size: 32182
+  object_id: f5813bb7-7124-4ade-6c6a-6433e0119c60
   sha: f28b7370542daaf81cefb44d9057fa9b3fb43064
 nfs-common/nfs-common_1.2.8-9ubuntu12_amd64.deb:
   size: 184538
+  object_id: bc2628ec-8ef8-4868-631f-9ff901838b3d
   sha: 2977e5a1e86615e268cc518f04c9dd2cc832b263
 nfs-common/rpcbind_0.2.3-0.2_amd64.deb:
   size: 40252
+  object_id: 4874b0f7-b588-4c19-4474-c65b95d10b27
   sha: 8fa58cfcb1862c6d337d10496fada5f1a6e94a03
 python/Python-2.7.15.tgz:
   size: 17496336
+  object_id: 886f9c53-8300-41bc-5fae-d9beac0d5137
   sha: c9750707d127d39a6868e1e55f7cd8c7be006b89
 smoke-test/smoke-test:
-  size: 6285371
-  sha: f615215c8dd9a39e81edc06edb3db864c10ba2c5
-wavefront/harbor-wavefront-bundle-1.8.0.tgz:
-  size: 293838496
-  sha: 476b00721476db44a217dcd682a0c8e0b3cc5fa9
+  size: 0
+  object_id: 5cfea79a-04ad-421a-7aa7-93c9937df20d
+  sha: da39a3ee5e6b4b0d3255bfef95601890afd80709
