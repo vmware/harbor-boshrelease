@@ -15,9 +15,6 @@ TEMP_PIDFILE=${HARBOR_RUN_DIR}/harbor.tmp.pid
 HARBOR_PACKAGE_DIR=${PACKAGE_DIR}/harbor-app
 COMPOSE_PACKAGE_DIR=${PACKAGE_DIR}/docker-compose
 HARBOR_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.yml
-HARBOR_CLAIR_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.clair.yml
-HARBOR_NOTARY_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.notary.yml
-HARBOR_CHARTMUSEUM_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.chartmuseum.yml
 
 CTL_CMD=/sbin/start-stop-daemon
 COMPOSE_CMD=${COMPOSE_PACKAGE_DIR}/bin/docker-compose
@@ -110,15 +107,6 @@ cronJobDown() {
 
 #Build compose options
 COMPOSE_OPTS="-H $DOCKER_HOST -f ${HARBOR_YAML}"
-if [ -n "$WITH_NOTARY" ]; then
-  COMPOSE_OPTS="${COMPOSE_OPTS} -f ${HARBOR_NOTARY_YAML}"
-fi
-
-if [ -n "$WITH_CLAIR" ]; then
-  COMPOSE_OPTS="${COMPOSE_OPTS} -f ${HARBOR_CLAIR_YAML}"
-fi
-
-COMPOSE_OPTS="${COMPOSE_OPTS} -f ${HARBOR_CHARTMUSEUM_YAML}"
 
 case $COMMAND_NAME in
 

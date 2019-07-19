@@ -19,9 +19,10 @@ set -ex
 
 harbor_db_image=$($DOCKER_CMD images goharbor/harbor-db --format "{{.Repository}}:{{.Tag}}")
 harbor_db_path="/data/database"
+fix_notary_sql_path="/var/vcap/packages/harbor-common/fix-notary.sql"
 
 launch_db() {
-    $DOCKER_CMD run -d --name fix-notary-migration -v ${harbor_db_path}:/var/lib/postgresql/data ${harbor_db_image} "postgres"
+    $DOCKER_CMD run -d --name fix-notary-migration -v ${harbor_db_path}:/var/lib/postgresql/data -v ${fix_notary_sql_path}:/fix-notary.sql ${harbor_db_image} "postgres"
 }
 
 clean_db() {
@@ -48,17 +49,11 @@ wait_for_db_ready() {
     set -e
 }
 
-fix_notary_server() {
-    $DOCKER_CMD exec fix-notary-migration psql -U postgres -d notaryserver -c "delete from schema_migrations where version > 2 and not exists(select column_name from information_schema.columns where table_name = 'schema_migrations' and column_name = 'dirty');"
+fix_notary() {
+    $DOCKER_CMD exec fix-notary-migration psql -U postgres -f "/fix-notary.sql"
 }
-
-fix_notary_signer() {
-    $DOCKER_CMD exec fix-notary-migration psql -U postgres -d notarysigner -c "delete from schema_migrations where version > 1 and not exists(select column_name from information_schema.columns where table_name = 'schema_migrations' and column_name = 'dirty');"
-}
-
 
 launch_db
 wait_for_db_ready
-fix_notary_server
-fix_notary_signer
+fix_notary
 clean_db

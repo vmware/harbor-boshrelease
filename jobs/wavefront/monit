@@ -1,0 +1,8 @@
+<% if_p('vm_monitor') do |monitor| %>
+  <% if monitor == 'wavefront_monitor' %>
+check process wavefront with pidfile /var/vcap/sys/run/wavefront/wavefront.pid
+  group vcap
+  start program "/var/vcap/jobs/wavefront/bin/ctl start" with timeout 180 seconds
+  stop program "/var/vcap/jobs/wavefront/bin/ctl stop" with timeout 180 seconds
+  depends on dockerd
+<%end%><%end%>
