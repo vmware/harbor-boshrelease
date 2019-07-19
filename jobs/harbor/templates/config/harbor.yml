@@ -1,0 +1,123 @@
+## Configuration file of Harbor
+
+#The IP address or hostname to access admin UI and registry service.
+#DO NOT use localhost or 127.0.0.1, because Harbor needs to be accessed by external clients.
+hostname:  <%= p("hostname", spec.ip) %>
+
+# http related config
+http:
+  # port for http, default is 80. If https enabled, this port will redirect to https port
+  port: 80
+
+<%- if p("ui_url_protocol") == "https" %>
+# https related comfig
+https:
+  # https port for harbor, default is 443
+  port: 443
+  #The path of cert and key files for nginx
+  certificate: /data/cert/server.crt
+  private_key: /data/cert/server.key
+<%- end %>
+
+# Uncomment extearnal_url if you want to enable external proxy
+# And when it enabled the hostname will no longger used
+# external_url: https://reg.mydomain.com:8433
+
+# The initial password of Harbor admin
+# It only works in first time to install harbor
+# Remember Change the admin password from UI after launching Harbor.
+harbor_admin_password: <%= p("admin_password") %>
+
+## Harbor DB configuration
+database:
+  #The password for the root user of Harbor DB. Change this before any production use.
+  password: <%= p("db_password") %>
+
+# The default data volume
+data_volume: /data
+
+# Harbor Storage settings by default is using /data dir on local filesystem
+# Uncomment storage_service setting If you want to using external storage
+# storage_service:
+#   # ca_bundle is the path to the custom root ca certificate, which will be injected into the truststore
+#   # of registry's and chart repository's containers.  This is usually needed when the user hosts a internal storage with self signed certificate.
+#   ca_bundle:
+
+#   # storage backend, default is filesystem, options include filesystem, azure, gcs, s3, swift and oss
+#   # for more info about this configuration please refer https://docs.docker.com/registry/configuration/
+#   filesystem:
+#     maxthreads: 100
+
+storage_service:
+<%- if p("registry_storage_provider.redirect") == "true" %>
+  redirect:
+    disabled: true
+<%- end %>
+<%- if p("registry_storage_provider.name") == "s3" %>
+  bundle_ca:
+    ca_bundle: /var/vcap/jobs/harbor/config/trusted_certificates.crt
+# S3 storage
+  s3:
+    accesskey: <%= p("registry_storage_provider.s3.accesskey") %>                                                                                                                            
+    secretkey: <%= p("registry_storage_provider.s3.secretkey") %>                                                                                                        
+    region: <%= p("registry_storage_provider.s3.region") %>                                                                                                                                              
+    regionendpoint: <%= p("registry_storage_provider.s3.regionendpoint") %>                                                                                                                                    
+    bucket: <%= p("registry_storage_provider.s3.bucket") %>                                                                                                                              
+    secure: <%= p("registry_storage_provider.s3.secure") %>                                                                                                                                                 
+    v4auth: <%= p("registry_storage_provider.s3.v4auth") %>                                                                                                                                                       
+    chunksize: <%= p("registry_storage_provider.s3.chunksize") %>                                                                                                                                           
+    rootdirectory: <%= p("registry_storage_provider.s3.rootdirectory") %>  
+    trusted_certificates: /harbor_cust_cert/custom-ca-bundle.crt 
+<%- end %>
+<%- if p("registry_storage_provider.name") == "gcp" %>
+# GCS storage
+  gcs:
+    bucket: <%= p("registry_storage_provider.gcs.bucket") %>                                                                                                                        
+    keyfile: <%= p("registry_storage_provider.gcs.keyfile") %>                                                                                              
+    rootdirectory: <%= p("registry_storage_provider.gcs.rootdirectory") %>                                                                                                                      
+    chunksize: <%= p("registry_storage_provider.gcs.chunksize") %>  
+<%- end %>
+<%- if p("registry_storage_provider.name") == "azure" %>
+# Azure storage
+  azure:
+    accountname: <%= p("registry_storage_provider.azure.accountname") %> 
+    accountkey: <%= p("registry_storage_provider.azure.accountkey") %> 
+    container: <%= p("registry_storage_provider.azure.container") %> 
+    realm: <%= p("registry_storage_provider.azure.realm") %> 
+<%- end %>
+
+# Clair configuration
+clair: 
+  # The interval of clair updaters, the unit is hour, set to 0 to disable the updaters.
+  updaters_interval: <%= p("clair_updater_interval") %>
+  # Config http proxy for Clair, e.g. http://my.proxy.com:3128
+  # Clair doesn't need to connect to harbor internal components via http proxy.
+  http_proxy: <%= p("http_proxy") %>
+  https_proxy: <%= p("https_proxy") %>
+  no_proxy: <%= p("no_proxy") %>
+
+jobservice:
+  # Maximum number of job workers in job service  
+  max_job_workers: <%= p("max_job_workers") %>
+
+# Log configurations
+log:
+  # options are debug, info, warn, error
+  level: info
+  # Log files are rotated log_rotate_count times before being removed. If count is 0, old versions are removed rather than rotated.
+  rotate_count: <%= p("log_rotate_count") %>
+  # Log files are rotated only if they grow bigger than log_rotate_size bytes. If size is followed by k, the size is assumed to be in kilobytes. 
+  # If the M is used, the size is in megabytes, and if G is used, the size is in gigabytes. So size 100, size 100k, size 100M and size 100G 
+  # are all valid.
+  rotate_size: <%= p("log_rotate_size") %>
+  # The directory on your host that store log
+  location: /var/log/harbor
+
+#This attribute is for migrator to detect the version of the .cfg file, DO NOT MODIFY!
+_version: 1.8.0
+
+# UAA cert
+<%- if p("auth_mode") == "uaa_auth" %>
+uaa:
+  ca_file: /data/cert/uaa_ca.crt
+<%- end %>

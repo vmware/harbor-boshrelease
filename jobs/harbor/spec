@@ -2,18 +2,19 @@
 name: harbor
 
 templates:
-  bin/ctl.erb: bin/ctl
-  bin/pre-start.erb: bin/pre-start
-  bin/status_check.erb: bin/status_check
-  bin/properties.sh.erb: bin/properties.sh
-  config/harbor.cfg: config/harbor.cfg
+  bin/ctl.erb.sh: bin/ctl
+  bin/pre-start.erb.sh: bin/pre-start
+  bin/post-start.erb.sh: bin/post-start
+  bin/status_check.erb.sh: bin/status_check
+  bin/properties.erb.sh: bin/properties.sh
+  config/harbor.yml: config/harbor.yml
   config/server.crt: config/server.crt
   config/server.key: config/server.key
   config/ca.crt: config/ca.crt
   config/uaa_ca.crt: config/uaa_ca.crt
   config/trusted_certificates.crt: config/trusted_certificates.crt
   config/uaa.json.erb: config/uaa.json
-  bin/uaa.sh.erb: bin/uaa.sh
+  bin/uaa.erb.sh: bin/uaa.sh
   config/gcs_keyfile: config/gcs_keyfile
   config/daemon.json: config/daemon.json
 
@@ -60,18 +61,14 @@ properties:
     description: "The protocol for accessing the UI and token/notification service, by default it is https"
     default: "https"
   db_password:
-    description: "The password for the root user of mysql db"
+    description: "The password for the root user of postgres db"
   max_job_workers:
     description: "Maximum number of job workers in job service"
     default: 50
   customize_crt:
     description: "Determine whether or not to generate certificate for the registry's token. If the value is on, the prepare script creates new root cert and private key for generating token to access the registry. If the value is off the default key/cert will be used. This flag also controls the creation of the notary signer's cert."
     default: "on"
-  admiral_url:
-    description: "Admiral's url, comment this attribute, or set its value to NA when Harbor is standalone"
-    default: "NA"
-  clair_db_password:
-    description: "The password of the Clair's postgres database, only effective when Harbor is deployed with Clair"
+
   admin_password:
     description: "The initial password of Harbor admin, only works for the first time when Harbor starts"
   auth_mode:
@@ -95,67 +92,6 @@ properties:
   db.user:
     description: "The user name of mysql database"
     default: "root"
-  email.identity:
-    description: "Identity left blank to act as username"
-  email.server:
-    description: "Email server address"
-  email.port:
-    description: "Email server port"
-    default: 25
-  email.username:
-    description: "Username of email server"
-  email.password:
-    description: "Password of email server"
-  email.from:
-    description: "Email address of the sender"
-  email.ssl:
-    description: "If SSL is enabled"
-    default: false
-  email.insecure:
-    description: "Whether to verify the certificate of email server"
-    default: false
-  ldap.url:
-    description: "The url for an ldap endpoint"
-    default: "ldaps://ldap.mydomain.com"
-  ldap.verify_cert:
-    description: "Verify SSL certificate of LDAP server"
-    default: true
-  ldap.searchdn:
-    description: "A user's DN who has the permission to search the LDAP/AD server. If your LDAP/AD server does not support anonymous search, you should configure this DN and ldap.searchpwd."
-    default: ~
-  ldap.searchpwd:
-    description: "The password of the ldap.searchdn"
-    default: ~
-  ldap.filter:
-    description: "Search filter for users in LDAP/AD, make sure the syntax of the filter is correct."
-    default: ~
-  ldap.basedn:
-    description: "The base DN from which to look up a user in LDAP/AD"
-    default: "ou=people,dc=mydomain,dc=com"
-  ldap.group_admin_dn:
-    description: "The group DN from wich to look up an admin user in LDAP/AD"
-    default: ""
-  ldap.uid:
-    description: "The attribute used in a search to match a user, it could be uid, cn, email, sAMAccountName or other attributes."
-    default: "uid"
-  ldap.scope:
-    description: "The scope to search for users: 0-LDAP_SCOPE_BASE, 1-LDAP_SCOPE_ONELEVEL, 2-LDAP_SCOPE_SUBTREE"
-    default: "2"
-  ldap.timeout:
-    description: "Timeout (in seconds)  when connecting to an LDAP Server"
-    default: 5
-  ldap.group_basedn:
-    description: "The base DN from which to look up a group in LDAP/AD"
-    default: "ou=group,dc=mydomain,dc=com"
-  ldap.group_filter:
-    description: "Search filter for groups in LDAP/AD, make sure the syntax of the filter is correct."
-    default: "objectclass=group"
-  ldap.group_gid:
-    description: "The attribute used in a search to match a group, it could be cn, name or other attributes."
-    default: "cn"
-  ldap.group_scope:
-    description: "The scope to search for users: 1-LDAP_SCOPE_BASE, 2-LDAP_SCOPE_ONELEVEL, 3-LDAP_SCOPE_SUBTREE"
-    default: "2"
   ssl.cert:
     description: "The certificate for server"
   ssl.key:
@@ -216,8 +152,62 @@ properties:
   registry_storage_provider.config:
     description: "The comma separated 'key: value' pairs for configuring Docker Registry storage provider."
     default: ""
+  registry_storage_provider.s3.accesskey:
+   description: "s3 storage access key."
+   default: ""   
+  registry_storage_provider.s3.secretkey:
+   description: "s3 storage secret key."
+   default: ""   
+  registry_storage_provider.s3.bucket:
+   description: "s3 storage bucket."
+   default: ""   
+  registry_storage_provider.s3.rootdirectory:
+   description: "s3 storage root directory."
+   default: ""      
+  registry_storage_provider.s3.region:
+   description: "s3 storage region."
+   default: "" 
+  registry_storage_provider.s3.regionendpoint:
+   description: "s3 storage region endpoint."
+   default: ""                        
+  registry_storage_provider.s3.v4auth:
+   description: "s3 storage v4auth."
+   default: ""           
+  registry_storage_provider.s3.secure:
+   description: "s3 storage secure."
+   default: "" 
+  registry_storage_provider.s3.chunksize:
+   description: "s3 storage chunk size."
+   default: ""   
+  registry_storage_provider.s3.trusted_certificates:
+   description: "s3 storage trusted certificate."
+   default: ""                           
   registry_storage_provider.gcs.keyfile_content:
     description: "The text content of the GCS key file."
+    default: ""
+  registry_storage_provider.gcs.bucket:
+    description: "The GCS bucket."
+    default: ""
+  registry_storage_provider.gcs.rootdirectory:
+    description: "The GCS root directory."
+    default: ""      
+  registry_storage_provider.gcs.chunksize:
+    description: "The GCS chunck size "
+    default: "" 
+  registry_storage_provider.gcs.keyfile:
+    description: "The GCS key file path."
+    default: ""                           
+  registry_storage_provider.azure.accountname:
+    description: "Azure storage account name."
+    default: ""
+  registry_storage_provider.azure.accountkey:
+    description: "Azure storage account key."
+    default: ""
+  registry_storage_provider.azure.container:
+    description: "Azure storage container."
+    default: ""
+  registry_storage_provider.azure.realm:
+    description: "Azure storage realm."
     default: ""
   registry_storage_provider.nfs.server_uri:
     description: "The URI of NFS Server, e.g. nfs_server_ip:/path/to/exported_directory ."
