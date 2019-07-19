@@ -146,6 +146,9 @@ properties:
   uaa.admin.client_secret:
     description: "Secret of UAA admin client"
     default: ""
+  uaa.is_saml_backend
+    description: "Is UAA with SAML backend?"
+    default: false 
   registry_storage_provider.name:
     description: "The name of Docker Registry storage provider."
     default: filesystem
