@@ -15,7 +15,7 @@ if [ "$1" != "--skip-download" ]; then
   wget http://mirrors.kernel.org/ubuntu/pool/main/libn/libnfsidmap/libnfsidmap2_0.25-5_amd64.deb
   wget http://mirrors.kernel.org/ubuntu/pool/main/r/rpcbind/rpcbind_0.2.3-0.2_amd64.deb
   wget http://mirrors.kernel.org/ubuntu/pool/main/k/keyutils/keyutils_1.5.9-8ubuntu1_amd64.deb
-
+  wget https://storage.googleapis.com/harbor-ci-pipeline-store/build-artifacts/harbor-wavefront-bundle-1.8.0.tgz
 fi
 cd -
 cd ..
@@ -29,6 +29,4 @@ bosh add-blob $files_dir/libevent-2.0-5_2.0.21-stable-2ubuntu0.16.04.1_amd64.deb
 bosh add-blob $files_dir/rpcbind_0.2.3-0.2_amd64.deb nfs-common/rpcbind_0.2.3-0.2_amd64.deb
 bosh add-blob $files_dir/keyutils_1.5.9-8ubuntu1_amd64.deb nfs-common/keyutils_1.5.9-8ubuntu1_amd64.deb
 bosh add-blob $files_dir/libnfsidmap2_0.25-5_amd64.deb nfs-common/libnfsidmap2_0.25-5_amd64.deb
-
-
-
+bosh add-blob $files_dir/harbor-wavefront-bundle-1.8.0.tgz wavefront/harbor-wavefront-bundle-1.8.0.tgz

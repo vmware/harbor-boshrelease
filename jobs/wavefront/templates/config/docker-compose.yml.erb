@@ -1,0 +1,20 @@
+version: '3.7'
+services:
+    telegraf:
+       image: telegraf:latest
+       command: ["telegraf", "--config", "/telegraf.config"]
+       volumes:
+           - "/:/hostfs:ro"
+           - "./telegraf.config:/telegraf.config"
+       environment:
+           - HOST_MOUNT_PREFIX=/hostfs
+           - HOST_PROC=/hostfs/proc
+    wavefront-proxy:
+        image: wavefronthq/proxy:latest
+        environment:
+            - WAVEFRONT_URL=<%= p("wavefront_url") %> 
+            - WAVEFRONT_TOKEN=<%= p("wavefront_token") %> 
+            - JAVA_HEAP_USAGE=512m
+        ports:
+            - "2878:2878"
+            - "4242:4242"

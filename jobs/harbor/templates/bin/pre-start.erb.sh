@@ -86,10 +86,11 @@ function prepareCert() {
     cp ${HARBOR_JOB_DIR}/config/server.crt $HARBOR_DATA/cert/
     cp ${HARBOR_JOB_DIR}/config/server.key $HARBOR_DATA/cert/
     cp ${HARBOR_JOB_DIR}/config/uaa_ca.crt $HARBOR_DATA/cert/
+    cp ${HARBOR_JOB_DIR}/config/trusted_certificates.crt $HARBOR_DATA/cert/
+    chmod 644 $HARBOR_DATA/cert/*
+
     cp ${HARBOR_JOB_DIR}/config/ca.crt $HARBOR_DATA/ca_download
     chmod 644  $HARBOR_DATA/ca_download/ca.crt
-    cp ${HARBOR_JOB_DIR}/config/trusted_certificates.crt $HARBOR_DATA/cert/
-
     #For status checking script usage
     CERT_PATH=$CERTS_D/${HARBOR_HOSTNAME}
     mkdir -p $CERT_PATH
