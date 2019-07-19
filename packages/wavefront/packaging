@@ -1,0 +1,9 @@
+set -e # exit immediately if a simple command exits with a non-zero status
+set -u # report the usage of uninitialized variables
+
+# copy bundle to boash install target
+cp ${BOSH_COMPILE_TARGET}/wavefront/harbor-wavefront-bundle-1.8.0.tgz ${BOSH_INSTALL_TARGET}
+
+# Unzip the harbor images tgz file to a tar file,
+# then docker loading images in 'ctl start' could be faster.
+gunzip ${BOSH_INSTALL_TARGET}/harbor-wavefront-bundle-1.8.0.tgz

@@ -1,0 +1,58 @@
+#!/bin/bash
+
+set -e # exit immediately if a simple command exits with a non-zero status
+set -u # report the usage of uninitialized variables
+
+source /var/vcap/packages/common/utils.sh
+
+JOB_NAME=wavefront
+WAVEFRONT_JOB_DIR=/var/vcap/jobs/$JOB_NAME
+DAEMON_SOCK=${RUN_DIR}/docker/dockerd.sock
+
+#Exit function with pid file deletion
+myExit() {
+  log "Wavefront status check: [FAILED]"
+  parseOpts
+  if [ "$RESTART_WAVEFRONT" = true ]; then
+    log "Now restart wavefront job"
+    rm -f /etc/cron.d/wavefront
+    /var/vcap/bosh/bin/monit restart wavefront
+  fi
+  exit $1
+}
+
+parseOpts() {
+  RESTART_WAVEFRONT=false
+  while getopts "r" opt; do
+    case $opt in
+      r)
+        RESTART_WAVEFRONT=true
+        ;;
+    esac
+  done
+}
+
+parseOpts $@
+
+#Check if containers existing
+wavefront_container=$($DOCKER_CMD ps | awk '{print $2}' | grep wavefront)
+telegraf_container=$($DOCKER_CMD ps | awk '{print $2}' | grep telegraf)
+
+if [ -z "$wavefront_container" ]; then
+  myExit 1
+fi
+
+if [ -z "$telegraf_container" ]; then
+  myExit 1
+fi
+
+#Check the status of wavefront containers
+if $DOCKER_CMD ps --filter "status=restarting" | grep 'wavefront'; then
+  myExit 2
+fi
+if $DOCKER_CMD ps --filter "status=restarting" | grep 'telegraf'; then
+  myExit 2
+fi
+
+log "Wavefront status check: [PASSED]"
+exit 0
