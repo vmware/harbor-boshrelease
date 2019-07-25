@@ -104,14 +104,15 @@ jobservice:
 log:
   # options are debug, info, warn, error
   level: info
-  # Log files are rotated log_rotate_count times before being removed. If count is 0, old versions are removed rather than rotated.
-  rotate_count: <%= p("log_rotate_count") %>
-  # Log files are rotated only if they grow bigger than log_rotate_size bytes. If size is followed by k, the size is assumed to be in kilobytes. 
-  # If the M is used, the size is in megabytes, and if G is used, the size is in gigabytes. So size 100, size 100k, size 100M and size 100G 
-  # are all valid.
-  rotate_size: <%= p("log_rotate_size") %>
-  # The directory on your host that store log
-  location: /var/log/harbor
+  local:
+    # Log files are rotated log_rotate_count times before being removed. If count is 0, old versions are removed rather than rotated.
+    rotate_count: <%= p("log_rotate_count") %>
+    # Log files are rotated only if they grow bigger than log_rotate_size bytes. If size is followed by k, the size is assumed to be in kilobytes. 
+    # If the M is used, the size is in megabytes, and if G is used, the size is in gigabytes. So size 100, size 100k, size 100M and size 100G 
+    # are all valid.
+    rotate_size: <%= p("log_rotate_size") %>
+    # The directory on your host that store log
+    location: /var/log/harbor
 
 #This attribute is for migrator to detect the version of the .cfg file, DO NOT MODIFY!
 _version: 1.8.0
