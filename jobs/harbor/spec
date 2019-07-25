@@ -146,7 +146,7 @@ properties:
   uaa.admin.client_secret:
     description: "Secret of UAA admin client"
     default: ""
-  uaa.is_saml_backend
+  uaa.is_saml_backend:
     description: "Is UAA with SAML backend?"
     default: false 
   registry_storage_provider.name:
