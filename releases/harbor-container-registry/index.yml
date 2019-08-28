@@ -1,8 +1,10 @@
 builds:
   33de7e62-8146-463f-41c1-8cf28c62bbe2:
     version: 1.5.0
+  734c96ab-04ac-452f-4d85-7300469a7b71:
+    version: 1.7.5-build.10
+  ae48cdb7-eca2-4bc9-494f-c6c77eda45a0:
+    version: 1.8.2
   d615f6a3-3534-47e2-4b3c-c3715bca60ce:
     version: 1.6.2
-  734c96ab-04ac-452f-4d85-7300469a7b71:
-    version: 1.7.5-build.10  
 format-version: "2"
