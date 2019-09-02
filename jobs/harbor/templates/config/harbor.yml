@@ -26,12 +26,12 @@ https:
 # The initial password of Harbor admin
 # It only works in first time to install harbor
 # Remember Change the admin password from UI after launching Harbor.
-harbor_admin_password: <%= p("admin_password") %>
+harbor_admin_password: "<%= p("admin_password") %>"
 
 ## Harbor DB configuration
 database:
   #The password for the root user of Harbor DB. Change this before any production use.
-  password: <%= p("db_password") %>
+  password: "<%= p("db_password") %>"
 
 # The default data volume
 data_volume: /data
@@ -53,9 +53,8 @@ storage_service:
   redirect:
     disabled: true
 <%- end %>
+  ca_bundle: /var/vcap/jobs/harbor/config/trusted_certificates.crt
 <%- if p("registry_storage_provider.name") == "s3" %>
-  bundle_ca:
-    ca_bundle: /var/vcap/jobs/harbor/config/trusted_certificates.crt
 # S3 storage
   s3:
     accesskey: <%= p("registry_storage_provider.s3.accesskey") %>                                                                                                                            
