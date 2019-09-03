@@ -98,7 +98,10 @@ clair:
 jobservice:
   # Maximum number of job workers in job service  
   max_job_workers: <%= p("max_job_workers") %>
-
+  
+notification:
+  # Maximum retry count for webhook job
+  webhook_job_max_retry: 10
 # Log configurations
 log:
   # options are debug, info, warn, error
