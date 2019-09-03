@@ -15,8 +15,8 @@ https:
   # https port for harbor, default is 443
   port: 443
   #The path of cert and key files for nginx
-  certificate: /data/cert/server.crt
-  private_key: /data/cert/server.key
+  certificate: /var/vcap/jobs/harbor/config/server.crt
+  private_key: /var/vcap/jobs/harbor/config/server.key
 <%- end %>
 
 # Uncomment extearnal_url if you want to enable external proxy
