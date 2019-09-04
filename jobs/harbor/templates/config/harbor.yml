@@ -117,7 +117,7 @@ log:
     # The directory on your host that store log
     location: /var/log/harbor
 
-<%- if p("log_insight_enabled") == "true" %>
+<%- if p("log_insight_enabled") == "enabled" %>
   # Uncomment following lines to enable external syslog endpoint.
   external_endpoint:
     # protocol used to transmit log to external endpoint, options is tcp or udp
