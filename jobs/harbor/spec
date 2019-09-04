@@ -240,3 +240,15 @@ properties:
   registry_storage_provider.redirect:
     description: "This allows to redirect to the docker storage location"
     default: false
+  log_insight_enabled:
+    description: "Enable the Log Insight integration or not"
+    default: false
+  log_insight_protocol:
+    description: "Protocol used to transmit log to external endpoint, options is tcp or udp"
+    default: "tcp"
+  log_insight_host:
+    description: "The Log Insight host the log send to "
+    default: "localhost"
+  log_insight_port:
+    description: "The Log Insight port that recieves the log"
+    default: 5140

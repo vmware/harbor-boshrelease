@@ -15,7 +15,7 @@ https:
   # https port for harbor, default is 443
   port: 443
   # The path of cert and key files for nginx
-  # It is a temporary and fixed location in tile 
+  # It is a temporary and fixed location in tile
   certificate: /tmp/server.crt
   private_key: /tmp/server.key
 <%- end %>
@@ -117,6 +117,16 @@ log:
     # The directory on your host that store log
     location: /var/log/harbor
 
+<%- if p("log_insight_enabled") == "true" %>
+  # Uncomment following lines to enable external syslog endpoint.
+  external_endpoint:
+    # protocol used to transmit log to external endpoint, options is tcp or udp
+    protocol: <%= p("log_insight_protocol") %>
+    # The host of external endpoint
+    host: <%= p("log_insight_host") %>
+    # Port of external endpoint
+    port: <%= p("log_insight_port") %>
+<%- end %>
 #This attribute is for migrator to detect the version of the .cfg file, DO NOT MODIFY!
 _version: 1.8.0
 
