@@ -83,8 +83,8 @@ function prepareCert() {
     mkdir -p $HARBOR_DATA/cert
     mkdir -p $HARBOR_DATA/ca_download
 
-    cp ${HARBOR_JOB_DIR}/config/server.crt $HARBOR_DATA/cert/
-    cp ${HARBOR_JOB_DIR}/config/server.key $HARBOR_DATA/cert/
+    cp ${HARBOR_JOB_DIR}/config/server.crt /tmp/
+    cp ${HARBOR_JOB_DIR}/config/server.key /tmp/
     cp ${HARBOR_JOB_DIR}/config/uaa_ca.crt $HARBOR_DATA/cert/
     cp ${HARBOR_JOB_DIR}/config/trusted_certificates.crt $HARBOR_DATA/cert/
     chmod 644 $HARBOR_DATA/cert/*
@@ -277,6 +277,10 @@ function updateVersionFile() {
    echo $HARBOR_FULL_VERSION > $HARBOR_VERSION_FILE
 }
 
+function cleanCertFile(){
+  rm -rf /tmp/server.key /tmp/server.crt
+}
+
 log "Installing Harbor $HARBOR_FULL_VERSION"
 
 prepareFolderAndFile
@@ -292,6 +296,7 @@ setupNFS
 registerUAA
 waitForBoshDNS
 updateVersionFile
+cleanCertFile
 
 log "Successfully done!"
 exit 0

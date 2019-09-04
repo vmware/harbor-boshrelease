@@ -14,9 +14,10 @@ http:
 https:
   # https port for harbor, default is 443
   port: 443
-  #The path of cert and key files for nginx
-  certificate: /var/vcap/jobs/harbor/config/server.crt
-  private_key: /var/vcap/jobs/harbor/config/server.key
+  # The path of cert and key files for nginx
+  # It is a temporary and fixed location in tile 
+  certificate: /tmp/server.crt
+  private_key: /tmp/server.key
 <%- end %>
 
 # Uncomment extearnal_url if you want to enable external proxy
