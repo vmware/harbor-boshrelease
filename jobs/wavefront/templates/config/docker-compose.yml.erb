@@ -6,6 +6,7 @@ services:
        volumes:
            - "/:/hostfs:ro"
            - "./telegraf.config:/telegraf.config"
+           - "/var/log/harbor:/harbor_log"
        environment:
            - HOST_MOUNT_PREFIX=/hostfs
            - HOST_PROC=/hostfs/proc
