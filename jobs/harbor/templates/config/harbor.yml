@@ -33,7 +33,11 @@ harbor_admin_password: "<%= p("admin_password") %>"
 database:
   #The password for the root user of Harbor DB. Change this before any production use.
   password: "<%= p("db_password") %>"
-
+  # The maximum number of connections in the idle connection pool. If it <=0, no idle connections are retained.
+  max_idle_conns: 50
+  # The maximum number of open connections to the database. If it <= 0, then there is no limit on the number of open connections.
+  # Note: the default number of connections is 100 for postgres.
+  max_open_conns: 100
 # The default data volume
 data_volume: /data
 
@@ -92,14 +96,14 @@ clair:
   updaters_interval: <%= p("clair_updater_interval") %>
   # Config http proxy for Clair, e.g. http://my.proxy.com:3128
   # Clair doesn't need to connect to harbor internal components via http proxy.
-  http_proxy: <%= p("http_proxy") %>
-  https_proxy: <%= p("https_proxy") %>
-  no_proxy: <%= p("no_proxy") %>
 
 jobservice:
   # Maximum number of job workers in job service  
   max_job_workers: <%= p("max_job_workers") %>
-  
+
+chart:
+  absolute_url: disabled
+
 notification:
   # Maximum retry count for webhook job
   webhook_job_max_retry: 10
@@ -128,10 +132,27 @@ log:
     port: <%= p("log_insight_port") %>
 <%- end %>
 #This attribute is for migrator to detect the version of the .cfg file, DO NOT MODIFY!
-_version: 1.8.0
+_version: 1.9.0
 
 # UAA cert
 <%- if p("auth_mode") == "uaa_auth" %>
 uaa:
   ca_file: /data/cert/uaa_ca.crt
 <%- end %>
+
+# Global proxy
+# Config http proxy for components, e.g. http://my.proxy.com:3128
+# Components doesn't need to connect to each others via http proxy.
+# Remove component from `components` array if want disable proxy
+# for it. If you want use proxy for replication, MUST enable proxy
+# for core and jobservice, and set `http_proxy` and `https_proxy`.
+# Add domain to the `no_proxy` field, when you want disable proxy
+# for some special registry.
+proxy:
+  http_proxy: <%= p("http_proxy") %>
+  https_proxy: <%= p("https_proxy") %>
+  no_proxy: <%= p("no_proxy") %>
+  components:
+    - core
+    - jobservice
+    - clair
