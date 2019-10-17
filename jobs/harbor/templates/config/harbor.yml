@@ -156,3 +156,5 @@ proxy:
     - core
     - jobservice
     - clair
+# Comma-separated adapters for replication. All adapters are supported if not specify 
+replication_adapters: docker-registry,docker-hub,docker-registry,docker-hub,harbor,helm-hub,google-gcr,aws-ecr,azure-acr
