@@ -22,6 +22,10 @@ CERTS_D=/etc/docker/certs.d
 PYTHON_CMD=${PACKAGE_DIR}/python/python2.7/bin/python
 HARBOR_LOG_DIR=$LOG_DIR/$JOB_NAME
 HARBOR_BUNDLE_DIR=/var/vcap/packages/harbor-app
+COMPOSE_PACKAGE_DIR=${PACKAGE_DIR}/docker-compose
+COMPOSE_CMD=${COMPOSE_PACKAGE_DIR}/bin/docker-compose
+HARBOR_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.yml
+HARBOR_READY_TIMEOUT=360
 
 source $PACKAGE_DIR/harbor-common/common.sh
 source $HARBOR_JOB_DIR/bin/properties.sh
@@ -281,6 +285,39 @@ function cleanCertFile(){
   rm -rf /tmp/server.key /tmp/server.crt
 }
 
+# It might take long time to do in-container migrate, 
+# if do this process in ctl start, it will expire the status check (300 seconds) 
+# put it in prestart script  
+function warmUpHarbor(){
+  waitForDockerd
+  $COMPOSE_CMD -H ${DOCKER_HOST} -f ${HARBOR_YAML} up -d
+  waitForHarborReady
+  $COMPOSE_CMD -H ${DOCKER_HOST} -f ${HARBOR_YAML} down -v
+}
+
+function waitForHarborReady() {
+    set +e
+    TIMEOUT=${HARBOR_READY_TIMEOUT}
+    harbor_url='<%= p("hostname", spec.ip) %>'
+    protocol='<%= p("ui_url_protocol") %>'
+
+    curl_command="curl -s"
+    if [ "$protocol" = "https" ]; then
+      curl_command="$curl_command --cacert $HARBOR_JOB_DIR/config/ca.crt"
+    fi
+    # Wait for /api/systeminfo return 200
+    while [ "$(${curl_command}  -o /dev/null -w '%{http_code}' ${protocol}://${harbor_url}/api/systeminfo)" != "200" ]; do
+      TIMEOUT=$((TIMEOUT - 1))
+      sleep 5
+      echo "waiting for harbor ready ..."
+      if [ $TIMEOUT -eq 0 ]; then
+        echo "Harbor can not start in time"
+        exit 1
+      fi
+    done
+
+    set -e
+}
 log "Installing Harbor $HARBOR_FULL_VERSION"
 
 prepareFolderAndFile
@@ -297,6 +334,7 @@ registerUAA
 waitForBoshDNS
 updateVersionFile
 cleanCertFile
+warmUpHarbor
 
 log "Successfully done!"
 exit 0
