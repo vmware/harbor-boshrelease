@@ -25,7 +25,7 @@ HARBOR_BUNDLE_DIR=/var/vcap/packages/harbor-app
 COMPOSE_PACKAGE_DIR=${PACKAGE_DIR}/docker-compose
 COMPOSE_CMD=${COMPOSE_PACKAGE_DIR}/bin/docker-compose
 HARBOR_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.yml
-HARBOR_READY_TIMEOUT=360
+INTIAL_DELAY_MINUTES_TIMEOUT=<%= p("initial_delay_minutes") %>
 
 source $PACKAGE_DIR/harbor-common/common.sh
 source $HARBOR_JOB_DIR/bin/properties.sh
@@ -297,7 +297,7 @@ function warmUpHarbor(){
 
 function waitForHarborReady() {
     set +e
-    TIMEOUT=${HARBOR_READY_TIMEOUT}
+    TIMEOUT=${INTIAL_DELAY_MINUTES_TIMEOUT}
     harbor_url='<%= p("hostname", spec.ip) %>'
     protocol='<%= p("ui_url_protocol") %>'
 
@@ -308,7 +308,7 @@ function waitForHarborReady() {
     # Wait for /api/systeminfo return 200
     while [ "$(${curl_command}  -o /dev/null -w '%{http_code}' ${protocol}://${harbor_url}/api/systeminfo)" != "200" ]; do
       TIMEOUT=$((TIMEOUT - 1))
-      sleep 5
+      sleep 60
       echo "waiting for harbor ready ..."
       if [ $TIMEOUT -eq 0 ]; then
         echo "Harbor can not start in time"

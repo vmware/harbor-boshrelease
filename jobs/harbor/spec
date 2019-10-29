@@ -252,3 +252,6 @@ properties:
   log_insight_port:
     description: "The Log Insight port that recieves the log"
     default: 5140
+  initial_delay_minutes:
+    description: "The delay time to wait the Harbor migration complete"
+    default: 60
