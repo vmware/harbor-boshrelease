@@ -49,7 +49,7 @@ data_volume: /data
 #     maxthreads: 100
 
 storage_service:
-<%- if p("registry_storage_provider.redirect") == "true" %>
+<%- if p("registry_storage_provider.redirect") == true %>
   redirect:
     disabled: true
 <%- end %>
