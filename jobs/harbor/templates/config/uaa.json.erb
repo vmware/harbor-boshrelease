@@ -1,3 +1,18 @@
+<%- if p("uaa.is_saml_backend") == true %>
+<% range = [*'0'..'9',*'A'..'Z',*'a'..'z'] -%>
+{
+    "scope": ["openid"],
+    "client_id": "<%= p('uaa.client_id') %>",
+    "client_secret": "<%= p('uaa.client_secret') %>",
+    "resource_ids": [],
+    "authorized_grant_types": ["client_credentials", "password", "authorization_code"],
+    "redirect_uri": ["<%= p('ui_url_protocol') %>://<%= p('hostname', spec.ip) %>", "<%= p('ui_url_protocol') %>://<%= p('hostname', spec.ip) %>/c/oidc/callback"],
+    "authorities": ["openid", "clients.read", "clients.secret", "uaa.resource", "scim.read", "scim.write"],
+    "token_salt": "<%= Array.new(8){range.sample}.join %>",
+    "autoapprove": true,
+    "name": "Harbor UAA Client"
+}
+<%- else %>
 <% range = [*'0'..'9',*'A'..'Z',*'a'..'z'] -%>
 {
     "scope": ["openid"],
@@ -12,3 +27,4 @@
     "allowedproviders": ["uaa", "ldap"],
     "name": "Harbor UAA Client"
 }
+<%- end %>

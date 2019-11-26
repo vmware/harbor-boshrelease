@@ -49,7 +49,7 @@ debug = false
 ## Run telegraf in quiet mode (error log messages only).
 quiet = false
 ## Specify the log file name. The empty string means to log to stderr.
-logfile = ""
+logfile = "/harbor_log/telegraf.log"
 
 ## Override default hostname, if empty use os.Hostname()
 hostname = "<%= p("wavefront_hostname") %>"

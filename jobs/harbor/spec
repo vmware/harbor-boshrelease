@@ -84,13 +84,13 @@ properties:
     description: "The flag to control what users have permission to create projects. The default value [everyone] allows everyone to creates a project. Set to [adminonly] so that only admin user can create project."
     default: "everyone"
   db.host:
-    description: "The address of the mysql database"
-    default: "mysql"
+    description: "The address of the postgres database"
+    default: "postgres"
   db.port:
-    description: "The port of mysql database host"
+    description: "The port of postgres database host"
     default: 3306
   db.user:
-    description: "The user name of mysql database"
+    description: "The user name of postgres database"
     default: "root"
   ssl.cert:
     description: "The certificate for server"
@@ -106,7 +106,7 @@ properties:
     default: ""
   no_proxy:
     description: "The no_proxy config for Clair"
-    default: "127.0.0.1,localhost,ui,registry"
+    default: "127.0.0.1,localhost,core,registry"
   with_clair:
     description: "An option to determine whether install the optional component Clair or not."
     default: true
@@ -146,6 +146,9 @@ properties:
   uaa.admin.client_secret:
     description: "Secret of UAA admin client"
     default: ""
+  uaa.is_saml_backend:
+    description: "Is UAA with SAML backend?"
+    default: false 
   registry_storage_provider.name:
     description: "The name of Docker Registry storage provider."
     default: filesystem
@@ -237,3 +240,18 @@ properties:
   registry_storage_provider.redirect:
     description: "This allows to redirect to the docker storage location"
     default: false
+  log_insight_enabled:
+    description: "Enable the Log Insight integration or not"
+    default: false
+  log_insight_protocol:
+    description: "Protocol used to transmit log to external endpoint, options is tcp or udp"
+    default: "tcp"
+  log_insight_host:
+    description: "The Log Insight host the log send to "
+    default: "localhost"
+  log_insight_port:
+    description: "The Log Insight port that recieves the log"
+    default: 5140
+  initial_delay_minutes:
+    description: "The delay time to wait the Harbor migration complete"
+    default: 60
