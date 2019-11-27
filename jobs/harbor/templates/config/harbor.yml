@@ -58,7 +58,7 @@ storage_service:
   redirect:
     disabled: true
 <%- end %>
-  ca_bundle: /var/vcap/jobs/harbor/config/trusted_certificates.crt
+  ca_bundle: /data/cert/trusted_certificates.crt
 <%- if p("registry_storage_provider.name") == "s3" %>
 # S3 storage
   s3:
