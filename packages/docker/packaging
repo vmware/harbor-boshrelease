@@ -1,17 +1,14 @@
 set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
 
-# We grab the latest versions that are in the directory
-DOCKER_VERSION=`ls -r docker/docker-*.tgz | sed 's/docker\/docker-\(.*\)\.tgz/\1/' | head -1`
-
 # Extract docker package
-echo "Extracting docker ${DOCKER_VERSION}..."
-if ! tar -xzvf ${BOSH_COMPILE_TARGET}/docker/docker-${DOCKER_VERSION}.tgz ; then
-  echo "Failed to extract docker ${DOCKER_VERSION} tarball"
+echo "Extracting docker ..."
+if ! tar -xzvf ${BOSH_COMPILE_TARGET}/docker/docker.tgz ; then
+  echo "Failed to extract docker tarball"
   exit 1
 fi
 
-echo "Copying docker ${DOCKER_VERSION} binaries..."
+echo "Copying docker binaries..."
 mkdir -p ${BOSH_INSTALL_TARGET}/bin
 cp docker/* ${BOSH_INSTALL_TARGET}/bin
 chmod +x ${BOSH_INSTALL_TARGET}/bin/*

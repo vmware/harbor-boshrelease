@@ -14,7 +14,7 @@ HARBOR_RUN_DIR=$RUN_DIR/$JOB_NAME
 PIDFILE=${HARBOR_RUN_DIR}/harbor.pid
 DAEMON_SOCK=${RUN_DIR}/docker/dockerd.sock
 PYTHON_DIR=${PACKAGE_DIR}/python/python2.7/bin
-
+source $HARBOR_JOB_DIR/bin/properties.sh
 export PATH=$PATH:${DOCKER_PACKAGE_DIR}/bin:${PYTHON_DIR}
 
 #Exit function with pid file deletion
@@ -54,7 +54,7 @@ if docker -H "unix://$DAEMON_SOCK" ps --filter "status=restarting" | grep 'gohar
 fi
 
 #Check the API
-harbor_url='<%= p("hostname", spec.ip) %>'
+harbor_url=${HARBOR_HOSTNAME}
 protocol='<%= p("ui_url_protocol") %>'
 
 curl_command="curl -s"

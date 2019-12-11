@@ -23,7 +23,8 @@ source ${PACKAGE_DIR}/uaa/uaa.sh
 #Need to do deregistration
 #Related properties from bosh link
 UAA_CA_FILE=${UAA_DEREGISTRATION_JOB_DIR}/config/uaa_ca.crt
-UAA_SERVER_ADDRESS='<%= link('harbor_uaa_reference').p('uaa.url') %>'
+#Convert UAA server FQDN to lowercase
+UAA_SERVER_ADDRESS='<%= link('harbor_uaa_reference').p('uaa.url').downcase %>'
 UAA_VERIFY_CERT='<%= link('harbor_uaa_reference').p('uaa.verify_cert') %>'
 HARBOR_UAA_CLIENT_ID='<%= link('harbor_uaa_reference').p('uaa.client_id') %>'
 UAA_ADMIN_CLIENT_SECRET='<%= link('harbor_uaa_reference').p('uaa.admin.client_secret') %>'

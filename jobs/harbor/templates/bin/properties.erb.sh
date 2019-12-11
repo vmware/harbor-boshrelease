@@ -4,7 +4,7 @@
 export HARBOR_PROTOCOL='<%= p("ui_url_protocol") %>'
 
 #Hostname of harbor
-export HARBOR_HOSTNAME='<%= p("hostname", spec.ip) %>'
+export HARBOR_HOSTNAME='<%= p("hostname", spec.ip).downcase %>'
 
 #None empty value means to install optional component Notary
 export WITH_NOTARY='<%= p("with_notary") ? "true" : "" %>'
@@ -19,7 +19,7 @@ HARBOR_DB_PWD='<%= p("db_password") %>'
 AUTH_MODE='<%= p("auth_mode") %>'
 
 #UAA server
-UAA_SERVER_ADDRESS='<%= p('uaa.url') %>'
+UAA_SERVER_ADDRESS='<%= p('uaa.url').downcase %>'
 
 #UAA admin secret
 UAA_ADMIN='<%= p('uaa.admin.client_id') %>'

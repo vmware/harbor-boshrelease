@@ -39,13 +39,13 @@ changeUserConfigSetting auth_mode <%= p("auth_mode") %>
 <%- if p("uaa.is_saml_backend") == true %>
 changeUserConfigSetting auth_mode oidc_auth
 changeUserConfigSetting oidc_name uaa
-changeUserConfigSetting oidc_endpoint <%= p("uaa.url") %>/oauth/token
+changeUserConfigSetting oidc_endpoint <%= p("uaa.url").downcase %>/oauth/token
 changeUserConfigSetting oidc_client_id <%= p("uaa.client_id") %>
 changeUserConfigSetting oidc_client_secret <%= p("uaa.client_secret") %>
 changeUserConfigSetting oidc_scope openid
 changeUserConfigSetting oidc_verify_cert false
 <%- else %>
-changeUserConfigSetting uaa_endpoint <%= p("uaa.url") %>
+changeUserConfigSetting uaa_endpoint <%= p("uaa.url").downcase %>
 changeUserConfigSetting uaa_client_id <%= p("uaa.client_id") %>
 changeUserConfigSetting uaa_client_secret <%= p("uaa.client_secret") %>
 changeUserConfigSetting uaa_verify_cert <%= p("uaa.verify_cert") %>

@@ -298,7 +298,7 @@ function warmUpHarbor(){
 function waitForHarborReady() {
     set +e
     TIMEOUT=${INTIAL_DELAY_MINUTES_TIMEOUT}
-    harbor_url='<%= p("hostname", spec.ip) %>'
+    harbor_url=${HARBOR_HOSTNAME}
     protocol='<%= p("ui_url_protocol") %>'
 
     curl_command="curl -s"
