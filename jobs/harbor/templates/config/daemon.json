@@ -10,4 +10,10 @@
         <%- end -%>
     ]
 }  
+<%- else -%>
+{"default-address-pools":
+    [
+        {"base":"172.20.0.0/16","size":24 }
+    ]
+}  
 <%- end -%>

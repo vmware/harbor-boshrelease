@@ -74,11 +74,8 @@ function prepareFolderAndFile() {
 # Process container network settings, such as ip address pool
 function customizeContainerNetworkSettings() {
   :
-  #Customize container network settings
-  <%- if p("customize_container_network") == "customized" %>
   mkdir -p /etc/docker/
   cp ${HARBOR_JOB_DIR}/config/daemon.json /etc/docker/daemon.json -f
-  <%- end %>
 }
 
 function prepareCert() {
