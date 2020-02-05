@@ -42,7 +42,7 @@ changeUserConfigSetting oidc_name uaa
 changeUserConfigSetting oidc_endpoint <%= p("uaa.url").downcase %>/oauth/token
 changeUserConfigSetting oidc_client_id <%= p("uaa.client_id") %>
 changeUserConfigSetting oidc_client_secret <%= p("uaa.client_secret") %>
-changeUserConfigSetting oidc_scope openid
+changeUserConfigSetting oidc_scope <%= p("uaa.oidc_scope") %>
 changeUserConfigSetting oidc_verify_cert false
 <%- else %>
 changeUserConfigSetting uaa_endpoint <%= p("uaa.url").downcase %>
