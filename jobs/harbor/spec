@@ -149,6 +149,9 @@ properties:
   uaa.is_saml_backend:
     description: "Is UAA with SAML backend?"
     default: false 
+  uaa.oidc_scope:
+    description: "The OIDC scope, it is required when auth mode is PKS UAA with SAML backend or OIDC auth"
+    default: "openid"
   registry_storage_provider.name:
     description: "The name of Docker Registry storage provider."
     default: filesystem
