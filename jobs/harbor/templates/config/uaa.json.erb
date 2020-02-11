@@ -1,7 +1,7 @@
 <%- if p("uaa.is_saml_backend") == true %>
 <% range = [*'0'..'9',*'A'..'Z',*'a'..'z'] -%>
 {
-    "scope": ["<%= p('uaa.oidc_scope').split(",").join("\",\"") %>"]
+    "scope": ["<%= p('uaa.oidc_scope').split(",").join("\",\"") %>"],
     "client_id": "<%= p('uaa.client_id') %>",
     "client_secret": "<%= p('uaa.client_secret') %>",
     "resource_ids": [],
