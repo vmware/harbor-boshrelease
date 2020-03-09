@@ -243,6 +243,8 @@ function setupNFS() {
   nfs_uri='<%= uri %>'
   mkdir -p $mount_point
   if ! mount | grep -q $nfs_uri ; then
+    set +e
+
     dpkg -i ${NFS_PKG_DIR}/keyutils_1.5.9-8ubuntu1_amd64.deb
     dpkg -i ${NFS_PKG_DIR}/libnfsidmap2_0.25-5_amd64.deb
     dpkg -i ${NFS_PKG_DIR}/rpcbind_0.2.3-0.2_amd64.deb
@@ -250,6 +252,8 @@ function setupNFS() {
     dpkg -i ${NFS_PKG_DIR}/nfs-common_1.2.8-9ubuntu12_amd64.deb
     
     mount $nfs_uri $mount_point
+    
+    set -e
   fi
   <%- end -%>
 }
