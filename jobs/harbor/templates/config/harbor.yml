@@ -54,7 +54,7 @@ data_volume: /data
 #     maxthreads: 100
 
 storage_service:
-<%- if p("registry_storage_provider.s3.no_direct") == "true" %>
+<%- if p("storage_no_direct") == "true" %>
   redirect:
     disabled: true
 <%- end %>

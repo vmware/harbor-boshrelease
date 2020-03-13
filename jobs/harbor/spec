@@ -243,7 +243,9 @@ properties:
   clair_updater_interval:
     description: "The interval to run clair updater"
     default: 12
-
+  storage_no_direct:
+    description: "This allows to redirect to the docker storage location"
+    default: false
   log_insight_enabled:
     description: "Enable the Log Insight integration or not"
     default: false
