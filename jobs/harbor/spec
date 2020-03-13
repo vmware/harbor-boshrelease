@@ -184,7 +184,10 @@ properties:
    default: "" 
   registry_storage_provider.s3.chunksize:
    description: "s3 storage chunk size."
-   default: ""   
+   default: "" 
+  registry_storage_provider.s3.no_direct:
+   description: "No direct to s3 storage."
+   default: false       
   registry_storage_provider.s3.trusted_certificates:
    description: "s3 storage trusted certificate."
    default: ""                           
@@ -240,9 +243,7 @@ properties:
   clair_updater_interval:
     description: "The interval to run clair updater"
     default: 12
-  registry_storage_provider.redirect:
-    description: "This allows to redirect to the docker storage location"
-    default: false
+
   log_insight_enabled:
     description: "Enable the Log Insight integration or not"
     default: false
