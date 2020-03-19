@@ -306,8 +306,8 @@ function waitForHarborReady() {
     if [ "$protocol" = "https" ]; then
       curl_command="$curl_command --cacert $HARBOR_JOB_DIR/config/ca.crt"
     fi
-    # Wait for /api/systeminfo return 200
-    while [ "$(${curl_command}  -o /dev/null -w '%{http_code}' ${protocol}://${harbor_url}/api/systeminfo)" != "200" ]; do
+    # Wait for /api/v2.0/systeminfo return 200
+    while [ "$(${curl_command}  -o /dev/null -w '%{http_code}' ${protocol}://${harbor_url}/api/v2.0/systeminfo)" != "200" ]; do
       TIMEOUT=$((TIMEOUT - 1))
       sleep 60
       echo "waiting for harbor ready ..."

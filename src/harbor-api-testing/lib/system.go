@@ -31,7 +31,7 @@ func NewSystemUtil(rootURI, hostname string, httpClient *client.APIClient) *Syst
 
 //GetSystemInfo : Get systeminfo
 func (nsu *SystemUtil) GetSystemInfo() error {
-	url := nsu.rootURI + "/api/systeminfo"
+	url := nsu.rootURI + "/api/v2.0/systeminfo"
 	data, err := nsu.testingClient.Get(url)
 	if err != nil {
 		return err

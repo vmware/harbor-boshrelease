@@ -64,8 +64,8 @@ fi
 
 set +e
 
-echo "${curl_command} ${protocol}://${harbor_url}/api/systeminfo"
-url=`${curl_command} ${protocol}://${harbor_url}/api/systeminfo | python -c "import sys, json; print json.load(sys.stdin)['registry_url']"`
+echo "${curl_command} ${protocol}://${harbor_url}/api/v2.0/systeminfo"
+url=`${curl_command} ${protocol}://${harbor_url}/api/v2.0/systeminfo | python -c "import sys, json; print json.load(sys.stdin)['registry_url']"`
 if [ $? != 0 ] ; then
   myExit 3
 fi
