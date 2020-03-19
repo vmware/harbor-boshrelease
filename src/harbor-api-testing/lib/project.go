@@ -31,7 +31,7 @@ func NewProjectUtil(rootURI string, httpClient *client.APIClient) *ProjectUtil {
 //GetProjects : Get projects
 //If name specified, then only get the specified project
 func (pu *ProjectUtil) GetProjects(name string) ([]models.ExistingProject, error) {
-	url := pu.rootURI + "/api/projects"
+	url := pu.rootURI + "/api/v2.0/projects"
 	if len(strings.TrimSpace(name)) > 0 {
 		url = url + "?name=" + name
 	}
@@ -87,7 +87,7 @@ func (pu *ProjectUtil) CreateProject(projectName string, accessLevel bool) error
 		return err
 	}
 
-	url := pu.rootURI + "/api/projects"
+	url := pu.rootURI + "/api/v2.0/projects"
 	if err = pu.testingClient.Post(url, body); err != nil {
 		return err
 	}
@@ -106,7 +106,7 @@ func (pu *ProjectUtil) DeleteProject(projectName string) error {
 		return errors.New("Failed to get project ID")
 	}
 
-	url := fmt.Sprintf("%s%s%d", pu.rootURI, "/api/projects/", pid)
+	url := fmt.Sprintf("%s%s%d", pu.rootURI, "/api/v2.0/projects/", pid)
 
 	if err := pu.testingClient.Delete(url); err != nil {
 		return err
@@ -137,7 +137,7 @@ func (pu *ProjectUtil) AssignRole(projectName, username string) error {
 		return err
 	}
 
-	url := fmt.Sprintf("%s%s%d%s", pu.rootURI, "/api/projects/", pid, "/members")
+	url := fmt.Sprintf("%s%s%d%s", pu.rootURI, "/api/v2.0/projects/", pid, "/members")
 	if err := pu.testingClient.Post(url, body); err != nil {
 		return err
 	}
@@ -160,7 +160,7 @@ func (pu *ProjectUtil) RevokeRole(projectName string, uid int) error {
 		return fmt.Errorf("Failed to get project ID with name %s", projectName)
 	}
 
-	url := fmt.Sprintf("%s%s%d%s%d", pu.rootURI, "/api/projects/", pid, "/members/", uid)
+	url := fmt.Sprintf("%s%s%d%s%d", pu.rootURI, "/api/v2.0/projects/", pid, "/members/", uid)
 	if err := pu.testingClient.Delete(url); err != nil {
 		return err
 	}

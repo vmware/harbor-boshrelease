@@ -48,7 +48,7 @@ func (uu *UserUtil) CreateUser(username, password string) error {
 		return err
 	}
 
-	url := fmt.Sprintf("%s%s", uu.rootURI, "/api/users")
+	url := fmt.Sprintf("%s%s", uu.rootURI, "/api/v2.0/users")
 	if err := uu.testingClient.Post(url, body); err != nil {
 		return err
 	}
@@ -63,7 +63,7 @@ func (uu *UserUtil) DeleteUser(username string) error {
 		return fmt.Errorf("Failed to get user with name %s", username)
 	}
 
-	url := fmt.Sprintf("%s%s%d", uu.rootURI, "/api/users/", uid)
+	url := fmt.Sprintf("%s%s%d", uu.rootURI, "/api/v2.0/users/", uid)
 	if err := uu.testingClient.Delete(url); err != nil {
 		return err
 	}
@@ -74,7 +74,7 @@ func (uu *UserUtil) DeleteUser(username string) error {
 //GetUsers : Get users
 //If name specified, then return that one
 func (uu *UserUtil) GetUsers(name string) ([]models.ExistingUser, error) {
-	url := fmt.Sprintf("%s%s", uu.rootURI, "/api/users")
+	url := fmt.Sprintf("%s%s", uu.rootURI, "/api/v2.0/users")
 	if len(strings.TrimSpace(name)) > 0 {
 		url = url + "?username=" + name
 	}

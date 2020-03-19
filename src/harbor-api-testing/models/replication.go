@@ -1,9 +1,8 @@
 package models
 
-//ReplicationPolicy : For /api/replications
+//ReplicationPolicy : For /api/v2.0/replications
 type ReplicationPolicy struct {
 	ProjectID int `json:"project_id"`
-	
 }
 
 type ExistingReplicationPolicy struct {

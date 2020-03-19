@@ -35,7 +35,7 @@ func (iu *ImageUtil) DeleteRepo(repoName string) error {
 		return errors.New("Empty repo name for deleting")
 	}
 
-	url := fmt.Sprintf("%s%s%s", iu.rootURI, "/api/repositories/", repoName)
+	url := fmt.Sprintf("%s%s%s", iu.rootURI, "/api/v2.0/repositories/", repoName)
 	if err := iu.testingClient.Delete(url); err != nil {
 		return err
 	}
@@ -53,7 +53,7 @@ func (iu *ImageUtil) ScanTag(repoName string, tagName string) error {
 		return errors.New("Empty tag name for scanning")
 	}
 
-	url := fmt.Sprintf("%s%s%s%s%s%s", iu.rootURI, "/api/repositories/", repoName, "/tags/", tagName, "/scan")
+	url := fmt.Sprintf("%s%s%s%s%s%s", iu.rootURI, "/api/v2.0/repositories/", repoName, "/tags/", tagName, "/scan")
 	if err := iu.testingClient.Post(url, nil); err != nil {
 		return err
 	}
@@ -62,7 +62,7 @@ func (iu *ImageUtil) ScanTag(repoName string, tagName string) error {
 	defer tk.Stop()
 	done := make(chan bool)
 	errchan := make(chan error)
-	url = fmt.Sprintf("%s%s%s%s%s", iu.rootURI, "/api/repositories/", repoName, "/tags/", tagName)
+	url = fmt.Sprintf("%s%s%s%s%s", iu.rootURI, "/api/v2.0/repositories/", repoName, "/tags/", tagName)
 	go func() {
 		for _ = range tk.C {
 			data, err := iu.testingClient.Get(url)
@@ -102,7 +102,7 @@ func (iu *ImageUtil) GetRepos(projectName string) ([]models.Repository, error) {
 		return nil, fmt.Errorf("Failed to get project ID with name %s", projectName)
 	}
 
-	url := fmt.Sprintf("%s%s%d", iu.rootURI, "/api/repositories?project_id=", pid)
+	url := fmt.Sprintf("%s%s%d", iu.rootURI, "/api/v2.0/repositories?project_id=", pid)
 	data, err := iu.testingClient.Get(url)
 	if err != nil {
 		return nil, err
@@ -122,7 +122,7 @@ func (iu *ImageUtil) GetTags(repoName string) ([]models.Tag, error) {
 		return nil, errors.New("Empty repository name for getting tags")
 	}
 
-	url := fmt.Sprintf("%s%s%s%s", iu.rootURI, "/api/repositories/", repoName, "/tags")
+	url := fmt.Sprintf("%s%s%s%s", iu.rootURI, "/api/v2.0/repositories/", repoName, "/tags")
 	tagData, err := iu.testingClient.Get(url)
 	if err != nil {
 		return nil, err

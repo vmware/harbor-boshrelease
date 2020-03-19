@@ -1,6 +1,6 @@
 package models
 
-//User : For /api/users
+//User : For /api/v2.0/users
 type User struct {
 	Username string `json:"username"`
 	RealName string `json:"realname"`
@@ -9,7 +9,7 @@ type User struct {
 	Comment  string `json:"comment"`
 }
 
-//ExistingUser : For GET /api/users
+//ExistingUser : For GET /api/v2.0/users
 type ExistingUser struct {
 	User
 	ID int `json:"user_id"`
