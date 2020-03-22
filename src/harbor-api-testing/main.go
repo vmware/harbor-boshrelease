@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"harbor-api-testing/envs"
-	"harbor-api-testing/tests/suites/suite03"
 	"os"
+
+	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/envs"
+	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/tests/suites/suite03"
 )
 
 //Execute suites from command

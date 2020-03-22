@@ -7,8 +7,13 @@ import (
 	"strings"
 	"time"
 
-	"harbor-api-testing/client"
-	"harbor-api-testing/models"
+	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/client"
+	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/models"
+)
+
+const (
+	// MimeTypeNativeReport defines the mime type for native report
+	MimeTypeNativeReport = "application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0"
 )
 
 //ImageUtil : For repository and tag functions
@@ -34,7 +39,7 @@ func (iu *ImageUtil) DeleteRepo(projectName, repoName string) error {
 	if len(strings.TrimSpace(repoName)) == 0 {
 		return errors.New("Empty repo name for deleting")
 	}
-	url := fmt.Sprintf("%s/api/v2.0/projects/%s/repositories/%s", iu.rootURI, projectName, repoName)
+	url := fmt.Sprintf("%s/api/v2.0/projects/%s/repositories/%s/_self", iu.rootURI, projectName, repoName)
 	if err := iu.testingClient.Delete(url); err != nil {
 		return err
 	}
@@ -43,16 +48,12 @@ func (iu *ImageUtil) DeleteRepo(projectName, repoName string) error {
 }
 
 //ScanTag :Scan a tag
-func (iu *ImageUtil) ScanTag(repoName string, tagName string) error {
+func (iu *ImageUtil) ScanTag(projectName, repoName, sha256 string) error {
 	if len(strings.TrimSpace(repoName)) == 0 {
 		return errors.New("Empty repo name for scanning")
 	}
+	url := fmt.Sprintf("%s/api/v2.0/projects//%s/repositories/%s/artifacts/%s/scan", iu.rootURI, projectName, repoName, sha256)
 
-	if len(strings.TrimSpace(tagName)) == 0 {
-		return errors.New("Empty tag name for scanning")
-	}
-
-	url := fmt.Sprintf("%s%s%s%s%s%s", iu.rootURI, "/api/v2.0/repositories/", repoName, "/tags/", tagName, "/scan")
 	if err := iu.testingClient.Post(url, nil); err != nil {
 		return err
 	}
@@ -61,10 +62,10 @@ func (iu *ImageUtil) ScanTag(repoName string, tagName string) error {
 	defer tk.Stop()
 	done := make(chan bool)
 	errchan := make(chan error)
-	url = fmt.Sprintf("%s%s%s%s%s", iu.rootURI, "/api/v2.0/repositories/", repoName, "/tags/", tagName)
+	resultURL := fmt.Sprintf("%s/api/v2.0/projects/%s/repositories/%s/artifacts/%s?with_scan_overview=true", iu.rootURI, projectName, repoName, sha256)
 	go func() {
-		for _ = range tk.C {
-			data, err := iu.testingClient.Get(url)
+		for range tk.C {
+			data, err := iu.testingClient.Get(resultURL)
 			if err != nil {
 				errchan <- err
 				return
@@ -75,8 +76,11 @@ func (iu *ImageUtil) ScanTag(repoName string, tagName string) error {
 				return
 			}
 
-			if tag.ScanOverview != nil && tag.ScanOverview.Status == "finished" {
-				done <- true
+			if tag.ScanOverview != nil {
+				summary, ok := tag.ScanOverview[MimeTypeNativeReport]
+				if ok && summary.Status == "Success" {
+					done <- true
+				}
 			}
 		}
 	}()
@@ -115,22 +119,19 @@ func (iu *ImageUtil) GetRepos(projectName string) ([]models.Repository, error) {
 	return repos, nil
 }
 
-//GetTags : Get tags
-func (iu *ImageUtil) GetTags(repoName string) ([]models.Tag, error) {
-	if len(strings.TrimSpace(repoName)) == 0 {
-		return nil, errors.New("Empty repository name for getting tags")
+//GetArtifacts ... get artifact in current repo
+func (iu *ImageUtil) GetArtifacts(projectName, repoName string) ([]models.Artifact, error) {
+	if len(projectName) == 0 || len(repoName) == 0 {
+		return nil, errors.New("project name and reponame can not be empty")
 	}
-
-	url := fmt.Sprintf("%s%s%s%s", iu.rootURI, "/api/v2.0/repositories/", repoName, "/tags")
-	tagData, err := iu.testingClient.Get(url)
+	url := fmt.Sprintf("%s/api/v2.0/projects/%s/repositories/%s/artifacts?with_tag=true&with_scan_overview=true&with_label=true", iu.rootURI, projectName, repoName)
+	var artifacts []models.Artifact
+	artifactData, err := iu.testingClient.Get(url)
 	if err != nil {
 		return nil, err
 	}
-
-	var tags []models.Tag
-	if err = json.Unmarshal(tagData, &tags); err != nil {
+	if err = json.Unmarshal(artifactData, &artifacts); err != nil {
 		return nil, err
 	}
-
-	return tags, nil
+	return artifacts, nil
 }

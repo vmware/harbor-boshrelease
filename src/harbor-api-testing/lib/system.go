@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"harbor-api-testing/client"
-	"harbor-api-testing/models"
+	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/client"
+	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/models"
 )
 
 //SystemUtil : For getting system info

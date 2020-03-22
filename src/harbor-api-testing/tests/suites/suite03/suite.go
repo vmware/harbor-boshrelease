@@ -2,9 +2,10 @@ package suite03
 
 import (
 	"fmt"
-	"harbor-api-testing/envs"
-	"harbor-api-testing/lib"
-	"harbor-api-testing/tests/suites/base"
+
+	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/envs"
+	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/lib"
+	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/tests/suites/base"
 )
 
 //Steps of suite03:
