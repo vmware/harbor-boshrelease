@@ -30,12 +30,11 @@ func NewImageUtil(rootURI string, httpClient *client.APIClient) *ImageUtil {
 }
 
 //DeleteRepo : Delete repo
-func (iu *ImageUtil) DeleteRepo(repoName string) error {
+func (iu *ImageUtil) DeleteRepo(projectName, repoName string) error {
 	if len(strings.TrimSpace(repoName)) == 0 {
 		return errors.New("Empty repo name for deleting")
 	}
-
-	url := fmt.Sprintf("%s%s%s", iu.rootURI, "/api/v2.0/repositories/", repoName)
+	url := fmt.Sprintf("%s/api/v2.0/projects/%s/repositories/%s", iu.rootURI, projectName, repoName)
 	if err := iu.testingClient.Delete(url); err != nil {
 		return err
 	}

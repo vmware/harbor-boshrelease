@@ -101,7 +101,7 @@ func (ccs *ConcourseCiSuite01) Run(onEnvironment *envs.Environment) *lib.Report 
 	}
 
 	//s9
-	if err := img.DeleteRepo(repoName); err != nil {
+	if err := img.DeleteRepo(onEnvironment.TestingProject, onEnvironment.ImageName); err != nil {
 		report.Failed("DeleteRepo", err)
 	} else {
 		report.Passed("DeleteRepo")
