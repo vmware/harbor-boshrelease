@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"harbor-api-testing/client"
+	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/client"
 )
 
 //Environment keeps the testing env info

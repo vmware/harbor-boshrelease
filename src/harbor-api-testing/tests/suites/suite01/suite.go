@@ -3,9 +3,9 @@ package suite01
 import (
 	"fmt"
 
-	"harbor-api-testing/envs"
-	"harbor-api-testing/lib"
-	"harbor-api-testing/tests/suites/base"
+	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/envs"
+	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/lib"
+	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/tests/suites/base"
 )
 
 //Steps of suite01:
@@ -71,11 +71,20 @@ func (ccs *ConcourseCiSuite01) Run(onEnvironment *envs.Environment) *lib.Report 
 
 	//s5
 	img := lib.NewImageUtil(onEnvironment.RootURI(), onEnvironment.HTTPClient)
-	repoName := fmt.Sprintf("%s/%s", onEnvironment.TestingProject, onEnvironment.ImageName)
-	if err := img.ScanTag(repoName, onEnvironment.ImageTag); err != nil {
-		report.Failed("ScanTag", err)
+
+	artifacts, err := img.GetArtifacts(onEnvironment.TestingProject, onEnvironment.ImageName)
+	if err != nil {
+		report.Failed("ScanTag", fmt.Errorf("Can not find tag to scan, error %v", err))
+	} else if len(artifacts) <= 0 {
+		report.Failed("ScanTag", fmt.Errorf("Can not find tag to scan"))
 	} else {
-		report.Passed("ScanTag")
+		digest := artifacts[0].Digest
+		fmt.Printf("Scan tag with digest: %v\n", digest)
+		if err := img.ScanTag(onEnvironment.TestingProject, onEnvironment.ImageName, digest); err != nil {
+			report.Failed("ScanTag", err)
+		} else {
+			report.Passed("ScanTag")
+		}
 	}
 
 	//s6
@@ -86,15 +95,14 @@ func (ccs *ConcourseCiSuite01) Run(onEnvironment *envs.Environment) *lib.Report 
 	}
 
 	//s7
-	uid := usr.GetUserID(onEnvironment.Account)
-	if err := pro.RevokeRole(onEnvironment.TestingProject, uid); err != nil {
+	if err := pro.RevokeRole(onEnvironment.TestingProject, onEnvironment.Account); err != nil {
 		report.Failed("RevokeRole", err)
 	} else {
 		report.Passed("RevokeRole")
 	}
 
 	//s8
-	if err := ccs.PullImage(onEnvironment); err == nil {
+	if err := ccs.PullImage(onEnvironment); err != nil {
 		report.Failed("pullImage[2]", err)
 	} else {
 		report.Passed("pullImage[2]")

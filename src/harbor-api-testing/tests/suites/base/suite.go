@@ -2,9 +2,10 @@ package base
 
 import (
 	"fmt"
+	"strings"
 
-	"harbor-api-testing/envs"
-	"harbor-api-testing/lib"
+	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/envs"
+	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/lib"
 )
 
 //ConcourseCiSuite : Provides some base cases
@@ -65,8 +66,10 @@ func (ccs *ConcourseCiSuite) PullImage(onEnvironment *envs.Environment) error {
 		onEnvironment.TestingProject,
 		onEnvironment.ImageName,
 		onEnvironment.ImageTag)
-
 	if err := docker.Pull(imagePulling); err != nil {
+		if strings.EqualFold("exit status 1", err.Error()) {
+			return nil
+		}
 		return err
 	}
 
