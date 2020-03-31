@@ -54,10 +54,8 @@ data_volume: /data
 #     maxthreads: 100
 
 storage_service:
-<%- if p("registry_storage_provider.redirect") == "true" %>
   redirect:
-    disabled: true
-<%- end %>
+    disabled: <%= p("registry_storage_provider.s3.disable_redirect") %>  
   ca_bundle: /data/cert/trusted_certificates.crt
 <%- if p("registry_storage_provider.name") == "s3" %>
 # S3 storage
