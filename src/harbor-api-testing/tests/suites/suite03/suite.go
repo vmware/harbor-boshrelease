@@ -56,8 +56,7 @@ func (ests *ErrandSmokeTestSuite) Run(onEnvironment *envs.Environment) *lib.Repo
 
 	//s4
 	img := lib.NewImageUtil(onEnvironment.RootURI(), onEnvironment.HTTPClient)
-	repoName := fmt.Sprintf("%s/%s", onEnvironment.TestingProject, onEnvironment.ImageName)
-	if err := img.DeleteRepo(repoName); err != nil {
+	if err := img.DeleteRepo(onEnvironment.TestingProject, onEnvironment.ImageName); err != nil {
 		report.Failed("DeleteRepo", err)
 	} else {
 		report.Passed("DeleteRepo")
