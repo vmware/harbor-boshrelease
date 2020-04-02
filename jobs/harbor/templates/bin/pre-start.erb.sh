@@ -117,6 +117,10 @@ function getPrepareOption() {
   if [ -n "$WITH_CLAIR" ]; then
     echo " --with-clair"
   fi
+  if [ -n "$WITH_TRIVY" ]; then
+    echo " --with-trivy"
+  fi
+
   echo " --with-chartmuseum"
 }
 
