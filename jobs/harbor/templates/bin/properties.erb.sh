@@ -12,6 +12,11 @@ export WITH_NOTARY='<%= p("with_notary") ? "true" : "" %>'
 #None empty value means to install optional component Clair
 export WITH_CLAIR='<%= p("with_clair") ? "true" : "" %>'
 
+#None empty value means to install optional component Trivy
+export WITH_TRIVY='<%= p("with_trivy") ? "true" : "" %>'
+
+
+
 #Database password of Harbor
 HARBOR_DB_PWD='<%= p("db_password") %>'
 

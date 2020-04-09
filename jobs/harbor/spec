@@ -109,6 +109,9 @@ properties:
     default: "127.0.0.1,localhost,core,registry"
   with_clair:
     description: "An option to determine whether install the optional component Clair or not."
+    default: false
+  with_trivy:
+    description: "An option to determine whether install the optional component Trivy or not."
     default: true
   with_notary:
     description: "An option to determine whether install the optional component Notary or not."
