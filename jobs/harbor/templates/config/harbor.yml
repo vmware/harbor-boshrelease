@@ -54,10 +54,8 @@ data_volume: /data
 #     maxthreads: 100
 
 storage_service:
-<%- if p("registry_storage_provider.redirect") == "true" %>
   redirect:
-    disabled: true
-<%- end %>
+    disabled: <%= p("registry_storage_provider.s3.disable_redirect") %>  
   ca_bundle: /data/cert/trusted_certificates.crt
 <%- if p("registry_storage_provider.name") == "s3" %>
 # S3 storage
@@ -97,6 +95,13 @@ clair:
   # Config http proxy for Clair, e.g. http://my.proxy.com:3128
   # Clair doesn't need to connect to harbor internal components via http proxy.
 
+# Trivy configuration
+trivy:
+  # ignoreUnfixed The flag to display only fixed vulnerabilities
+  ignore_unfixed: false
+  # skipUpdate The flag to enable or disable Trivy DB downloads from GitHub
+  skip_update: false
+
 jobservice:
   # Maximum number of job workers in job service  
   max_job_workers: <%= p("max_job_workers") %>
@@ -132,7 +137,7 @@ log:
     port: <%= p("log_insight_port") %>
 <%- end %>
 #This attribute is for migrator to detect the version of the .cfg file, DO NOT MODIFY!
-_version: 1.9.0
+_version: 2.0.0
 
 # UAA cert
 <%- if p("auth_mode") == "uaa_auth" %>
@@ -156,5 +161,4 @@ proxy:
     - core
     - jobservice
     - clair
-# Comma-separated adapters for replication. All adapters are supported if not specify 
-replication_adapters: docker-registry,docker-hub,docker-registry,docker-hub,harbor,helm-hub,google-gcr,aws-ecr,azure-acr
+    - trivy

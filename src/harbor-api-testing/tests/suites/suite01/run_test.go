@@ -3,7 +3,7 @@ package suite01
 import (
 	"testing"
 
-	"harbor-api-testing/envs"
+	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/envs"
 )
 
 //TestRun : Start to run the case

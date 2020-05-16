@@ -134,7 +134,7 @@ func (ac *APIClient) Post(url string, data []byte) error {
 	}
 
 	if resp.StatusCode != http.StatusCreated &&
-		resp.StatusCode != http.StatusOK {
+		resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusAccepted {
 		return errors.New(resp.Status)
 	}
 

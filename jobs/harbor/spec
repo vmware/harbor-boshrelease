@@ -109,6 +109,9 @@ properties:
     default: "127.0.0.1,localhost,core,registry"
   with_clair:
     description: "An option to determine whether install the optional component Clair or not."
+    default: false
+  with_trivy:
+    description: "An option to determine whether install the optional component Trivy or not."
     default: true
   with_notary:
     description: "An option to determine whether install the optional component Notary or not."
@@ -187,7 +190,10 @@ properties:
    default: ""   
   registry_storage_provider.s3.trusted_certificates:
    description: "s3 storage trusted certificate."
-   default: ""                           
+   default: ""
+  registry_storage_provider.s3.disable_redirect:
+   description: "s3 storage disable redirect."
+   default: false                       
   registry_storage_provider.gcs.keyfile_content:
     description: "The text content of the GCS key file."
     default: ""
@@ -240,9 +246,6 @@ properties:
   clair_updater_interval:
     description: "The interval to run clair updater"
     default: 12
-  registry_storage_provider.redirect:
-    description: "This allows to redirect to the docker storage location"
-    default: false
   log_insight_enabled:
     description: "Enable the Log Insight integration or not"
     default: false

@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"harbor-api-testing/client"
-	"harbor-api-testing/models"
+	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/client"
+	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/models"
 )
 
 //ProjectUtil : Util methods for project related
@@ -128,8 +128,10 @@ func (pu *ProjectUtil) AssignRole(projectName, username string) error {
 	}
 
 	m := models.Member{
-		UserName: username,
-		Roles:    []int{2},
+		RoleID: 2,
+		MemberUser: &models.MemUser{
+			UserName: username,
+		},
 	}
 
 	body, err := json.Marshal(&m)
@@ -146,24 +148,57 @@ func (pu *ProjectUtil) AssignRole(projectName, username string) error {
 }
 
 //RevokeRole : RevokeRole role from user
-func (pu *ProjectUtil) RevokeRole(projectName string, uid int) error {
+func (pu *ProjectUtil) RevokeRole(projectName string, username string) error {
 	if len(strings.TrimSpace(projectName)) == 0 {
 		return errors.New("Project name is required for revoking role")
 	}
 
-	if uid == 0 {
-		return errors.New("User ID is required for revoking role")
+	if len(username) == 0 {
+		return errors.New("Username is required for revoking role")
 	}
 
 	pid := pu.GetProjectID(projectName)
 	if pid == -1 {
 		return fmt.Errorf("Failed to get project ID with name %s", projectName)
 	}
-
-	url := fmt.Sprintf("%s%s%d%s%d", pu.rootURI, "/api/v2.0/projects/", pid, "/members/", uid)
+	m, err := pu.GetProjectMember(pid, username)
+	if err != nil {
+		return err
+	}
+	url := fmt.Sprintf("%s%s%d%s%d", pu.rootURI, "/api/v2.0/projects/", pid, "/members/", m.MID)
 	if err := pu.testingClient.Delete(url); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+//GetProjectMember : Get the project member by name
+func (pu *ProjectUtil) GetProjectMember(pid int, member string) (*models.ExistingMember, error) {
+	if pid == 0 {
+		return nil, errors.New("invalid project ID")
+	}
+
+	if len(strings.TrimSpace(member)) == 0 {
+		return nil, errors.New("empty member name")
+	}
+
+	url := fmt.Sprintf("%s/api/v2.0/projects/%d/members", pu.rootURI, pid)
+	data, err := pu.testingClient.Get(url)
+	if err != nil {
+		return nil, err
+	}
+
+	members := []*models.ExistingMember{}
+	if err := json.Unmarshal(data, &members); err != nil {
+		return nil, err
+	}
+
+	for _, m := range members {
+		if m.Name == member {
+			return m, nil
+		}
+	}
+
+	return nil, fmt.Errorf("no member found by the name '%s'", member)
 }
