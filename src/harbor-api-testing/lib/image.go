@@ -39,7 +39,7 @@ func (iu *ImageUtil) DeleteRepo(projectName, repoName string) error {
 	if len(strings.TrimSpace(repoName)) == 0 {
 		return errors.New("Empty repo name for deleting")
 	}
-	url := fmt.Sprintf("%s/api/v2.0/projects/%s/repositories/%s/_self", iu.rootURI, projectName, repoName)
+	url := fmt.Sprintf("%s/api/v2.0/projects/%s/repositories/%s", iu.rootURI, projectName, repoName)
 	if err := iu.testingClient.Delete(url); err != nil {
 		return err
 	}
