@@ -87,7 +87,8 @@ function prepareCert() {
     cp ${HARBOR_JOB_DIR}/config/server.crt /tmp/
     cp ${HARBOR_JOB_DIR}/config/server.key /tmp/
     cp ${HARBOR_JOB_DIR}/config/uaa_ca.crt $HARBOR_DATA/cert/
-    cp ${HARBOR_JOB_DIR}/config/trusted_certificates.crt $HARBOR_DATA/cert/
+    cp ${HARBOR_JOB_DIR}/config/trusted_certificates.crt /tmp/
+    chmod 644 /tmp/trusted_certificates.crt
     chmod 644 $HARBOR_DATA/cert/*
 
     cp ${HARBOR_JOB_DIR}/config/ca.crt $HARBOR_DATA/ca_download
@@ -287,7 +288,7 @@ function updateVersionFile() {
 }
 
 function cleanCertFile(){
-  rm -rf /tmp/server.key /tmp/server.crt
+  rm -rf /tmp/server.key /tmp/server.crt /tmp/trusted_certificates.crt
 }
 
 # It might take long time to do in-container migrate, 
