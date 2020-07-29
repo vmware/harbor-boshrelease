@@ -8,3 +8,5 @@ files:
 - harbor-common/utils.sh
 - harbor-common/notary-migration-fix.sh
 - harbor-common/fix-notary.sql
+- harbor-common/harbor-backup.sh
+- harbor-common/harbor-restore.sh
