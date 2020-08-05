@@ -26,7 +26,9 @@ COMPOSE_PACKAGE_DIR=${PACKAGE_DIR}/docker-compose
 COMPOSE_CMD=${COMPOSE_PACKAGE_DIR}/bin/docker-compose
 HARBOR_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.yml
 INTIAL_DELAY_MINUTES_TIMEOUT=<%= p("initial_delay_minutes") %>
-INSTALLED_HARBOR_VERSION=`cat $HARBOR_VERSION_FILE | true `
+if [ -f $HARBOR_VERSION_FILE ]; then
+  INSTALLED_HARBOR_VERSION=`cat $HARBOR_VERSION_FILE `
+fi
 source $PACKAGE_DIR/harbor-common/common.sh
 source $HARBOR_JOB_DIR/bin/properties.sh
 
