@@ -26,7 +26,7 @@ COMPOSE_PACKAGE_DIR=${PACKAGE_DIR}/docker-compose
 COMPOSE_CMD=${COMPOSE_PACKAGE_DIR}/bin/docker-compose
 HARBOR_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.yml
 INTIAL_DELAY_MINUTES_TIMEOUT=<%= p("initial_delay_minutes") %>
-
+INSTALLED_HARBOR_VERSION=`cat $HARBOR_VERSION_FILE`
 source $PACKAGE_DIR/harbor-common/common.sh
 source $HARBOR_JOB_DIR/bin/properties.sh
 
@@ -144,16 +144,23 @@ function installHarbor() {
 # Check existing Harbor Version
 checkHarborVersion() {
   if [ -z "$INSTALLED_HARBOR_VERSION" ]; then
-     if $DOCKER_CMD images | grep vmware/harbor-log ; then
-       # Harbor was installed which does not write the HARBOR_VERSION_FILE.
-       echo 1
-     else
        # Harbor was not installed on this machine before.
        echo 2
-     fi
   else
     compareVersion $HARBOR_FULL_VERSION $INSTALLED_HARBOR_VERSION
   fi
+}
+
+backupHarborDB() {
+  result=$(checkHarborVersion)
+  if [ $result -le 0 ]; then
+    return
+  fi
+  timestamp=$(date +"%Y-%m-%d-%H-%M")
+  rm -rf /data/database_backup*
+  log "Start to backup database..." 
+  cp -r /data/database /data/database_backup${INSTALLED_HARBOR_VERSION}_$timestamp
+  log "Backup database data to directory /data/database_backup${INSTALLED_HARBOR_VERSION}_$timestamp, done" 
 }
 
 #Load Harbor images
@@ -169,65 +176,6 @@ loadImages() {
   #Load images
   log "Loading docker images ..."
   $DOCKER_CMD load -i $HARBOR_IMAGES_TAR_PATH 2>&1
-}
-
-#Upgrade Harbor if higher version of Harbor to be installed, only consider version>1.6.0
-upgradeHarbor() {
-  INSTALLED_HARBOR_VERSION=`cat $HARBOR_VERSION_FILE`
-  <%- if p("enable_upgrade") -%>
-  result=$(checkHarborVersion)
-  case $result in
-    -1)
-      log "Can not upgrade Harbor from $INSTALLED_HARBOR_VERSION to $HARBOR_FULL_VERSION. Aborted."
-      exit 1
-      ;;
-    1)
-      log "Upgrading Harbor $INSTALLED_HARBOR_VERSION to $HARBOR_FULL_VERSION ..."
-      ;;
-    2)
-      # Harbor is not installed before. No need to upgrade.
-      return
-      ;;
-    0)
-      # Already installed. No need to upgrade.
-      return
-      ;;
-  esac
-
-  if [ -z "$INSTALLED_HARBOR_VERSION" ]; then
-    log "file /data/harbor_version is not found or invalid, please upgrade to harbor tile 1.5.2 or newer, then upgrade to this version"
-    exit 1
-  fi
-
-  if [ $(compareVersion $INSTALLED_HARBOR_VERSION "1.6.0") = "-1" ]; then
-
-    MIGRATE_DOCKER_CMD="$DOCKER_CMD run -i --rm -e DB_USR=root -e SKIP_CONFIRM=y "
-    HARBOR_MIGRATOR_TAG=$($DOCKER_CMD images | grep harbor-migrator | grep $HARBOR_MIGRATOR_VERSION | awk '{print $2}')
-    log "Use harbor-migrator:$HARBOR_MIGRATOR_TAG for migration"
-    log "Backing up Harbor database"
-    $MIGRATE_DOCKER_CMD -e DB_PWD=$HARBOR_DB_PWD -v /data/database:/var/lib/mysql -v $HARBOR_DB_BACKUP_DIR:/harbor-migration/backup goharbor/harbor-migrator:$HARBOR_MIGRATOR_TAG --db backup
-
-    log "Migrating Harbor database"
-    $MIGRATE_DOCKER_CMD -e DB_PWD=$HARBOR_DB_PWD -e PGDATA=/var/lib/postgresql/data -v /data/database:/var/lib/mysql goharbor/harbor-migrator:$HARBOR_MIGRATOR_TAG --db up
-    log "Migrating clair DB"
-    $MIGRATE_DOCKER_CMD -e PGDATA=/var/lib/postgresql/data  -v /data/clair-db/:/clair-db -v /data/database:/var/lib/postgresql/data goharbor/harbor-migrator:$HARBOR_MIGRATOR_TAG --db up
-    log "Migrating notary DB"
-    $MIGRATE_DOCKER_CMD -e PGDATA=/var/lib/postgresql/data -v /data/notary-db/:/var/lib/mysql -v /data/database:/var/lib/postgresql/data goharbor/harbor-migrator:$HARBOR_MIGRATOR_TAG --db up
-
-  else
-    # After Harbor 1.6.0, database is postgresql, it migration is handled by program internally 
-    echo "Skip to use migrator to upgrade harbor after 1.6.0"
-  fi
-
-  # Cleanup all unused image and reload image again.
-  $DOCKER_CMD image prune -a -f
-  loadImages
-
-  # Fix notary db schema error between 1.5.0 and 1.6.3
-  log "Upgrade notary db"
-  source $PACKAGE_DIR/harbor-common/notary-migration-fix.sh
-
-  <%- end -%>
 }
 
 # Setup NFS directory and update docker-compose.yml
@@ -334,10 +282,10 @@ prepareCert
 loadImages
 installHarbor
 setupGCSKeyFile
-upgradeHarbor
 setupNFS
 registerUAA
 waitForBoshDNS
+backupHarborDB
 updateVersionFile
 cleanCertFile
 warmUpHarbor
