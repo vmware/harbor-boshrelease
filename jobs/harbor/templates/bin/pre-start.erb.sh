@@ -15,7 +15,7 @@ HARBOR_PERSISTED_DATA=/var/vcap/store/$JOB_NAME
 HARBOR_IMAGES_TAR_PATH=${HARBOR_PACKAGE_DIR}/harbor*.tar
 HARBOR_DATA=/data
 HARBOR_DB_BACKUP_DIR=$HARBOR_DATA/db_backup
-HARBOR_VERSION_FILE=$HARBOR_DATA/harbor_version
+HARBOR_VERSION_FILE=$HARBOR_PERSISTED_DATA/harbor_version
 CFG_FILE=${HARBOR_JOB_DIR}/config/harbor.cfg
 CRON_PATH=/etc/cron.d/$JOB_NAME
 CERTS_D=/etc/docker/certs.d
@@ -26,9 +26,14 @@ COMPOSE_PACKAGE_DIR=${PACKAGE_DIR}/docker-compose
 COMPOSE_CMD=${COMPOSE_PACKAGE_DIR}/bin/docker-compose
 HARBOR_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.yml
 INTIAL_DELAY_MINUTES_TIMEOUT=<%= p("initial_delay_minutes") %>
-INSTALLED_HARBOR_VERSION=`cat $HARBOR_VERSION_FILE`
 source $PACKAGE_DIR/harbor-common/common.sh
 source $HARBOR_JOB_DIR/bin/properties.sh
+
+if [ -f $HARBOR_VERSION_FILE ]; then
+  INSTALLED_HARBOR_VERSION=$(cat ${HARBOR_VERSION_FILE} )
+else 
+  log "/data/harbor_version file not found!"
+fi
 
 # Add FQDN to /etc/hosts, for monit_status script to access Harbor
 function populateHostname() {
@@ -147,6 +152,7 @@ checkHarborVersion() {
        # Harbor was not installed on this machine before.
        echo 2
   else
+    log "compare version $HARBOR_FULL_VERSION $INSTALLED_HARBOR_VERSION"
     compareVersion $HARBOR_FULL_VERSION $INSTALLED_HARBOR_VERSION
   fi
 }
@@ -159,8 +165,8 @@ backupHarborDB() {
   timestamp=$(date +"%Y-%m-%d-%H-%M")
   rm -rf /data/database_backup*
   log "Start to backup database..." 
-  cp -r /data/database /data/database_backup${INSTALLED_HARBOR_VERSION}_$timestamp
-  log "Backup database data to directory /data/database_backup${INSTALLED_HARBOR_VERSION}_$timestamp, done" 
+  cp -r /data/database /data/database_backup_${INSTALLED_HARBOR_VERSION}_$timestamp
+  log "Backup database data to directory /data/database_backup_${INSTALLED_HARBOR_VERSION}_$timestamp, done" 
 }
 
 #Load Harbor images
