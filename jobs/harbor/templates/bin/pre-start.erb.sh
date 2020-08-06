@@ -26,9 +26,6 @@ COMPOSE_PACKAGE_DIR=${PACKAGE_DIR}/docker-compose
 COMPOSE_CMD=${COMPOSE_PACKAGE_DIR}/bin/docker-compose
 HARBOR_YAML=${HARBOR_PACKAGE_DIR}/docker-compose.yml
 INTIAL_DELAY_MINUTES_TIMEOUT=<%= p("initial_delay_minutes") %>
-if [ -f $HARBOR_VERSION_FILE ]; then
-  INSTALLED_HARBOR_VERSION=`cat $HARBOR_VERSION_FILE `
-fi
 source $PACKAGE_DIR/harbor-common/common.sh
 source $HARBOR_JOB_DIR/bin/properties.sh
 
@@ -145,6 +142,11 @@ function installHarbor() {
 
 # Check existing Harbor Version
 checkHarborVersion() {
+  if [ -f $HARBOR_VERSION_FILE ]; then
+    INSTALLED_HARBOR_VERSION=$(cat ${HARBOR_VERSION_FILE} )
+  else 
+    log "/data/harbor_version file not found!"
+  fi
   if [ -z "$INSTALLED_HARBOR_VERSION" ]; then
        # Harbor was not installed on this machine before.
        echo 2
@@ -161,8 +163,8 @@ backupHarborDB() {
   timestamp=$(date +"%Y-%m-%d-%H-%M")
   rm -rf /data/database_backup*
   log "Start to backup database..." 
-  cp -r /data/database /data/database_backup${INSTALLED_HARBOR_VERSION}_$timestamp
-  log "Backup database data to directory /data/database_backup${INSTALLED_HARBOR_VERSION}_$timestamp, done" 
+  cp -r /data/database /data/database_backup_${INSTALLED_HARBOR_VERSION}_$timestamp
+  log "Backup database data to directory /data/database_backup_${INSTALLED_HARBOR_VERSION}_$timestamp, done" 
 }
 
 #Load Harbor images
