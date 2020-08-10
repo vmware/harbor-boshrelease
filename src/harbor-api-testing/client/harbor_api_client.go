@@ -167,6 +167,31 @@ func (ac *APIClient) Delete(url string) error {
 	return nil
 }
 
+// Patch data
+func (ac *APIClient) Patch(url string, data []byte) error {
+	if strings.TrimSpace(url) == "" {
+		return errors.New("Empty url")
+	}
+
+	req, err := http.NewRequest("PATCH", url, strings.NewReader(string(data)))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set(httpHeaderContentType, httpHeaderJSON)
+	req.SetBasicAuth(ac.config.Username, ac.config.Password)
+	resp, err := ac.client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != http.StatusCreated &&
+		resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusAccepted {
+		return errors.New(resp.Status)
+	}
+	return nil
+}
+
 //SwitchAccount : Switch account
 func (ac *APIClient) SwitchAccount(username, password string) {
 	if len(strings.TrimSpace(username)) == 0 ||
