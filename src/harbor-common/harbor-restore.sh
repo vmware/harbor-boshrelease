@@ -94,14 +94,8 @@ restore_chartmuseum() {
 }
 
 restore_secret() {
-    if [ -f harbor/secret/secretkey ]; then
-        cp -f harbor/secret/secretkey /data/secretkey 
-    fi
-    if [ -f harbor/secret/defaultalias ]; then
-        cp -f harbor/secret/defaultalias /data/secretkey 
-    fi
-    if [ -d harbor/secret/keys ]; then
-        cp -r harbor/secret/keys/ /data/secret/
+    if [ -d harbor/secret/ ]; then
+        cp -r harbor/secret/* /data/secret/
     fi
 }
 
