@@ -78,15 +78,13 @@ backup_redis() {
 }
 
 backup_secret() {
-    if [ -f /data/secretkey ]; then
-        cp /data/secretkey harbor/secret/
+    # backup all files in secret
+    if [ -d /data/secret/ ]; then
+        cp -r /data/secret/* harbor/secret/
     fi
-    if [ -f /data/defaultalias ]; then
-         cp /data/defaultalias harbor/secret/
-    fi
-    # location changed after 1.8.0
-    if [ -d /data/secret/keys/ ]; then
-        cp -r /data/secret/keys/ harbor/secret/
+    # exclude the server.crt and server.key because they should be signed with new ca
+    if [ -d harbor/secret/cert/  ]; then
+        rm -rf harbor/secret/cert/
     fi
 }
 

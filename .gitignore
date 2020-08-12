@@ -20,3 +20,8 @@
 **/private.yml
 ~/
 **/*.tgz
+.idea/modules.xml
+.idea/harbor-boshrelease.iml
+.idea/misc.xml
+.idea/vcs.xml
+.idea/.gitignore
