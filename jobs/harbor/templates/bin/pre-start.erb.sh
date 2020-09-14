@@ -152,16 +152,11 @@ checkHarborVersion() {
        # Harbor was not installed on this machine before.
        echo 2
   else
-    log "compare version $HARBOR_FULL_VERSION $INSTALLED_HARBOR_VERSION"
-    compareVersion $HARBOR_FULL_VERSION $INSTALLED_HARBOR_VERSION
+    compareVersion $INSTALLED_HARBOR_VERSION $HARBOR_FULL_VERSION
   fi
 }
 
 backupHarborDB() {
-  result=$(checkHarborVersion)
-  if [ $result -le 0 ]; then
-    return
-  fi
   timestamp=$(date +"%Y-%m-%d-%H-%M")
   rm -rf /data/database_backup*
   log "Start to backup database..." 
@@ -172,8 +167,8 @@ backupHarborDB() {
 #Load Harbor images
 loadImages() {
   result=$(checkHarborVersion)
-  if [ $result -le 0 ]; then
-    # No need to load the same images twice or images of lower version.
+  if [ $result -eq 0 ]; then
+    # No need to load the same images twice for same version
     return
   fi
   waitForDockerd
@@ -249,6 +244,14 @@ function cleanCertFile(){
 # if do this process in ctl start, it will expire the status check (300 seconds) 
 # put it in prestart script  
 function warmUpHarbor(){
+  result=$(checkHarborVersion)
+  if [ $result -ge 0 ]; then
+    log "Skip to warm up Harbor for fresh install or same version"
+    return
+  fi
+  
+  backupHarborDB
+
   waitForDockerd
   $COMPOSE_CMD -H ${DOCKER_HOST} -f ${HARBOR_YAML} up -d
   waitForHarborReady
@@ -291,10 +294,9 @@ setupGCSKeyFile
 setupNFS
 registerUAA
 waitForBoshDNS
-backupHarborDB
-updateVersionFile
 cleanCertFile
 warmUpHarbor
+updateVersionFile
 
 log "Successfully done!"
 exit 0
