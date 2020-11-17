@@ -1,7 +1,7 @@
 version: '3.7'
 services:
     telegraf:
-       image: telegraf:1.11.3
+       image: telegraf:1.14
        command: ["telegraf", "--config", "/telegraf.config"]
        volumes:
            - "/:/hostfs:ro"
@@ -11,7 +11,7 @@ services:
            - HOST_MOUNT_PREFIX=/hostfs
            - HOST_PROC=/hostfs/proc
     wavefront-proxy:
-        image: wavefronthq/proxy:4.38
+        image: wavefronthq/proxy:5.7
         environment:
             - WAVEFRONT_URL=<%= p("wavefront_url") %> 
             - WAVEFRONT_TOKEN=<%= p("wavefront_token") %> 
