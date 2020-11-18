@@ -10,3 +10,4 @@ files:
 - harbor-common/fix-notary.sql
 - harbor-common/harbor-backup.sh
 - harbor-common/harbor-restore.sh
+- harbor-common/config-utils

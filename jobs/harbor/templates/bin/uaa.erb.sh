@@ -9,6 +9,7 @@ register_harbor_uaa_client() {
 
   #Start to register Harbor UAA client
   handle_harbor_uaa_client \
+    register \
     $UAA_VERIFY_CERT \
     $UAA_CA_FILE \
     $UAA_SERVER_ADDRESS \
