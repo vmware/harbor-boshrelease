@@ -68,9 +68,10 @@ properties:
   customize_crt:
     description: "Determine whether or not to generate certificate for the registry's token. If the value is on, the prepare script creates new root cert and private key for generating token to access the registry. If the value is off the default key/cert will be used. This flag also controls the creation of the notary signer's cert."
     default: "on"
-
   admin_password:
     description: "The initial password of Harbor admin, only works for the first time when Harbor starts"
+  admin_password_for_smoketest:
+    description: "The admin password for smoke test"
   auth_mode:
     description: "By default the auth mode is db_auth, i.e. the credentials are stored in a local database. Set it to ldap_auth if you want to verify a user's credentials against an LDAP server."
     default: "db_auth"

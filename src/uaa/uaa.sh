@@ -94,17 +94,32 @@ register_uaa_client() {
   return $?
 }
 
-#Unregister the Harbor UAA client if it exists; register the Harbor UAA client if renew flag is specified
-#e.g: handle_harbor_uaa_client \
+# Register or unregister the Harbor UAA client if exist
+# e.g: register a uaa client
+#  handle_harbor_uaa_client \
+#      register
 #      true \
 #      "/var/vcap/jobs/harbor/config/uaa_ca.crt" \
-#      "https://localhost/uaa" \
+#      "https://api.pks.local/uaa" \
 #      "admin" \
 #      "secret" \
 #      "harbor_uaa_client" \
 #      "/var/vcap/jobs/harbor/config/uaa.json" #If registering needed
+#
+# To unregister a uaa client
+#  handle_harbor_uaa_client
+#     unregister \
+#     true   \
+#     "/var/vcap/jobs/harbor/config/uaa_ca.crt" \
+#     "https://api.pks.local/uaa" \
+#      "admin" \
+#      "secret" \
+#      "harbor_uaa_client"
+
 handle_harbor_uaa_client() {
-  #Check verify cert parameter
+  # operation can be register/unregister
+  operation=$1;shift;
+  # Check verify cert parameter
   uaa_verify_cert=$1;shift;
   uaa_ca_file=$1;shift;
 
@@ -130,23 +145,22 @@ handle_harbor_uaa_client() {
 
   #Existing
   if [ "x$harbor_uaa_client_curled" = "x$harbor_uaa_client_id" ]; then
-    log "Harbor UAA client id '$harbor_uaa_client_id' existing, trying to unregister"
-    #Try to delete
-    delete_uaa_client "$curl_cmd" $uaa_server_address $harbor_uaa_client_id $access_token
-
-    log "Harbor UAA client '$harbor_uaa_client_id' is successfully unregistered!"
+    if [ "$operation" = "unregister" ]; then
+      log "Harbor UAA client id '$harbor_uaa_client_id' existing, unregister it"
+      delete_uaa_client "$curl_cmd" $uaa_server_address $harbor_uaa_client_id $access_token
+    fi
+    return $?
   fi
 
-  #More parameter for registering harbor uaa client?
   if [ $# -gt 0 ]; then
     uaa_json_file=$1
     if [ -f $uaa_json_file ]; then
       #Create harbor UAA client
-      uaa_properties=$(cat $uaa_json_file)
+      uaa_properties=$($CONFIG_CMD -show-uaa -uaa-json $uaa_json_file)
 
       log "Registering Harbor UAA client '$harbor_uaa_client_id'..."
-      register_uaa_client "$curl_cmd" $uaa_server_address $access_token "$uaa_properties" 
-  
+      register_uaa_client "$curl_cmd" $uaa_server_address $access_token "$uaa_properties"
+
       log "Harbor UAA client '$harbor_uaa_client_id' is successfully registered!"
     fi
   fi

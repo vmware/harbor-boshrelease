@@ -11,6 +11,7 @@ DOCKER_DAEMON_SOCK=${DOCKER_RUN_DIR}/dockerd.sock
 DOCKER_HOST="unix://$DOCKER_DAEMON_SOCK"
 DOCKER_CMD="${DOCKER_PACKAGE_DIR}/bin/docker -H $DOCKER_HOST"
 PYTHON_CMD="${PACKAGE_DIR}/python/python2.7/bin/python"
+CONFIG_CMD="${PACKAGE_DIR}/harbor-common/config-utils"
 
 log() {
   echo [`date`] $*

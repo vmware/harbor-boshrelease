@@ -31,6 +31,7 @@ UAA_ADMIN_CLIENT_SECRET='<%= link('harbor_uaa_reference').p('uaa.admin.client_se
 
 #Start to unregister Harbor UAA client
 handle_harbor_uaa_client \
+  unregister \
   $UAA_VERIFY_CERT \
   $UAA_CA_FILE \
   $UAA_SERVER_ADDRESS \

@@ -23,32 +23,13 @@ waitForDBReady() {
     set -e
 }
 
-changeUserConfigSetting() {
-    key=$1
-    value=$2
-    $DOCKER_CMD exec harbor-db psql -U postgres -d registry -c "insert into properties (k, v) values ('$key', '$value') on conflict (k) do update set v = '$value';"
-}
-
 waitForDBReady
 
-changeUserConfigSetting auth_mode <%= p("auth_mode") %>
-
 <%- if p("auth_mode") == "uaa_auth" %>
-
-
 <%- if p("uaa.is_saml_backend") == true %>
-changeUserConfigSetting auth_mode oidc_auth
-changeUserConfigSetting oidc_name uaa
-changeUserConfigSetting oidc_endpoint <%= p("uaa.url").downcase %>/oauth/token
-changeUserConfigSetting oidc_client_id <%= p("uaa.client_id") %>
-changeUserConfigSetting oidc_client_secret <%= p("uaa.client_secret") %>
-changeUserConfigSetting oidc_scope <%= p("uaa.oidc_scope") %>
-changeUserConfigSetting oidc_verify_cert false
+$CONFIG_CMD -config-oidc -harbor-server https://<%= p("hostname") %> -password '<%= p("admin_password_for_smoketest") %>' -uaa-server <%= p("uaa.url") %>
 <%- else %>
-changeUserConfigSetting uaa_endpoint <%= p("uaa.url").downcase %>
-changeUserConfigSetting uaa_client_id <%= p("uaa.client_id") %>
-changeUserConfigSetting uaa_client_secret <%= p("uaa.client_secret") %>
-changeUserConfigSetting uaa_verify_cert <%= p("uaa.verify_cert") %>
+$CONFIG_CMD -config-uaa -harbor-server https://<%= p("hostname") %> -password '<%= p("admin_password_for_smoketest") %>' -uaa-server  <%= p("uaa.url") %> -verify-cert
 <%- end %>
 
 <%- end %>
