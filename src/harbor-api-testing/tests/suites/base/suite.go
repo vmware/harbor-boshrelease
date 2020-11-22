@@ -64,7 +64,7 @@ func (ccs *ConcourseCiSuite) PullImage(onEnvironment *envs.Environment) error {
 	imagePulling := fmt.Sprintf("%s/%s/%s:%s",
 		onEnvironment.Hostname,
 		onEnvironment.TestingProject,
-		onEnvironment.ImageName,
+		"busybox",
 		onEnvironment.ImageTag)
 	if err := docker.Pull(imagePulling); err != nil {
 		if strings.EqualFold("exit status 1", err.Error()) {
