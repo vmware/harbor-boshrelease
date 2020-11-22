@@ -36,7 +36,7 @@ func (ccs *ConcourseCiSuite) PushImage(onEnvironment *envs.Environment) error {
 	imagePushing := fmt.Sprintf("%s/%s/%s:%s",
 		onEnvironment.Hostname,
 		onEnvironment.TestingProject,
-		onEnvironment.ImageName,
+		"busybox",
 		onEnvironment.ImageTag)
 
 	if err := docker.Tag(imagePulling, imagePushing); err != nil {
