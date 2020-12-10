@@ -1,8 +1,6 @@
 package suite01
 
 import (
-	"fmt"
-
 	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/envs"
 	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/lib"
 	"github.com/vmware/harbor-boshrelease/src/harbor-api-testing/tests/suites/base"
@@ -14,13 +12,12 @@ import (
 //  s2: create user "cody"
 //  s3: assign cody as developer
 //  s4: push a busybox image to project
-//  s5: scan image
-//  s6: pull image from project
-//  s7: remove "cody" from project member list
-//  s8: pull image from project [FAIL]
-//  s9: remove repository busybox
-//  s10: delete project
-//  s11: delete user
+//  s5: pull image from project
+//  s6: remove "cody" from project member list
+//  s7: pull image from project [FAIL]
+//  s8: remove repository busybox
+//  s9: delete project
+//  s10: delete user
 
 //ConcourseCiSuite01 : For harbor journey in concourse pipeline
 type ConcourseCiSuite01 struct {
@@ -75,59 +72,42 @@ func (ccs *ConcourseCiSuite01) Run(onEnvironment *envs.Environment) *lib.Report 
 	}
 
 	//s5
-	img := lib.NewImageUtil(onEnvironment.RootURI(), onEnvironment.HTTPClient)
-
-	artifacts, err := img.GetArtifacts(onEnvironment.TestingProject, onEnvironment.ImageName)
-	if err != nil {
-		report.Failed("ScanTag", fmt.Errorf("Can not find tag to scan, error %v", err))
-	} else if len(artifacts) <= 0 {
-		report.Failed("ScanTag", fmt.Errorf("Can not find tag to scan"))
-	} else {
-		digest := artifacts[0].Digest
-		fmt.Printf("Scan tag with digest: %v\n", digest)
-		if err := img.ScanTag(onEnvironment.TestingProject, onEnvironment.ImageName, digest); err != nil {
-			report.Failed("ScanTag", err)
-		} else {
-			report.Passed("ScanTag")
-		}
-	}
-
-	//s6
 	if err := ccs.PullImage(onEnvironment); err != nil {
 		report.Failed("pullImage[1]", err)
 	} else {
 		report.Passed("pullImage[1]")
 	}
 
-	//s7
+	//s6
 	if err := pro.RevokeRole(onEnvironment.TestingProject, onEnvironment.Account); err != nil {
 		report.Failed("RevokeRole", err)
 	} else {
 		report.Passed("RevokeRole")
 	}
 
-	//s8
+	//s7
 	if err := ccs.PullImage(onEnvironment); err != nil {
 		report.Failed("pullImage[2]", err)
 	} else {
 		report.Passed("pullImage[2]")
 	}
 
-	//s9
+	//s8
+	img := lib.NewImageUtil(onEnvironment.RootURI(), onEnvironment.HTTPClient)
 	if err := img.DeleteRepo(onEnvironment.TestingProject, onEnvironment.ImageName); err != nil {
 		report.Failed("DeleteRepo", err)
 	} else {
 		report.Passed("DeleteRepo")
 	}
 
-	//s10
+	//s9
 	if err := pro.DeleteProject(onEnvironment.TestingProject); err != nil {
 		report.Failed("DeleteProject", err)
 	} else {
 		report.Passed("DeleteProject")
 	}
 
-	//s11
+	//s10
 	if err := usr.DeleteUser(onEnvironment.Account); err != nil {
 		report.Failed("DeleteUser", err)
 	} else {
