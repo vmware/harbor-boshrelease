@@ -28,11 +28,6 @@ type ConcourseCiSuite01 struct {
 func (ccs *ConcourseCiSuite01) Run(onEnvironment *envs.Environment) *lib.Report {
 	report := &lib.Report{}
 
-	scanner := lib.NewScannerUtil(onEnvironment.RootURI(), onEnvironment.HTTPClient)
-	if err := scanner.SetDefaultScannerToClair(); err != nil {
-		report.Failed("SetDefaultScannerToClair ", err)
-	}
-
 	//s0
 	sys := lib.NewSystemUtil(onEnvironment.RootURI(), onEnvironment.Hostname, onEnvironment.HTTPClient)
 	if err := sys.GetSystemInfo(); err != nil {

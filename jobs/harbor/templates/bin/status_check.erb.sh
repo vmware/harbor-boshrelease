@@ -65,12 +65,12 @@ fi
 set +e
 
 echo "${curl_command} ${protocol}://${harbor_url}/api/v2.0/systeminfo"
-url=`${curl_command} ${protocol}://${harbor_url}/api/v2.0/systeminfo | python -c "import sys, json; print json.load(sys.stdin)['registry_url']"`
+version=`${curl_command} ${protocol}://${harbor_url}/api/v2.0/systeminfo | python -c "import sys, json; print json.load(sys.stdin)['harbor_version']"`
 if [ $? != 0 ] ; then
   myExit 3
 fi
 
-if [ -z "$url" ]; then
+if [ -z "$version" ]; then
   myExit 4
 fi
 

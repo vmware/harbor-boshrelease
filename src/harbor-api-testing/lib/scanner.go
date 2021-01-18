@@ -43,21 +43,21 @@ func (su *ScannerUtil) GetScanners() ([]Scanner, error) {
 	return scanners, nil
 }
 
-func (su *ScannerUtil) SetDefaultScannerToClair() error {
+func (su *ScannerUtil) SetDefaultScannerToTrivy() error {
 	scanners, err := su.GetScanners()
 	if err != nil {
 		return err
 	}
-	var clairUUID string
+	var trivyUUID string
 	for _, s := range scanners {
-		if strings.EqualFold(s.Name, "clair") {
-			clairUUID = s.UUID
+		if strings.EqualFold(s.Name, "trivy") {
+			trivyUUID = s.UUID
 		}
 	}
-	if len(clairUUID) == 0 {
-		return errors.New("clair scanner is not registered!")
+	if len(trivyUUID) == 0 {
+		return errors.New("trivy scanner is not registered!")
 	}
-	return su.SetDefaultScanner(clairUUID)
+	return su.SetDefaultScanner(trivyUUID)
 }
 
 func (su *ScannerUtil) SetDefaultScanner(uuid string) error {

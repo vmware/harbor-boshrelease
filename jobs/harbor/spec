@@ -109,11 +109,17 @@ properties:
     description: "The no_proxy config for Clair"
     default: "127.0.0.1,localhost,core,registry"
   with_clair:
-    description: "An option to determine whether install the optional component Clair or not."
+    description: "An option to determine whether install the optional component Clair or not. Deprecated option. Please install clair outside and add clair scanner in Harbor."
     default: false
   with_trivy:
     description: "An option to determine whether install the optional component Trivy or not."
     default: true
+  trivy.skip_update:
+    description: "The flag to enable or disable Trivy DB downloads from GitHub"
+    default: false
+  trivy.github_token:
+    description: "The GitHub access token to download Trivy DB"
+    default: ""
   with_notary:
     description: "An option to determine whether install the optional component Notary or not."
     default: true
