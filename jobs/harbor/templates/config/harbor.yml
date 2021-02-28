@@ -100,7 +100,10 @@ trivy:
   # ignoreUnfixed The flag to display only fixed vulnerabilities
   ignore_unfixed: false
   # skipUpdate The flag to enable or disable Trivy DB downloads from GitHub
-  skip_update: false
+  skip_update: <%= p("trivy.skip_update") %>
+  insecure: false
+  github_token: <%= p("trivy.github_token") %>
+
 
 jobservice:
   # Maximum number of job workers in job service  
