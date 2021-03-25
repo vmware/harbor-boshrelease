@@ -140,7 +140,7 @@ log:
     port: <%= p("log_insight_port") %>
 <%- end %>
 #This attribute is for migrator to detect the version of the .cfg file, DO NOT MODIFY!
-_version: 2.0.0
+_version: 2.2.0
 
 # UAA cert
 <%- if p("auth_mode") == "uaa_auth" %>
@@ -163,5 +163,4 @@ proxy:
   components:
     - core
     - jobservice
-    - clair
     - trivy
