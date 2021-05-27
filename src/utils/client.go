@@ -15,7 +15,10 @@ import (
 	"time"
 )
 
-const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+const (
+	charset           = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	ConfigurationPath = "/api/v2.0/configurations"
+)
 
 var seededRand *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
 
@@ -99,14 +102,22 @@ func main() {
 	c := newConfigClient(client, *harborServerUrl, "admin", *password)
 	uaaProf, err := parseJsonFile(*uaaJsonPath)
 	checkError(err)
+	authMode := c.getAuthModeFromConfig()
 	if *isConfigOIDC {
-		err = c.configOIDC(uaaProf, *uaaServer, *verifyCert)
+		if authMode.Value == "oidc_auth" {
+			err = c.configOIDC(uaaProf, *uaaServer, *verifyCert, false)
+		} else {
+			err = c.configOIDC(uaaProf, *uaaServer, *verifyCert, true)
+		}
 	}
-
 	if *isConfigUAA {
-		err = c.configUAA(uaaProf, *uaaServer, *verifyCert)
-
+		if authMode.Value == "uaa_auth" {
+			err = c.configUAA(uaaProf, *uaaServer, *verifyCert, false)
+		} else {
+			err = c.configUAA(uaaProf, *uaaServer, *verifyCert, true)
+		}
 	}
+
 	checkError(err)
 	os.Exit(0)
 }
@@ -213,31 +224,53 @@ func createHttpClient(caCertFile string, insecure bool) *http.Client {
 	return &http.Client{Transport: tr}
 }
 
-func (c *ConfigClient) configHarborWithSetting(setting map[string]interface{}) error {
-	url := c.harborUrl + "/api/v2.0/configurations"
-	method := "PUT"
+type ConfigAuth struct {
+	Value    string `json:"value"`
+	Editable bool   `json:"editable"`
+}
+
+func (c *ConfigClient) requestConfig(method string, setting map[string]interface{}) (*http.Response, error) {
+	url := c.harborUrl + ConfigurationPath
 	payload, err := json.Marshal(setting)
 	checkError(err)
 	req, err := http.NewRequest(method, url, bytes.NewReader(payload))
 	checkError(err)
 	req.SetBasicAuth(c.username, c.password)
 	req.Header.Add("Content-Type", "application/json")
-	res, err := c.client.Do(req)
+	return c.client.Do(req)
+}
+
+func (c *ConfigClient) getAuthModeFromConfig() ConfigAuth {
+	var configs map[string]json.RawMessage
+	var authMode ConfigAuth
+	res, err := c.requestConfig("GET", nil)
+	checkError(err)
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	checkError(err)
+	err = json.Unmarshal(body, &configs)
+	checkError(err)
+	err = json.Unmarshal(configs["auth_mode"], &authMode)
+	checkError(err)
+	return authMode
+}
+
+func (c *ConfigClient) configHarborWithSetting(setting map[string]interface{}) error {
+	res, err := c.requestConfig("PUT", setting)
 	checkError(err)
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 	checkError(err)
 	Trace(fmt.Sprintf("Response code %v\n", res.StatusCode))
 	if res.StatusCode != http.StatusOK {
-		return fmt.Errorf("failed to send request to %v, response code %v", url, res.StatusCode)
+		return fmt.Errorf("failed to send request to %v, response code %v", c.harborUrl+ConfigurationPath, res.StatusCode)
 	}
 	Trace("request content is " + string(body) + "\n")
 	return nil
 }
 
-func (c *ConfigClient) configOIDC(setting *UAAProfile, uaaUrl string, verifyCert bool) error {
+func (c *ConfigClient) configOIDC(setting *UAAProfile, uaaUrl string, verifyCert bool, withAuthMode bool) error {
 	s := map[string]interface{}{
-		"auth_mode":          "oidc_auth",
 		"oidc_endpoint":      strings.ToLower(uaaUrl) + "/oauth/token",
 		"oidc_name":          "uaa",
 		"oidc_client_id":     setting.ClientID,
@@ -245,17 +278,22 @@ func (c *ConfigClient) configOIDC(setting *UAAProfile, uaaUrl string, verifyCert
 		"oidc_scope":         strings.Join(setting.Scope, ","),
 		"oidc_verify_cert":   verifyCert,
 	}
-
+	if withAuthMode {
+		s["auth_mode"] = "oidc_auth"
+	}
 	return c.configHarborWithSetting(s)
+
 }
 
-func (c *ConfigClient) configUAA(setting *UAAProfile, uaaUrl string, verifyCert bool) error {
+func (c *ConfigClient) configUAA(setting *UAAProfile, uaaUrl string, verifyCert bool, withAuthMode bool) error {
 	s := map[string]interface{}{
-		"auth_mode":         "uaa_auth",
 		"uaa_endpoint":      strings.ToLower(uaaUrl),
 		"uaa_client_id":     setting.ClientID,
 		"uaa_client_secret": setting.ClientSecret,
 		"uaa_verify_cert":   verifyCert,
+	}
+	if withAuthMode {
+		s["auth_mode"] = "uaa_auth"
 	}
 	return c.configHarborWithSetting(s)
 }
