@@ -99,14 +99,33 @@ func main() {
 	c := newConfigClient(client, *harborServerUrl, "admin", *password)
 	uaaProf, err := parseJsonFile(*uaaJsonPath)
 	checkError(err)
+	var sysinfo map[string]json.RawMessage
+	var authMode string
+	res, err := http.Get(c.harborUrl + "/api/v2.0/systeminfo")
+	checkError(err)
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	checkError(err)
+	err = json.Unmarshal(body, &sysinfo)
+	checkError(err)
+	err = json.Unmarshal(sysinfo["auth_mode"], &authMode)
+	checkError(err)
+
 	if *isConfigOIDC {
-		err = c.configOIDC(uaaProf, *uaaServer, *verifyCert)
+		if authMode == "oidc_auth" {
+			err = c.configOIDC(uaaProf, *uaaServer, *verifyCert, false)
+		} else {
+			err = c.configOIDC(uaaProf, *uaaServer, *verifyCert, true)
+		}
 	}
-
 	if *isConfigUAA {
-		err = c.configUAA(uaaProf, *uaaServer, *verifyCert)
-
+		if authMode == "uaa_auth" {
+			err = c.configUAA(uaaProf, *uaaServer, *verifyCert, false)
+		} else {
+			err = c.configUAA(uaaProf, *uaaServer, *verifyCert, true)
+		}
 	}
+
 	checkError(err)
 	os.Exit(0)
 }
@@ -235,9 +254,8 @@ func (c *ConfigClient) configHarborWithSetting(setting map[string]interface{}) e
 	return nil
 }
 
-func (c *ConfigClient) configOIDC(setting *UAAProfile, uaaUrl string, verifyCert bool) error {
+func (c *ConfigClient) configOIDC(setting *UAAProfile, uaaUrl string, verifyCert bool, withAuthMode bool) error {
 	s := map[string]interface{}{
-		"auth_mode":          "oidc_auth",
 		"oidc_endpoint":      strings.ToLower(uaaUrl) + "/oauth/token",
 		"oidc_name":          "uaa",
 		"oidc_client_id":     setting.ClientID,
@@ -245,17 +263,22 @@ func (c *ConfigClient) configOIDC(setting *UAAProfile, uaaUrl string, verifyCert
 		"oidc_scope":         strings.Join(setting.Scope, ","),
 		"oidc_verify_cert":   verifyCert,
 	}
+	if withAuthMode {
+		s["auth_mode"] = "oidc_auth"
+	}
 
 	return c.configHarborWithSetting(s)
 }
 
-func (c *ConfigClient) configUAA(setting *UAAProfile, uaaUrl string, verifyCert bool) error {
+func (c *ConfigClient) configUAA(setting *UAAProfile, uaaUrl string, verifyCert bool, withAuthMode bool) error {
 	s := map[string]interface{}{
-		"auth_mode":         "uaa_auth",
 		"uaa_endpoint":      strings.ToLower(uaaUrl),
 		"uaa_client_id":     setting.ClientID,
 		"uaa_client_secret": setting.ClientSecret,
 		"uaa_verify_cert":   verifyCert,
+	}
+	if withAuthMode {
+		s["auth_mode"] = "uaa_auth"
 	}
 	return c.configHarborWithSetting(s)
 }
