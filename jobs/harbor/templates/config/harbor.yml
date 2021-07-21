@@ -88,13 +88,6 @@ storage_service:
     realm: <%= p("registry_storage_provider.azure.realm") %> 
 <%- end %>
 
-# Clair configuration
-clair: 
-  # The interval of clair updaters, the unit is hour, set to 0 to disable the updaters.
-  updaters_interval: <%= p("clair_updater_interval") %>
-  # Config http proxy for Clair, e.g. http://my.proxy.com:3128
-  # Clair doesn't need to connect to harbor internal components via http proxy.
-
 # Trivy configuration
 trivy:
   # ignoreUnfixed The flag to display only fixed vulnerabilities
@@ -140,7 +133,7 @@ log:
     port: <%= p("log_insight_port") %>
 <%- end %>
 #This attribute is for migrator to detect the version of the .cfg file, DO NOT MODIFY!
-_version: 2.2.0
+_version: 2.3.0
 
 # UAA cert
 <%- if p("auth_mode") == "uaa_auth" %>
