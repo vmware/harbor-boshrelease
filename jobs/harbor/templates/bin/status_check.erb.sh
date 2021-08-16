@@ -75,7 +75,7 @@ if [ -z "$version" ]; then
 fi
 
 #Check Docker Registry connectivity
-password='<%= p("admin_password") %>'
+password='<%= p("admin_password_for_smoketest") %>'
 login=$(docker -H "unix://$DAEMON_SOCK" login -u admin -p $password $harbor_url 2>&1 )
 if [ $? != 0 ] ; then
   # In case the admin password is modified on Harbor UI,
