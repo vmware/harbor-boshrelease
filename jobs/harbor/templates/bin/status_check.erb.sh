@@ -57,10 +57,7 @@ fi
 harbor_url=${HARBOR_HOSTNAME}
 protocol='<%= p("ui_url_protocol") %>'
 
-curl_command="curl -s"
-if [ "$protocol" = "https" ]; then
-  curl_command="$curl_command --cacert $HARBOR_JOB_DIR/config/ca.crt"
-fi
+curl_command="curl -sk"
 
 set +e
 
