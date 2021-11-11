@@ -11,16 +11,16 @@ services:
     environment:
       - HOST_MOUNT_PREFIX=/hostfs
       - HOST_PROC=/hostfs/proc
-    wavefront-proxy:
-      image: wavefronthq/proxy:5.7
-      pull_policy: never
-      environment:
-        - WAVEFRONT_URL=<%= p("wavefront_url") %> 
-        - WAVEFRONT_TOKEN=<%= p("wavefront_token") %> 
-        - JAVA_HEAP_USAGE=512m
-      volumes:
-        - "./proxy-log4j2.xml:/etc/wavefront/wavefront-proxy/log4j2.xml"
-        - "/var/log/harbor:/harbor_log"
-      ports:
-        - "2878:2878"
-        - "4242:4242"
+  wavefront-proxy:
+    image: wavefronthq/proxy:5.7
+    pull_policy: never
+    environment:
+      - WAVEFRONT_URL=<%= p("wavefront_url") %>
+      - WAVEFRONT_TOKEN=<%= p("wavefront_token") %>
+      - JAVA_HEAP_USAGE=512m
+    volumes:
+      - "./proxy-log4j2.xml:/etc/wavefront/wavefront-proxy/log4j2.xml"
+      - "/var/log/harbor:/harbor_log"
+    ports:
+      - "2878:2878"
+      - "4242:4242"
