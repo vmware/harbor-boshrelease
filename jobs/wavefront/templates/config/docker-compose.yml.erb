@@ -18,6 +18,7 @@ services:
       - WAVEFRONT_URL=<%= p("wavefront_url") %>
       - WAVEFRONT_TOKEN=<%= p("wavefront_token") %>
       - JAVA_HEAP_USAGE=512m
+      - JAVA_ARGS=-Dlog4j2.formatMsgNoLookups=true
     volumes:
       - "./proxy-log4j2.xml:/etc/wavefront/wavefront-proxy/log4j2.xml"
       - "/var/log/harbor:/harbor_log"
