@@ -7,7 +7,7 @@ set -o pipefail
 source /var/vcap/packages/common/utils.sh
 
 WAVEFRONT_PACKAGE_DIR=${PACKAGE_DIR}/wavefront
-WAVEFRONT_IMAGES_TAR_PATH=$WAVEFRONT_PACKAGE_DIR/harbor-wavefront-bundle-2.0.1.tar
+WAVEFRONT_IMAGES_TAR_PATH=$WAVEFRONT_PACKAGE_DIR/harbor-wavefront-bundle.tar
 #Load Wavefront images
 loadImages() {
   waitForDockerd
