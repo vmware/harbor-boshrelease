@@ -12,7 +12,7 @@ services:
       - HOST_MOUNT_PREFIX=/hostfs
       - HOST_PROC=/hostfs/proc
   wavefront-proxy:
-    image: wavefronthq/proxy:10.11
+    image: wavefronthq/proxy:10.12
     pull_policy: never
     environment:
       - WAVEFRONT_URL=<%= p("wavefront_url") %> 
