@@ -96,7 +96,13 @@ trivy:
   skip_update: <%= p("trivy.skip_update") %>
   insecure: false
   github_token: <%= p("trivy.github_token") %>
-
+  # The offline_scan option prevents Trivy from sending API requests to identify dependencies.
+  # Scanning JAR files and pom.xml may require Internet access for better detection, but this option tries to avoid it.
+  # For example, the offline mode will not try to resolve transitive dependencies in pom.xml when the dependency doesn't
+  # exist in the local repositories. It means a number of detected vulnerabilities might be fewer in offline mode.
+  # It would work if all the dependencies are in local.
+  # This option doesn't affect DB download. You need to specify "skip-update" as well as "offline-scan" in an air-gapped environment.
+  offline_scan: <%= p("trivy.offline_scan") %>
 
 jobservice:
   # Maximum number of job workers in job service  

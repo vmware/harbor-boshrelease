@@ -120,6 +120,9 @@ properties:
   trivy.github_token:
     description: "The GitHub access token to download Trivy DB"
     default: ""
+  trivy.offline_scan:
+    description: "The option prevents Trivy from sending API requests to identify dependencies"
+    default: true
   with_notary:
     description: "An option to determine whether install the optional component Notary or not."
     default: true
