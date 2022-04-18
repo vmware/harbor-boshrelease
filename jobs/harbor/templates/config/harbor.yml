@@ -139,7 +139,7 @@ log:
     port: <%= p("log_insight_port") %>
 <%- end %>
 #This attribute is for migrator to detect the version of the .cfg file, DO NOT MODIFY!
-_version: 2.3.0
+_version: 2.5.0
 
 # UAA cert
 <%- if p("auth_mode") == "uaa_auth" %>
@@ -163,3 +163,11 @@ proxy:
     - core
     - jobservice
     - trivy
+
+upload_purging:
+  enabled: true
+  # remove files in _upload directories which exist for a period of time, default is one week.
+  age: 168h
+  # the interval of the purge operations
+  interval: 24h
+  dryrun: false    
