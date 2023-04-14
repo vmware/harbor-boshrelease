@@ -34,7 +34,7 @@ database:
   #The password for the root user of Harbor DB. Change this before any production use.
   password: "<%= p("db_password") %>"
   # The maximum number of connections in the idle connection pool. If it <=0, no idle connections are retained.
-  max_idle_conns: 50
+  max_idle_conns: 100
   # The maximum number of open connections to the database. If it <= 0, then there is no limit on the number of open connections.
   # Note: the default number of connections is 100 for postgres.
   max_open_conns: 900
@@ -127,17 +127,14 @@ trivy:
 jobservice:
   # Maximum number of job workers in job service  
   max_job_workers: <%= p("max_job_workers") %>
+  logger_sweeper_duration: 1 #days
 
 notification:
   # Maximum retry count for webhook job
-  webhook_job_max_retry: 10
+  webhook_job_max_retry: 3
+  # HTTP client timeout for webhook job
+  webhook_job_http_client_timeout: 3 #seconds
 
-chart:
-  absolute_url: disabled
-
-notification:
-  # Maximum retry count for webhook job
-  webhook_job_max_retry: 10
 # Log configurations
 log:
   # options are debug, info, warn, error
@@ -163,7 +160,7 @@ log:
     port: <%= p("log_insight_port") %>
 <%- end %>
 #This attribute is for migrator to detect the version of the .cfg file, DO NOT MODIFY!
-_version: 2.7.0
+_version: 2.8.0
 
 # UAA cert
 <%- if p("auth_mode") == "uaa_auth" %>
