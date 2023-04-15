@@ -124,8 +124,7 @@ function getPrepareOption() {
   if [ -n "$WITH_TRIVY" ]; then
     echo " --with-trivy"
   fi
-
-  echo " --with-chartmuseum"
+  
 }
 
 # Run prepare 
