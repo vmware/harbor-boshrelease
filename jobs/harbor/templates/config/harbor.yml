@@ -61,7 +61,7 @@ data_volume: /data
 
 storage_service:
   redirect:
-    disabled: <%= p("registry_storage_provider.s3.disable_redirect") %>  
+    disable: <%= p("registry_storage_provider.s3.disable_redirect") %>  
   ca_bundle: /tmp/trusted_certificates.crt
 <%- if p("registry_storage_provider.name") == "s3" %>
 # S3 storage
