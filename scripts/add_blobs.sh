@@ -1,4 +1,6 @@
 #!/bin/bash
+# This script is used to add blobs to the bosh release in local build environment.
+# it should be updated on-demand
 
 set -e
 

@@ -196,11 +196,12 @@ function setupNFS() {
   if ! mount | grep -q $nfs_uri ; then
     set +e
 
-    dpkg -i ${NFS_PKG_DIR}/keyutils_1.5.9-8ubuntu1_amd64.deb
-    dpkg -i ${NFS_PKG_DIR}/libnfsidmap2_0.25-5_amd64.deb
-    dpkg -i ${NFS_PKG_DIR}/rpcbind_0.2.3-0.2_amd64.deb
-    dpkg -i ${NFS_PKG_DIR}/libevent-2.0-5_2.0.21-stable-2ubuntu0.16.04.1_amd64.deb
-    dpkg -i ${NFS_PKG_DIR}/nfs-common_1.2.8-9ubuntu12_amd64.deb
+    dpkg -i --auto-deconfigure ${NFS_PKG_DIR}/libc6_2.36-0ubuntu4_amd64.deb
+    dpkg -i ${NFS_PKG_DIR}/libevent-core-2.1-7a_2.1.12-stable-5ubuntu1_amd64.deb
+    dpkg -i ${NFS_PKG_DIR}/rpcbind_1.2.6-2build1_amd64.deb
+    dpkg -i ${NFS_PKG_DIR}/libnfsidmap1_2.6.1-2ubuntu4.1_amd64.deb
+    dpkg -i ${NFS_PKG_DIR}/keyutils_1.6.1-2ubuntu3_amd64.deb
+    dpkg -i ${NFS_PKG_DIR}/nfs-common_2.6.1-2ubuntu4.1_amd64.deb
     
     mount $nfs_uri $mount_point
     
