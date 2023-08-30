@@ -117,9 +117,6 @@ setupGCSKeyFile() {
 }
 
 function getPrepareOption() {
-  if [ -n "$WITH_NOTARY" ]; then
-    echo " --with-notary"
-  fi
   
   if [ -n "$WITH_TRIVY" ]; then
     echo " --with-trivy"
