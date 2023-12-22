@@ -165,7 +165,7 @@ log:
     port: <%= p("log_insight_port") %>
 <%- end %>
 #This attribute is for migrator to detect the version of the .cfg file, DO NOT MODIFY!
-_version: 2.9.0
+_version: 2.10.0
 
 # UAA cert
 <%- if p("auth_mode") == "uaa_auth" %>
