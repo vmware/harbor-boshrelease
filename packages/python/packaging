@@ -1,10 +1,12 @@
+#!/usr/bin/env bash
+
 set -e
 
 # wget https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tgz
-tar xzvf ${BOSH_COMPILE_TARGET}/python/Python-2.7.15.tgz
-mkdir -p ${BOSH_INSTALL_TARGET}/python2.7
-pushd ${BOSH_COMPILE_TARGET}/Python-2.7.*
-  ./configure --prefix=${BOSH_INSTALL_TARGET}/python2.7
+tar xzvf "${BOSH_COMPILE_TARGET}/python/Python-2.7.15.tgz"
+mkdir -p "${BOSH_INSTALL_TARGET}/python2.7"
+pushd "${BOSH_COMPILE_TARGET}/"Python-2.7.*
+  ./configure --prefix="${BOSH_INSTALL_TARGET}/python2.7"
   make
   make install
 popd

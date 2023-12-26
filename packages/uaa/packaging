@@ -1,4 +1,6 @@
+#!/usr/bin/env bash
+
 set -e
 
-cp -a uaa/* ${BOSH_INSTALL_TARGET}
-chmod +x ${BOSH_INSTALL_TARGET}/*.sh
+cp -a uaa/* "${BOSH_INSTALL_TARGET}"
+chmod +x "${BOSH_INSTALL_TARGET}/"*.sh

@@ -1,10 +1,12 @@
+#!/usr/bin/env bash
+
 set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
 
 echo "Extracting nfs-common ..."
-if ! tar -xzvf ${BOSH_COMPILE_TARGET}/nfs-common/nfs-common.tgz -C ${BOSH_INSTALL_TARGET} ; then
+if ! tar -xzvf "${BOSH_COMPILE_TARGET}/nfs-common/nfs-common.tgz" -C "${BOSH_INSTALL_TARGET}" ; then
   echo "Failed to extract nfs-common tarball"
   exit 1
 fi
 
-chmod +x ${BOSH_INSTALL_TARGET}/*.sh
+chmod +x "${BOSH_INSTALL_TARGET}/"*.sh
