@@ -171,6 +171,8 @@ loadImages() {
   #Load images
   log "Loading docker images ..."
   $DOCKER_CMD load -i $HARBOR_IMAGES_TAR_PATH 2>&1
+  #Should load wavefront image because previous image prune will remove it
+  $DOCKER_CMD load -i ${PACKAGE_DIR}/wavefront/harbor-wavefront-bundle.tar 2>&1
 }
 
 # Setup NFS directory and update docker-compose.yml
