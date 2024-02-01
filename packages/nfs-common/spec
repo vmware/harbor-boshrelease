@@ -2,9 +2,4 @@
 name: nfs-common
 
 files:
-  - nfs-common/nfs-common_2.6.1-2ubuntu4.1_amd64.deb
-  - nfs-common/libevent-core-2.1-7a_2.1.12-stable-5ubuntu1_amd64.deb
-  - nfs-common/rpcbind_1.2.6-2build1_amd64.deb
-  - nfs-common/keyutils_1.6.1-2ubuntu3_amd64.deb
-  - nfs-common/libnfsidmap1_2.6.1-2ubuntu4.1_amd64.deb
-  - nfs-common/libc6_2.36-0ubuntu4_amd64.deb
+  - nfs-common/nfs-common.tgz
