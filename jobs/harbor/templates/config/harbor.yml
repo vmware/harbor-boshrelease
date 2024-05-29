@@ -124,6 +124,10 @@ trivy:
   # https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line
   #
   # github_token: xxx
+  # skipJavaDBUpdate If the flag is enabled you have to manually download the `trivy-java.db` file and mount it in the
+  # `/home/scanner/.cache/trivy/java-db/trivy-java.db` path
+  skip_java_db_update: false
+  
 jobservice:
   # Maximum number of job workers in job service  
   max_job_workers: <%= p("max_job_workers") %>
