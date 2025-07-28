@@ -144,6 +144,8 @@ trivy:
 jobservice:
   # Maximum number of job workers in job service  
   max_job_workers: <%= p("max_job_workers") %>
+  # Maximum hours of task duration in job service, default 24
+  max_job_duration_hours: 24
   logger_sweeper_duration: 1 #days
   # The jobLoggers backend name, only support "STD_OUTPUT", "FILE" and/or "DB"
   job_loggers:
@@ -182,7 +184,7 @@ log:
     port: <%= p("log_insight_port") %>
 <%- end %>
 #This attribute is for migrator to detect the version of the .cfg file, DO NOT MODIFY!
-_version: 2.12.0
+_version: 2.13.0
 
 # UAA cert
 <%- if p("auth_mode") == "uaa_auth" %>
