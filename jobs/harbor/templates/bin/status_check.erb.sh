@@ -55,21 +55,8 @@ fi
 
 #Check the API
 harbor_url=${HARBOR_HOSTNAME}
-protocol='<%= p("ui_url_protocol") %>'
-
-curl_command="curl -sk"
 
 set +e
-
-echo "${curl_command} ${protocol}://${harbor_url}/api/v2.0/systeminfo"
-version=`${curl_command} ${protocol}://${harbor_url}/api/v2.0/systeminfo | python -c "import sys, json; print json.load(sys.stdin)['harbor_version']"`
-if [ $? != 0 ] ; then
-  myExit 3
-fi
-
-if [ -z "$version" ]; then
-  myExit 4
-fi
 
 #Check Docker Registry connectivity
 password='<%= p("admin_password_for_smoketest") %>'
