@@ -4,5 +4,5 @@ set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
 
 mkdir -p "${BOSH_INSTALL_TARGET}/bin"
-cp "${BOSH_COMPILE_TARGET}/docker/docker-compose-Linux-x86_64" "${BOSH_INSTALL_TARGET}/bin/docker-compose"
+cp "${BOSH_COMPILE_TARGET}/docker/docker-compose-linux-x86_64" "${BOSH_INSTALL_TARGET}/bin/docker-compose"
 chmod +x "${BOSH_INSTALL_TARGET}/bin/docker-compose"

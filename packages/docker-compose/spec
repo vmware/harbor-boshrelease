@@ -4,4 +4,4 @@ name: docker-compose
 dependencies: []
 
 files:
-- docker/docker-compose-Linux-x86_64 
+- docker/docker-compose-linux-x86_64 
