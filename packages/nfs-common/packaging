@@ -1,14 +1,12 @@
-# wget http://mirrors.kernel.org/ubuntu/pool/main/n/nfs-utils/nfs-common_1.2.8-9ubuntu12_amd64.deb
+#!/usr/bin/env bash
 
-#dpkg -i ${BOSH_COMPILE_TARGET}/nfs-common/keyutils_1.5.9-8ubuntu1_amd64.deb
-#dpkg -i ${BOSH_COMPILE_TARGET}/nfs-common/libnfsidmap2_0.25-5_amd64.deb
-#dpkg -i ${BOSH_COMPILE_TARGET}/nfs-common/rpcbind_0.2.3-0.2_amd64.deb
-#dpkg -i ${BOSH_COMPILE_TARGET}/nfs-common/libevent-2.0-5_2.0.21-stable-2ubuntu0.16.04.1_amd64.deb
-#dpkg -i ${BOSH_COMPILE_TARGET}/nfs-common/nfs-common_1.2.8-9ubuntu12_amd64.deb
+set -e # exit immediately if a simple command exits with a non-zero status
+set -u # report the usage of uninitialized variables
 
+echo "Extracting nfs-common ..."
+if ! tar -xzvf "${BOSH_COMPILE_TARGET}/nfs-common/nfs-common.tgz" -C "${BOSH_INSTALL_TARGET}" ; then
+  echo "Failed to extract nfs-common tarball"
+  exit 1
+fi
 
-cp ${BOSH_COMPILE_TARGET}/nfs-common/keyutils_1.5.9-8ubuntu1_amd64.deb ${BOSH_INSTALL_TARGET}
-cp ${BOSH_COMPILE_TARGET}/nfs-common/libnfsidmap2_0.25-5_amd64.deb  ${BOSH_INSTALL_TARGET}
-cp ${BOSH_COMPILE_TARGET}/nfs-common/rpcbind_0.2.3-0.2_amd64.deb  ${BOSH_INSTALL_TARGET}
-cp ${BOSH_COMPILE_TARGET}/nfs-common/libevent-2.0-5_2.0.21-stable-2ubuntu0.16.04.1_amd64.deb  ${BOSH_INSTALL_TARGET}
-cp ${BOSH_COMPILE_TARGET}/nfs-common/nfs-common_1.2.8-9ubuntu12_amd64.deb  ${BOSH_INSTALL_TARGET}
+chmod +x "${BOSH_INSTALL_TARGET}/"*.sh

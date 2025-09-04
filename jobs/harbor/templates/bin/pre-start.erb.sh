@@ -117,15 +117,11 @@ setupGCSKeyFile() {
 }
 
 function getPrepareOption() {
-  if [ -n "$WITH_NOTARY" ]; then
-    echo " --with-notary"
-  fi
   
   if [ -n "$WITH_TRIVY" ]; then
     echo " --with-trivy"
   fi
-
-  echo " --with-chartmuseum"
+  
 }
 
 # Run prepare 
@@ -175,6 +171,8 @@ loadImages() {
   #Load images
   log "Loading docker images ..."
   $DOCKER_CMD load -i $HARBOR_IMAGES_TAR_PATH 2>&1
+  #Should load wavefront image because previous image prune will remove it
+  $DOCKER_CMD load -i ${PACKAGE_DIR}/wavefront/harbor-wavefront-bundle.tar 2>&1
 }
 
 # Setup NFS directory and update docker-compose.yml
@@ -196,13 +194,7 @@ function setupNFS() {
   mkdir -p $mount_point
   if ! mount | grep -q $nfs_uri ; then
     set +e
-
-    dpkg -i ${NFS_PKG_DIR}/keyutils_1.5.9-8ubuntu1_amd64.deb
-    dpkg -i ${NFS_PKG_DIR}/libnfsidmap2_0.25-5_amd64.deb
-    dpkg -i ${NFS_PKG_DIR}/rpcbind_0.2.3-0.2_amd64.deb
-    dpkg -i ${NFS_PKG_DIR}/libevent-2.0-5_2.0.21-stable-2ubuntu0.16.04.1_amd64.deb
-    dpkg -i ${NFS_PKG_DIR}/nfs-common_1.2.8-9ubuntu12_amd64.deb
-    
+    source ${NFS_PKG_DIR}/install_nfs_common.sh    
     mount $nfs_uri $mount_point
     
     set -e

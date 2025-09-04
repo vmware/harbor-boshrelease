@@ -20,6 +20,16 @@ https:
   private_key: /tmp/server.key
 <%- end %>
 
+# # Harbor will set ipv4 enabled only by default if this block is not configured
+# # Otherwise, please uncomment this block to configure your own ip_family stacks
+# ip_family:
+#   # ipv6Enabled set to true if ipv6 is enabled in docker network, currently it affected the nginx related component
+#   ipv6:
+#     enabled: false
+#   # ipv4Enabled set to true by default, currently it affected the nginx related component
+#   ipv4:
+#     enabled: true
+
 # Uncomment extearnal_url if you want to enable external proxy
 # And when it enabled the hostname will no longger used
 # external_url: https://reg.mydomain.com:8433
@@ -31,10 +41,10 @@ harbor_admin_password: "<%= p("admin_password") %>"
 
 ## Harbor DB configuration
 database:
-  #The password for the root user of Harbor DB. Change this before any production use.
+  # The password for the user('postgres' by default) of Harbor DB. Change this before any production use.
   password: "<%= p("db_password") %>"
   # The maximum number of connections in the idle connection pool. If it <=0, no idle connections are retained.
-  max_idle_conns: 50
+  max_idle_conns: 100
   # The maximum number of open connections to the database. If it <= 0, then there is no limit on the number of open connections.
   # Note: the default number of connections is 100 for postgres.
   max_open_conns: 900
@@ -61,7 +71,7 @@ data_volume: /data
 
 storage_service:
   redirect:
-    disabled: <%= p("registry_storage_provider.s3.disable_redirect") %>  
+    disable: <%= p("registry_storage_provider.s3.disable_redirect") %>  
   ca_bundle: /tmp/trusted_certificates.crt
 <%- if p("registry_storage_provider.name") == "s3" %>
 # S3 storage
@@ -124,20 +134,31 @@ trivy:
   # https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line
   #
   # github_token: xxx
+  # skipJavaDBUpdate If the flag is enabled you have to manually download the `trivy-java.db` file and mount it in the
+  # `/home/scanner/.cache/trivy/java-db/trivy-java.db` path
+  skip_java_db_update: false
+  # timeout The duration to wait for scan completion.
+  # There is upper bound of 30 minutes defined in scan job. So if this `timeout` is larger than 30m0s, it will also timeout at 30m0s.
+  timeout: 5m0s
+  
 jobservice:
   # Maximum number of job workers in job service  
   max_job_workers: <%= p("max_job_workers") %>
+  # Maximum hours of task duration in job service, default 24
+  max_job_duration_hours: 24
+  logger_sweeper_duration: 1 #days
+  # The jobLoggers backend name, only support "STD_OUTPUT", "FILE" and/or "DB"
+  job_loggers:
+    - STD_OUTPUT
+    - FILE
+    # - DB  
 
 notification:
   # Maximum retry count for webhook job
-  webhook_job_max_retry: 10
+  webhook_job_max_retry: 3
+  # HTTP client timeout for webhook job
+  webhook_job_http_client_timeout: 3 #seconds
 
-chart:
-  absolute_url: disabled
-
-notification:
-  # Maximum retry count for webhook job
-  webhook_job_max_retry: 10
 # Log configurations
 log:
   # options are debug, info, warn, error
@@ -163,7 +184,7 @@ log:
     port: <%= p("log_insight_port") %>
 <%- end %>
 #This attribute is for migrator to detect the version of the .cfg file, DO NOT MODIFY!
-_version: 2.7.0
+_version: 2.13.0
 
 # UAA cert
 <%- if p("auth_mode") == "uaa_auth" %>

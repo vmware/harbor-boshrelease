@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   telegraf:
-    image: telegraf:1.14
+    image: telegraf:1.20.2
     pull_policy: never
     command: ["telegraf", "--config", "/telegraf.config"]
     volumes:
@@ -12,7 +12,7 @@ services:
       - HOST_MOUNT_PREFIX=/hostfs
       - HOST_PROC=/hostfs/proc
   wavefront-proxy:
-    image: wavefronthq/proxy:10.12
+    image: wavefronthq/proxy:12.0
     pull_policy: never
     environment:
       - WAVEFRONT_URL=<%= p("wavefront_url") %>

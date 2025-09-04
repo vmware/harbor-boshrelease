@@ -2,5 +2,5 @@
 blobstore:
   provider: gcs
   options:
-    bucket_name: harbor-bosh-releases
+    bucket_name: 25vc_harbor-bosh-releases
 final_name: harbor-container-registry

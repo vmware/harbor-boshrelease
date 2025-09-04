@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e -u
 
-mkdir -p ${BOSH_INSTALL_TARGET}/bin
-cp ${BOSH_COMPILE_TARGET}/smoke-test/smoke-test ${BOSH_INSTALL_TARGET}/bin
-chmod 755 ${BOSH_INSTALL_TARGET}/bin/smoke-test
+mkdir -p "${BOSH_INSTALL_TARGET}/bin"
+cp "${BOSH_COMPILE_TARGET}/smoke-test/smoke-test" "${BOSH_INSTALL_TARGET}/bin"
+chmod 755 "${BOSH_INSTALL_TARGET}/bin/smoke-test"

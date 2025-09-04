@@ -4,7 +4,7 @@ package envs
 var ConcourseCIEnv = Environment{
 	Protocol:       "https",
 	TestingProject: "concoursecitesting01",
-	GCRProjectName: "gcr.io/eminent-nation-87317/harbortile-ci/",
+	GCRProjectName: "pksartifacts.azurecr.io/pks-golf/",
 	ImageName:      "busybox",
 	ImageTag:       "latest",
 	CAFile:         "../../../ca.crt",
