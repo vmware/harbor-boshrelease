@@ -3,6 +3,8 @@ builds:
     version: 2.13.2
   33de7e62-8146-463f-41c1-8cf28c62bbe2:
     version: 1.5.0
+  6d36cca3-b5a4-4412-6826-a6ee6fe09107:
+    version: 2.11.1
   734c96ab-04ac-452f-4d85-7300469a7b71:
     version: 1.7.5-build.10
   ae48cdb7-eca2-4bc9-494f-c6c77eda45a0:
