@@ -123,6 +123,9 @@ properties:
   trivy.offline_scan:
     description: "The option prevents Trivy from sending API requests to identify dependencies"
     default: true
+  trivy.skip_java_db_update:
+    description: "The flag to enable or disable Trivy Java DB downloads. If enabled, you have to manually download the trivy-java.db file and mount it in the /home/scanner/.cache/trivy/java-db/trivy-java.db path"
+    default: false
   with_notary:
     description: "An option to determine whether install the optional component Notary or not."
     default: true
