@@ -9,7 +9,7 @@ SMOKETEST_BIN_PATH=/harbor-boshrelease/make/smoke_test
 DOCKERCMD=$(shell which docker)
 
 GOBUILDPATHINCONTAINER=/harbor-boshrelease
-GOBUILDIMAGE=golang:1.25.5
+GOBUILDIMAGE=golang:1.14.7
 
 compile_smoke_test:
 	@echo "compiling binary for smoke_test..."
