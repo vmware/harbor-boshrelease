@@ -2,4 +2,4 @@
 
 set -e
 
-cp -a busybox/*.tar "${BOSH_INSTALL_TARGET}"
+cp -a busybox/.*.tar "${BOSH_INSTALL_TARGET}"
