@@ -4,4 +4,4 @@ name: busybox
 dependencies: []
 
 files:
-- busybox/busybox.tar
+- busybox-1.37.0.tar
