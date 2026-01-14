@@ -105,7 +105,7 @@ if ! docker -H $DOCKER_HOST version >/dev/null; then
 fi
 
 # Load testing image : busybox
-BUSYBOX_PATH=$PACKAGES_DIR/busybox/busybox-1.37.0.tar
+BUSYBOX_PATH=$PACKAGES_DIR/busybox/busybox.tar
 docker -H $DOCKER_HOST load -i $BUSYBOX_PATH
 
 # Set testing environment
