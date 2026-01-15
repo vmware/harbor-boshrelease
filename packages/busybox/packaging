@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
 set -e
+echo $BOSH_INSTALL_TARGET
 
 cp -a busybox/*.tar "${BOSH_INSTALL_TARGET}"
