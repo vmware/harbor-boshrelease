@@ -1,7 +1,0 @@
----
-name: busybox
-
-dependencies: []
-
-files:
-- busybox/busybox-1.37.0.tar
