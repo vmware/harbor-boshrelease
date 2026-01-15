@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -e
+
+cp -a busybox/*.tar "${BOSH_INSTALL_TARGET}"
