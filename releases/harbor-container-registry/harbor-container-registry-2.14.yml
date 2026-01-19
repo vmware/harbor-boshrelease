@@ -1,0 +1,121 @@
+name: harbor-container-registry
+version: "2.14"
+commit_hash: non-git
+uncommitted_changes: false
+jobs:
+- name: docker
+  version: 781c17b950dd9bb2c90775c8056bf600af57301306e3c801f10f33fa4edff6fc
+  fingerprint: 781c17b950dd9bb2c90775c8056bf600af57301306e3c801f10f33fa4edff6fc
+  sha1: sha256:6cf75d51397ea065742940e560da629ca63c464351be9296f49073daa980a3f4
+  packages:
+  - common
+  - docker
+- name: enable-bosh-dns
+  version: 2bb1026b18d076ecb97dfec366e36fcdd7714268d9dfc530660f568002296e30
+  fingerprint: 2bb1026b18d076ecb97dfec366e36fcdd7714268d9dfc530660f568002296e30
+  sha1: sha256:9d3a7030919cfdd1589ecc3f61cea7a122fb9d6a44ed720a12d83f51c59d1487
+  packages: []
+- name: harbor
+  version: 325c0cacd1e75a6d5685de18e6fa4488fb6f042ebbcfa68262f274e71e185dc4
+  fingerprint: 325c0cacd1e75a6d5685de18e6fa4488fb6f042ebbcfa68262f274e71e185dc4
+  sha1: sha256:9dd9ba507a946e1a96bb48bee6ffeef44a17eb79a5ae06303f917a7fd59532ee
+  packages:
+  - common
+  - harbor-common
+  - docker-compose
+  - harbor-app
+  - uaa
+  - python
+  - nfs-common
+- name: harbor-dns-aliases
+  version: a63e4ce306ea36c0251c4643df500b0ab8c79bf5a2b9dbf1aaaa00067a0c2b3f
+  fingerprint: a63e4ce306ea36c0251c4643df500b0ab8c79bf5a2b9dbf1aaaa00067a0c2b3f
+  sha1: sha256:05111457e797e510151595946c883b9f75e4c2cd3face6d19f2e22360f4edc58
+  packages: []
+- name: smoke-test
+  version: 76039b4bb0b67786bb306473d8064327d411031c67431008d973347ac6fe9045
+  fingerprint: 76039b4bb0b67786bb306473d8064327d411031c67431008d973347ac6fe9045
+  sha1: sha256:7f98cb724654d94982586e8abfbfe0ed6919636570c72fef1cb75b38fc1e5c75
+  packages:
+  - smoke-test
+  - docker
+  - busybox
+- name: uaa-deregistration
+  version: 1dd448ce76d5cb9c5b4c9fbac21dac6acc5b520df3e8e19db94001f88c3e672b
+  fingerprint: 1dd448ce76d5cb9c5b4c9fbac21dac6acc5b520df3e8e19db94001f88c3e672b
+  sha1: sha256:ab6f1c91b8811255b3363e235177621d230491d59a042cfc1f56bc7cb08b5c75
+  packages:
+  - common
+  - uaa
+- name: wavefront
+  version: 9566b1149f3b45cfe48c7e893a8df24efda26ecc2ca0daf674c9abc036274607
+  fingerprint: 9566b1149f3b45cfe48c7e893a8df24efda26ecc2ca0daf674c9abc036274607
+  sha1: sha256:69ac874b47b007b06134272769a389cd94bf086d8eccc776a7ce1f072a35ea68
+  packages:
+  - common
+  - docker-compose
+  - wavefront
+packages:
+- name: busybox
+  version: ca8313afa08e41a067a997a70bd35339072795cad57b51e884c18378650465d2
+  fingerprint: ca8313afa08e41a067a997a70bd35339072795cad57b51e884c18378650465d2
+  sha1: sha256:657334f5e54a2d3d83b6466998cf79e1d01846e66070d8d5c9137b71f4097fb4
+  dependencies: []
+- name: common
+  version: 1ee9dd03e6d818e2158fd430c06e81ca519f9fde706dcb8359fc22db1d2f0f50
+  fingerprint: 1ee9dd03e6d818e2158fd430c06e81ca519f9fde706dcb8359fc22db1d2f0f50
+  sha1: sha256:6c19888f88de729f23f251e4abde548df33a3afa8e15888167fc5fdeeaa76aff
+  dependencies: []
+- name: docker
+  version: ed5ca3b973d181a2418b190bf159a425fbc265fe9cb117ca4957ef995a888e6f
+  fingerprint: ed5ca3b973d181a2418b190bf159a425fbc265fe9cb117ca4957ef995a888e6f
+  sha1: sha256:cf9d40b587a1300d88f59fd6ae60defd1fed4c5682be6b0d94023fb5a6596535
+  dependencies:
+  - common
+- name: docker-compose
+  version: 3ff5126d2d7d1aaa2847bb5021a02794fc022734977e1e618448acedf5ae3285
+  fingerprint: 3ff5126d2d7d1aaa2847bb5021a02794fc022734977e1e618448acedf5ae3285
+  sha1: sha256:659859f3fa530a7b27713ba151b927b2ac470b93b2685e978c01ec01631079e4
+  dependencies: []
+- name: harbor-app
+  version: 443add13cc6dedcec5f5194832c15799e339a62451290988f0d82fd44282b7d2
+  fingerprint: 443add13cc6dedcec5f5194832c15799e339a62451290988f0d82fd44282b7d2
+  sha1: sha256:710c7fe25b9af424cf7d007654fc1710d1d9ed42654495d803d3859ff242e606
+  dependencies:
+  - harbor-common
+- name: harbor-common
+  version: d29dba21371d2c8ef2beaf0f51e8f84ade34e12ebf8bbe2f64d23f9166574a5c
+  fingerprint: d29dba21371d2c8ef2beaf0f51e8f84ade34e12ebf8bbe2f64d23f9166574a5c
+  sha1: sha256:a6803aae2b75986ef15ed04b62a9af2f5561a1624c2670c938c14586690dce22
+  dependencies:
+  - common
+- name: nfs-common
+  version: 959231c5f213a0a4c90c208a8a4988d6c18b268705b6ba82cac6fe62aa666735
+  fingerprint: 959231c5f213a0a4c90c208a8a4988d6c18b268705b6ba82cac6fe62aa666735
+  sha1: sha256:1484eb884e95a3f919084affb229574f1b632bd2b40a141ef9c639c97aec53db
+  dependencies: []
+- name: python
+  version: 55dd29a987017f40d92819b42bd3d1614d31d2d4c47e87d534d70602e54b7dcc
+  fingerprint: 55dd29a987017f40d92819b42bd3d1614d31d2d4c47e87d534d70602e54b7dcc
+  sha1: sha256:d4ebc6c647abadf6e6815023242eb965aba896a69cb349021a8eb1dfe0a50b39
+  dependencies: []
+- name: smoke-test
+  version: e04a054a5776dec7fa835c900dc9009acbd13cf9d2c5d78dc4270ed4566cb089
+  fingerprint: e04a054a5776dec7fa835c900dc9009acbd13cf9d2c5d78dc4270ed4566cb089
+  sha1: sha256:34149518a242a3434875a8503a7aaf376f947a15e23ec5a6daa57fbc598a8c2d
+  dependencies: []
+- name: uaa
+  version: edf355df11e873d210b2d4ac3c2c6cbc8e59093f74c8114c5aab406d647a56c2
+  fingerprint: edf355df11e873d210b2d4ac3c2c6cbc8e59093f74c8114c5aab406d647a56c2
+  sha1: sha256:2a81bce7bff313c8929236b55d8417e7a1b480f130a25b31b9a1443347a1d07f
+  dependencies: []
+- name: wavefront
+  version: 4f3f2fb6f13965f840cc8e269527c5eaf0760e24a4131ca08f3076cf42b008b8
+  fingerprint: 4f3f2fb6f13965f840cc8e269527c5eaf0760e24a4131ca08f3076cf42b008b8
+  sha1: sha256:f42bbbd3efef3e54371f09acf0fb8777672772452064c868d2b79cefdf576e7e
+  dependencies: []
+license:
+  version: cfb2ebdebfb2fa4ad6803d8580bba0ee32cd33c1d2f9933267bb4fd4de0f6c26
+  fingerprint: cfb2ebdebfb2fa4ad6803d8580bba0ee32cd33c1d2f9933267bb4fd4de0f6c26
+  sha1: sha256:66e25ff81aa72686464494dc75a086d6031a00cde7271023fa4b9446aac01fea
+no_compression: false
