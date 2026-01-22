@@ -16,9 +16,9 @@ jobs:
   sha1: sha256:9d3a7030919cfdd1589ecc3f61cea7a122fb9d6a44ed720a12d83f51c59d1487
   packages: []
 - name: harbor
-  version: 5a6de7c47aa3ff1f6c5756dac07e8f745a972c8aa33fda415e0b0db143b98acb
-  fingerprint: 5a6de7c47aa3ff1f6c5756dac07e8f745a972c8aa33fda415e0b0db143b98acb
-  sha1: sha256:61a1bd2347eb9cc7188d8381b4898b3e076ea6087c697efab3790d0407546666
+  version: 325c0cacd1e75a6d5685de18e6fa4488fb6f042ebbcfa68262f274e71e185dc4
+  fingerprint: 325c0cacd1e75a6d5685de18e6fa4488fb6f042ebbcfa68262f274e71e185dc4
+  sha1: sha256:165c85ea0e3a6676ec74060c35a89c1c69ccff668e8b661fe0f45dc5d614757e
   packages:
   - common
   - harbor-common
@@ -90,9 +90,9 @@ packages:
   dependencies:
   - common
 - name: nfs-common
-  version: 1bd0a29c4ec23f51d6cf4fe386895b7769f80c6b56ef465590dccf47e146b376
-  fingerprint: 1bd0a29c4ec23f51d6cf4fe386895b7769f80c6b56ef465590dccf47e146b376
-  sha1: sha256:b11a008ee9c90145d5c1cbca91f7ccb59bc9146868dfe3d5a43e48dc3748d031
+  version: c5518cc6aee51e811780001136350eefe449c159117826453f4084c1a25e6d96
+  fingerprint: c5518cc6aee51e811780001136350eefe449c159117826453f4084c1a25e6d96
+  sha1: sha256:16a1e1fbd796c476101db5f30332e27ff805a11ef683903aed08205b18d123d4
   dependencies: []
 - name: python
   version: 55dd29a987017f40d92819b42bd3d1614d31d2d4c47e87d534d70602e54b7dcc
@@ -118,3 +118,4 @@ license:
   version: cfb2ebdebfb2fa4ad6803d8580bba0ee32cd33c1d2f9933267bb4fd4de0f6c26
   fingerprint: cfb2ebdebfb2fa4ad6803d8580bba0ee32cd33c1d2f9933267bb4fd4de0f6c26
   sha1: sha256:66e25ff81aa72686464494dc75a086d6031a00cde7271023fa4b9446aac01fea
+no_compression: false
