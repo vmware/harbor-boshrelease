@@ -136,7 +136,7 @@ trivy:
   # github_token: xxx
   # skipJavaDBUpdate If the flag is enabled you have to manually download the `trivy-java.db` file and mount it in the
   # `/home/scanner/.cache/trivy/java-db/trivy-java.db` path
-  skip_java_db_update: false
+  skip_java_db_update: <%= p("trivy.skip_java_db_update") %>
   # timeout The duration to wait for scan completion.
   # There is upper bound of 30 minutes defined in scan job. So if this `timeout` is larger than 30m0s, it will also timeout at 30m0s.
   timeout: 5m0s

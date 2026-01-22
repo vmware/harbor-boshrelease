@@ -7,8 +7,12 @@ builds:
     version: 2.11.1
   734c96ab-04ac-452f-4d85-7300469a7b71:
     version: 1.7.5-build.10
+  8530dcff-9b0c-4852-5901-25874c124d46:
+    version: 2.14.0
   ae48cdb7-eca2-4bc9-494f-c6c77eda45a0:
     version: 1.8.2
+  bff26920-ae15-4c8b-494d-07b0abd347d4:
+    version: 2.14.0-build.3
   d615f6a3-3534-47e2-4b3c-c3715bca60ce:
     version: 1.6.2
 format-version: "2"
