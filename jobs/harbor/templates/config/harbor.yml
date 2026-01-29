@@ -18,6 +18,8 @@ https:
   # It is a temporary and fixed location in tile
   certificate: /tmp/server.crt
   private_key: /tmp/server.key
+  # enable strong ssl ciphers (default: false)
+  strong_ssl_ciphers: <%= p("strong_ssl_ciphers") %>
 <%- end %>
 
 # # Harbor will set ipv4 enabled only by default if this block is not configured

@@ -99,6 +99,9 @@ properties:
     description: "The certificate key for server"
   ssl.ca:
     description: "The CA of the server"
+  strong_ssl_ciphers:
+    description: "Enable strong SSL ciphers for HTTPS connections"
+    default: false
   http_proxy:
     description: "The http_proxy url for Clair"
     default: ""
